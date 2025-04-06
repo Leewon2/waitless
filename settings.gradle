@@ -1,5 +1,6 @@
 rootProject.name = 'waitless'
 
+include ':benefit-service'
 include ':message-service'
 include ':reservation-service'
 include ':restaurant-service'
