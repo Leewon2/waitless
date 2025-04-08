@@ -1,10 +1,11 @@
 rootProject.name = 'waitless'
 
+include ':server'
+include ':gateway'
+include ':common'
 include ':benefit-service'
 include ':message-service'
 include ':reservation-service'
 include ':restaurant-service'
 include ':review-service'
-include ':server'
 include ':user-service'
-include ':common'
