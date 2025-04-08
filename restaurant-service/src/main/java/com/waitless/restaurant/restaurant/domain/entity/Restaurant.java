@@ -2,6 +2,7 @@ package com.waitless.restaurant.restaurant.domain.entity;
 
 import com.waitless.common.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -38,11 +39,8 @@ public class Restaurant extends BaseTimeEntity {
     @JoinColumn(name="category_id", nullable = false)
     private Category category;
 
-    @Column(precision = 9, scale = 6)
-    private Double latitude;
-
-    @Column(precision = 9, scale = 6)
-    private Double longitude;
+    @Embedded
+    private Location location;
 
     @Column(name = "opening_time")
     private LocalTime openingTime;
