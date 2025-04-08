@@ -23,7 +23,11 @@ public abstract class BaseTimeEntity {
 
     private LocalDateTime deletedAt;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean isDeleted;
+
     public void delete() {
+        this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
     }
 
@@ -36,4 +40,5 @@ public abstract class BaseTimeEntity {
     public void setUpdateAt() {
         updatedAt = LocalDateTime.now();
     }
+
 }
