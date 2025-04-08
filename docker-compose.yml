@@ -1,0 +1,12 @@
+services:
+  mariadb:
+    image: mariadb:10.11
+    container_name: hangry-mariadb
+    restart: always
+    environment:
+      MARIADB_DATABASE: hangry-database
+      MARIADB_USER: root
+      MARIADB_PASSWORD: root
+      MARIADB_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
