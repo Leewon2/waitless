@@ -9,4 +9,5 @@ public interface MenuRepository {
     Menu save(Menu menu);
 
     Menu getMenu(UUID id);
+
 }

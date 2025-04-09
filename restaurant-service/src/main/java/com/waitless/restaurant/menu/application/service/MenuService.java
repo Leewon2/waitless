@@ -10,4 +10,6 @@ public interface MenuService {
     CreatedMenuResponseDto createMenu(CreateMenuDto createMenuDto);
 
     MenuDto getMenu(UUID id);
+
+    MenuDto deleteMenu(UUID id);
 }

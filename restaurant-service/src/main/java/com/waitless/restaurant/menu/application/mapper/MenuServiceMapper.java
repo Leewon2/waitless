@@ -8,8 +8,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
-import java.util.Optional;
-
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MenuServiceMapper {
     @Mapping(source = "id", target = "menuId")
@@ -17,5 +15,5 @@ public interface MenuServiceMapper {
     Menu toMenu(CreateMenuDto createMenuDto);
 
     @Mapping(source = "id", target = "menuId")
-    MenuDto toGetResponseDto(Menu menu);
+    MenuDto toMenuDto(Menu menu);
 }

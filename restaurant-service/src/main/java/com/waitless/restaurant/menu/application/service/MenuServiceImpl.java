@@ -28,6 +28,13 @@ public class MenuServiceImpl implements MenuService{
     @Transactional(readOnly = true)
     // TODO : 예외처리
     public MenuDto getMenu(UUID id) {
-        return menuServiceMapper.toGetResponseDto(menuRepository.getMenu(id));
+        return menuServiceMapper.toMenuDto(menuRepository.getMenu(id));
+    }
+
+    @Transactional
+    public MenuDto deleteMenu(UUID id) {
+        Menu menu = menuRepository.getMenu(id);
+        menu.delete();
+        return menuServiceMapper.toMenuDto(menuRepository.save(menu));
     }
 }
