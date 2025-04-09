@@ -1,6 +1,6 @@
 package com.waitless.restaurant.restaurant.domain.entity;
 
-import com.waitless.common.entity.BaseTimeEntity;
+import com.waitless.common.domain.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

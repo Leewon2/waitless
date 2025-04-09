@@ -1,29 +1,38 @@
 package com.waitless.review.domain.vo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Embeddable
 @Getter
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewType {
 
     @Enumerated(EnumType.STRING)
-    private Type value;
+    @Column(name = "review_type")
+    private Type reviewType;
 
-    protected ReviewType() {}
-
-    private ReviewType(Type value) {
-        this.value = value;
+    private ReviewType(Type reviewType) {
+        this.reviewType = reviewType;
     }
 
-    public static ReviewType of(Type value) {
-        return new ReviewType(value);
+    public static ReviewType of(Type reviewType) {
+        return new ReviewType(reviewType);
     }
 
-    public boolean isDeleted() {
-        return this.value == Type.DELETED;
+    public boolean isTypeDeleted() {
+        return this.reviewType == Type.DELETED;
+    }
+
+    public boolean isTypeEditied(){
+        return this.reviewType == Type.EDITED;
     }
 
     public enum Type {
