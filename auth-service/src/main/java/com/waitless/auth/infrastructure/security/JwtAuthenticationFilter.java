@@ -1,0 +1,74 @@
+package com.waitless.auth.infrastructure.security;
+
+import java.io.IOException;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.waitless.auth.application.client.UserServiceClient;
+import com.waitless.auth.application.dto.LoginResponseDto;
+import com.waitless.auth.application.dto.ValidateUserRequestDto;
+import com.waitless.auth.application.dto.ValidateUserResponseDto;
+import com.waitless.auth.application.exception.AuthBusinessException;
+import com.waitless.auth.application.exception.AuthErrorCode;
+import com.waitless.auth.presentation.dto.LoginRequestDto;
+
+import feign.FeignException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final UserServiceClient userServiceClient;
+	private final JwtUtil jwtUtil;
+
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+		FilterChain filterChain) throws ServletException, IOException {
+
+		if (!request.getRequestURI().equals("/api/auth/login")) {
+			log.info(request.getRequestURI());
+			filterChain.doFilter(request, response);
+		}
+		try {
+			// 로그인 요청 데이터
+			LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
+			// 유저 검증
+			ValidateUserResponseDto validateUserResponseDto = userServiceClient.validateUser(
+				new ValidateUserRequestDto(loginRequestDto.email(), loginRequestDto.password())
+			);
+			if (validateUserResponseDto == null) {
+				throw AuthBusinessException.from(AuthErrorCode.AUTH_LOGIN_FAILED);
+			}
+
+			Long userId = validateUserResponseDto.userId();	// 유저 id(pk)
+			String role = validateUserResponseDto.role();	// 유저 역할
+
+			// JWT Token 생성
+			String accessToken = jwtUtil.generateAccessToken(userId, role);
+			String refreshToken = jwtUtil.generateRefreshToken(userId);
+
+			// Refresh Token 저장
+
+			response.setHeader("Authorization", accessToken);
+			response.setHeader("Refresh-Token", refreshToken);
+			response.setContentType("application/json");
+
+			LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken, "로그인 성공");
+			objectMapper.writeValue(response.getOutputStream(), loginResponseDto);
+		} catch (FeignException.Unauthorized e) {
+			throw AuthBusinessException.from(AuthErrorCode.AUTH_LOGIN_FAILED);
+		} catch (IOException e) {
+			throw AuthBusinessException.from(AuthErrorCode.AUTH_PARSING_FAILED);
+		}
+	}
+}
