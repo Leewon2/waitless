@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: benefit-service
+  datasource:
+    url: jdbc:mariadb://localhost:3306/hangry-database
+    username: root
+    password: root
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        default_batch_fetch_size: 50
+    open-in-view: false
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+#point:
+#  max-bonus: 1000
+#  daily-attendance-point: 100
+#  reward-point-on-review: 100
+#  cache-ttl-seconds: 300
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+
+server:
+  port: 19096
+
+logging:
+  level:
+    root: info
+    com.waitless.benefit.point: debug
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace
