@@ -1,24 +1,29 @@
 package com.waitless.review.domain.vo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Embeddable
 @Getter
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Rating {
 
-    private Integer value;
+    @Column(name = "rating_value")
+    private Integer ratingValue;
 
-    protected Rating() {}
-
-    private Rating(Integer value) {
-        if (value == null || value < 1 || value > 5) {
+    private Rating(Integer ratingValue) {
+        if (ratingValue == null || ratingValue < 1 || ratingValue > 5) {
             throw new IllegalArgumentException("Rating must be between 1 and 5.");
         }
-        this.value = value;
+        this.ratingValue = ratingValue;
     }
 
-    public static Rating of(Integer value) {
-        return new Rating(value);
+    public static Rating of(Integer ratingValue) {
+        return new Rating(ratingValue);
     }
 }

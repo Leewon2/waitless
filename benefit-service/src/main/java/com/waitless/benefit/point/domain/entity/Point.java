@@ -2,10 +2,10 @@ package com.waitless.benefit.point.domain.entity;
 
 import com.waitless.benefit.point.domain.vo.PointAmount;
 import com.waitless.benefit.point.domain.vo.PointType;
+import com.waitless.common.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class Point {
+public class Point extends BaseTimeEntity {
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -32,12 +32,6 @@ public class Point {
     @Column(length = 255)
     private String description;
 
-    @Column(nullable = false)
-    private boolean isDeleted;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
     public static Point of(Long userId, PointAmount amount, PointType type, String description) {
         return Point.builder()
                 .id(UUID.randomUUID())
@@ -45,12 +39,10 @@ public class Point {
                 .amount(amount)
                 .type(type)
                 .description(description)
-                .isDeleted(false)
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 
     public void softDelete() {
-        this.isDeleted = true;
+        this.delete();
     }
 }
