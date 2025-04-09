@@ -16,16 +16,15 @@ import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Filter;
 
 @Getter
-@Builder
 @Table(name="p_restaurant")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Filter(name = "deletedFilter", condition = "(deleted_at IS NOT NULL) = :isDeleted")
 public class Restaurant extends BaseTimeEntity {
 
     @Id
@@ -50,5 +49,20 @@ public class Restaurant extends BaseTimeEntity {
 
     @Embedded
     private OperatingHours operatingHours;
+
+
+    public static Restaurant of(String name, Long ownerId, String phone, Category category,
+        Location location, OperatingHours operatingHours) {
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.name = name;
+        restaurant.ownerId = ownerId;
+        restaurant.phone = phone;
+        restaurant.location = location;
+        restaurant.operatingHours = operatingHours;
+        restaurant.category = category;
+
+        return restaurant;
+    }
 
 }

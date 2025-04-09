@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location {
 
-    @Column(name = "latitude", precision = 9, scale = 6)
+    @Column(name = "latitude")
     private Double latitude;
 
-    @Column(name = "longitude", precision = 9, scale = 6)
+    @Column(name = "longitude")
     private Double longitude;
 }
