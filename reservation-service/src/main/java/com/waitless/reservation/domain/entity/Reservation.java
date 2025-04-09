@@ -1,6 +1,6 @@
 package com.waitless.reservation.domain.entity;
 
-import com.waitless.common.entity.BaseTimeEntity;
+import com.waitless.common.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

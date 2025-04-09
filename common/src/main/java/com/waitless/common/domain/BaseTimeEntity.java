@@ -1,4 +1,4 @@
-package com.waitless.common.entity;
+package com.waitless.common.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -18,6 +18,7 @@ public abstract class BaseTimeEntity {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
@@ -25,5 +26,8 @@ public abstract class BaseTimeEntity {
 
     public void delete() {
         this.isDeleted = true;
+    }
+    public boolean isDeleted() {
+        return this.isDeleted;
     }
 }
