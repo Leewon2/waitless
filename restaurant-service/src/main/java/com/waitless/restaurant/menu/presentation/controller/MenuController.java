@@ -1,10 +1,10 @@
 package com.waitless.restaurant.menu.presentation.controller;
 
-import com.waitless.common.dto.response.SingleResponse;
+import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.restaurant.menu.application.dto.CreatedMenuResponseDto;
-import com.waitless.restaurant.menu.presentation.mapper.MenuControllerMapper;
 import com.waitless.restaurant.menu.application.service.MenuService;
 import com.waitless.restaurant.menu.presentation.dto.CreateMenuRequestDto;
+import com.waitless.restaurant.menu.presentation.mapper.MenuControllerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +23,8 @@ public class MenuController {
                 menuService.createMenu(
                         menuControllerMapper.toServiceDto(createMenuRequestDto))));
     }
+
+
 
     /**
      * 연동 테스트를 위한 API
