@@ -1,6 +1,5 @@
 package com.waitless.restaurant.restaurant.application.dto;
 
-import com.waitless.restaurant.restaurant.domain.entity.Restaurant;
 import java.time.LocalTime;
 import java.util.UUID;
 
