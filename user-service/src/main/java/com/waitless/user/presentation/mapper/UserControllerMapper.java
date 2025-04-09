@@ -1,0 +1,14 @@
+package com.waitless.user.presentation.mapper;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
+
+import com.waitless.user.application.dto.SignupDto;
+import com.waitless.user.application.dto.SignupResponseDto;
+import com.waitless.user.presentation.dto.SignupRequestDto;
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface UserControllerMapper {
+	SignupDto toServiceDto(SignupRequestDto signupRequestDto);
+}

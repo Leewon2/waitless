@@ -1,0 +1,11 @@
+POST http://localhost:19091/api/users/signup
+Content-Type: application/json
+
+{
+  "email": "user3@gmail.com",
+  "password": "user3",
+  "name": "user3",
+  "phone": "010-1234-1236",
+  "role" : "ADMIN",
+  "slackId": "user3@gmail.com"
+}
