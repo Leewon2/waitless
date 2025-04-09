@@ -4,7 +4,9 @@ import com.waitless.common.domain.BaseTimeEntity;
 import com.waitless.restaurant.menu.application.dto.CreateMenuDto;
 import com.waitless.restaurant.menu.domain.entity.enums.MenuCategory;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Filter;
 
 import java.util.UUID;
@@ -34,13 +36,9 @@ public class Menu extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
-    public static Menu of(CreateMenuDto createMenuDto){
-        return new Menu(createMenuDto.restaurantId(), createMenuDto.category(), createMenuDto.amount(), createMenuDto.price(), createMenuDto.name());
-    }
-
-    private Menu(UUID restaurantId, MenuCategory menuCategory, int amount, int price, String name){
+    public Menu(UUID restaurantId, MenuCategory category, int amount, int price, String name){
         this.restaurantId=restaurantId;
-        this.menuCategory=menuCategory;
+        this.menuCategory=category;
         this.amount=amount;
         this.price=price;
         this.name=name;

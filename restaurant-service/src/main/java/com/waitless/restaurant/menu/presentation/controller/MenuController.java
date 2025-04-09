@@ -2,7 +2,7 @@ package com.waitless.restaurant.menu.presentation.controller;
 
 import com.waitless.common.dto.response.SingleResponse;
 import com.waitless.restaurant.menu.application.dto.CreatedMenuResponseDto;
-import com.waitless.restaurant.menu.application.mapper.MenuMapper;
+import com.waitless.restaurant.menu.presentation.mapper.MenuControllerMapper;
 import com.waitless.restaurant.menu.application.service.MenuService;
 import com.waitless.restaurant.menu.presentation.dto.CreateMenuRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/menus")
 public class MenuController {
     private final MenuService menuService;
-    private final MenuMapper menuMapper;
+    private final MenuControllerMapper menuControllerMapper;
 
     // TODO : 예외처리, 권한설정
     @PostMapping
     public ResponseEntity<SingleResponse<CreatedMenuResponseDto>> createMenu(@RequestBody CreateMenuRequestDto createMenuRequestDto){
-        return ResponseEntity.ok(SingleResponse.success(menuService.createMenu(menuMapper.toServiceDto(createMenuRequestDto))));
+        return ResponseEntity.ok(SingleResponse.success(
+                menuService.createMenu(
+                        menuControllerMapper.toServiceDto(createMenuRequestDto))));
     }
 
     /**
