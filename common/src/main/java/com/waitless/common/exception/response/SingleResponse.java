@@ -1,4 +1,4 @@
-package com.waitless.common.dto.response;
+package com.waitless.common.exception.response;
 
 import lombok.Getter;
 
