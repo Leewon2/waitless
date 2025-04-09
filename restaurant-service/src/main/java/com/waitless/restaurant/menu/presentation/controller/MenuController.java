@@ -4,6 +4,7 @@ import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.restaurant.menu.application.dto.CreatedMenuResponseDto;
 import com.waitless.restaurant.menu.application.service.MenuService;
 import com.waitless.restaurant.menu.presentation.dto.CreateMenuRequestDto;
+import com.waitless.restaurant.menu.presentation.dto.UpdateMenuRequestDto;
 import com.waitless.restaurant.menu.presentation.mapper.MenuControllerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,13 @@ public class MenuController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMenu(@PathVariable UUID id){
         return ResponseEntity.ok(SingleResponse.success(menuService.deleteMenu(id)));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateMenu(@PathVariable UUID id, @RequestBody(required = false)UpdateMenuRequestDto updateMenuRequestDto){
+        return ResponseEntity.ok(SingleResponse.success(
+                menuService.updateMenu(
+                        id,menuControllerMapper.toUpdateMenuDto(updateMenuRequestDto))));
     }
 
 

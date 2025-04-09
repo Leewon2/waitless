@@ -1,8 +1,6 @@
 package com.waitless.restaurant.menu.application.service;
 
-import com.waitless.restaurant.menu.application.dto.CreateMenuDto;
-import com.waitless.restaurant.menu.application.dto.CreatedMenuResponseDto;
-import com.waitless.restaurant.menu.application.dto.MenuDto;
+import com.waitless.restaurant.menu.application.dto.*;
 
 import java.util.UUID;
 
@@ -12,4 +10,6 @@ public interface MenuService {
     MenuDto getMenu(UUID id);
 
     MenuDto deleteMenu(UUID id);
+
+    UpdatedMenuResponseDto updateMenu(UUID id, UpdateMenuDto updateMenuDto);
 }
