@@ -46,11 +46,11 @@ public class Menu extends BaseTimeEntity {
         this.name = name;
     }
 
-    public static Menu of(Menu menuId, Menu menu) {
-        return new Menu(menuId.id, menuId.restaurantId,
-                menu.menuCategory == null ? menuId.menuCategory : menu.menuCategory,
-                menu.amount == null ? menuId.amount : menu.amount,
-                menu.price == null ? menuId.price : menu.price,
-                menu.name == null ? menuId.name : menu.name);
+    public static Menu of(Menu oldMenu, Menu updateMenu) {
+        return new Menu(oldMenu.id, oldMenu.restaurantId,
+                updateMenu.menuCategory == null ? oldMenu.menuCategory : updateMenu.menuCategory,
+                updateMenu.amount == null ? oldMenu.amount : updateMenu.amount,
+                updateMenu.price == null ? oldMenu.price : updateMenu.price,
+                updateMenu.name == null ? oldMenu.name : updateMenu.name);
     }
 }

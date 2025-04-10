@@ -38,8 +38,8 @@ public class MenuServiceImpl implements MenuService{
 
     @Transactional
     public UpdatedMenuResponseDto updateMenu(UUID id, UpdateMenuDto updateMenuDto) {
-        Menu menuId = menuRepository.getMenu(id);
-        Menu menu = menuServiceMapper.toMenuFromUpdateMenu(updateMenuDto);
-        return menuServiceMapper.toUpdateResponseDto(menuRepository.save(Menu.of(menuId, menu)));
+        Menu oldMenu = menuRepository.getMenu(id);
+        Menu updateMenu = menuServiceMapper.toMenuFromUpdateMenu(updateMenuDto);
+        return menuServiceMapper.toUpdateResponseDto(menuRepository.save(Menu.of(oldMenu, updateMenu)));
     }
 }
