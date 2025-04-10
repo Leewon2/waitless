@@ -1,6 +1,6 @@
 package com.waitless.restaurant.restaurant.application.mapper;
 
-import com.waitless.restaurant.restaurant.application.dto.CreateRestaurantResponseDto;
+import com.waitless.restaurant.restaurant.application.dto.RestaurantResponseDto;
 import com.waitless.restaurant.restaurant.domain.entity.Restaurant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,5 +14,5 @@ public interface RestaurantServiceMapper {
     @Mapping(source = "location.longitude", target = "longitude")
     @Mapping(source = "operatingHours.openingTime", target = "openingTime")
     @Mapping(source = "operatingHours.closingTime", target = "closingTime")
-    CreateRestaurantResponseDto toResponseDto(Restaurant restaurant);
+    RestaurantResponseDto toResponseDto(Restaurant restaurant);
 }

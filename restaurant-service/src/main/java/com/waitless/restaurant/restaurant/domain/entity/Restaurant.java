@@ -3,6 +3,7 @@ package com.waitless.restaurant.restaurant.domain.entity;
 import com.waitless.common.domain.BaseTimeEntity;
 import com.waitless.restaurant.restaurant.domain.vo.Location;
 import com.waitless.restaurant.restaurant.domain.vo.OperatingHours;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -13,17 +14,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Table(name="p_restaurant")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Filter(name = "deletedFilter", condition = "(deleted_at IS NOT NULL) = :isDeleted")
+@Where(clause = "is_deleted = false")
 public class Restaurant extends BaseTimeEntity {
 
     @Id
@@ -62,6 +64,11 @@ public class Restaurant extends BaseTimeEntity {
         restaurant.category = category;
 
         return restaurant;
+    }
+
+    public void update(String phone, LocalTime operatingHours , LocalTime closingHours) {
+        if(StringUtils.isNotBlank(phone)) this.phone = phone;
+        this.operatingHours.update(operatingHours, closingHours);
     }
 
 }

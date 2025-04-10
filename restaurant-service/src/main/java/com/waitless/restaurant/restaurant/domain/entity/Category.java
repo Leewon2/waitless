@@ -10,13 +10,13 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Entity
 @Table(name = "p_category")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Filter(name = "deletedFilter", condition = "(deleted_at IS NOT NULL) = :isDeleted")
+@Where(clause = "is_deleted = false")
 public class Category extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

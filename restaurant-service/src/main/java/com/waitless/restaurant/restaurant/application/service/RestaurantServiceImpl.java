@@ -42,6 +42,14 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurantServiceMapper.toResponseDto(restaurant);
     }
 
+    @Transactional
+    public RestaurantResponseDto updateRestaurant(UUID id, UpdateRestaurantDto updateRestaurantDto) {
+        Restaurant restaurant = findById(id);
+        restaurant.update(updateRestaurantDto.phone(), updateRestaurantDto.openingTime(), updateRestaurantDto.closingTime());
+
+        return restaurantServiceMapper.toResponseDto(restaurant);
+    }
+
     @Transactional(readOnly = true)
     public Restaurant findById(UUID id) {
       return restaurantRepository.findById(id).orElseThrow(()-> new NullPointerException("식당을 찾을 수 없습니다."));
