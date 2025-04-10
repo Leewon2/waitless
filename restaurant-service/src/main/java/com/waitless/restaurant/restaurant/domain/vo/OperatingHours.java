@@ -3,7 +3,6 @@ package com.waitless.restaurant.restaurant.domain.vo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.time.LocalTime;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,19 +19,28 @@ public class OperatingHours {
 
 
 
-    @Builder
-    public OperatingHours(LocalTime openingTime, LocalTime closingTime) {
-        if (!openingTime.isBefore(closingTime)) {
-            throw new IllegalArgumentException("영업 시작 시간은 종료 시간보다 이전이어야 합니다.");
-        }
+    private OperatingHours(LocalTime openingTime, LocalTime closingTime) {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
     }
 
-    public boolean isOpenAt(LocalTime time) {
-        return !time.isBefore(openingTime) && !time.isAfter(closingTime);
+    public static OperatingHours of(LocalTime openingTime, LocalTime closingTime) {
+        return new OperatingHours(openingTime, closingTime);
     }
 
+    public void update(LocalTime openingTime, LocalTime closingTime) {
+        if (openingTime != null) this.openingTime = openingTime;
+        if (closingTime != null) this.closingTime = closingTime;
+    }
+
+    public boolean isOpenAt(LocalTime time) {
+        if (openingTime.isBefore(closingTime)) {
+            return !time.isBefore(openingTime) && !time.isAfter(closingTime);
+        } else {
+            // 자정이 넘어가는 영업 시간일 때
+            return !time.isBefore(openingTime) || !time.isAfter(closingTime);
+        }
+    }
 
     public boolean isOpenNow() {
         return isOpenAt(LocalTime.now());
