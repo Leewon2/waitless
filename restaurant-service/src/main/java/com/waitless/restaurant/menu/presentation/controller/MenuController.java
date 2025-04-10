@@ -45,13 +45,17 @@ public class MenuController {
     }
 
 
-
     /**
-     * 연동 테스트를 위한 API
+     * 테스트용 API
      */
     @GetMapping("/hello")
     public ResponseEntity<?> hello(){
         return ResponseEntity.ok("hello");
+    }
+
+    @GetMapping("menus/{id}")
+    public ResponseEntity<?> getMenus(@PathVariable UUID id){
+        return ResponseEntity.ok(SingleResponse.success(menuService.getMenus(id)));
     }
 
 }

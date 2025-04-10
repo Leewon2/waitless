@@ -15,7 +15,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "p_menu")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Filter(name = "deletedFilter", condition = "is_deleted = :isDeleted")
 @Where(clause = "is_deleted=false")
 public class Menu extends BaseTimeEntity {
     @Id
