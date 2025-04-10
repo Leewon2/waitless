@@ -9,10 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location {
 
     @Column(name = "latitude")
@@ -20,4 +18,13 @@ public class Location {
 
     @Column(name = "longitude")
     private Double longitude;
+
+    public Location(Double latitude, Double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public static Location of(Double latitude, Double longitude) {
+        return new Location(latitude, longitude);
+    }
 }
