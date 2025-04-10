@@ -28,7 +28,7 @@ public class Reservation extends BaseTimeEntity {
     private Long userId;
 
     @Column(nullable = false)
-    private UUID storeId;
+    private UUID restaurantId;
 
     @Column(nullable = false)
     private String restaurantName;
@@ -37,7 +37,7 @@ public class Reservation extends BaseTimeEntity {
     private Integer peopleCount;
 
     @Column(nullable = false)
-    private Integer reservationNumber;
+    private Long reservationNumber;
 
     @Column(nullable = false)
     private Integer delayCount = 3; //순서 미루기 3번 가능. 미룰 때마다 delayCount--
@@ -63,4 +63,30 @@ public class Reservation extends BaseTimeEntity {
 
     private int originalAmount; // 쿠폰/포인트 적용 전 금액
     */
+
+    public static Reservation create(UUID storeId, String restaurantName,
+                                     Integer peopleCount, Long reservationNumber,
+                                     LocalDate reservationDate, ReservationStatus status,
+                                     List<ReservationMenu> menus, Long userId) {
+
+        Reservation reservation = new Reservation();
+        reservation.restaurantId = storeId;
+        reservation.restaurantName = restaurantName;
+        reservation.peopleCount = peopleCount;
+        reservation.reservationNumber = reservationNumber;
+        reservation.reservationDate = reservationDate;
+        reservation.status = status;
+        reservation.userId = userId;
+
+        for (ReservationMenu menu : menus) {
+            reservation.addMenu(menu);
+        }
+
+        return reservation;
+    }
+
+    private void addMenu(ReservationMenu menu) {
+        this.menus.add(menu);
+        menu.addReservation(this);
+    }
 }
