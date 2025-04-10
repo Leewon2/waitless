@@ -8,6 +8,6 @@ import java.util.UUID;
 public interface MenuRepository {
     Menu save(Menu menu);
 
-    Menu getMenu(UUID id);
+    Optional<Menu> getMenu(UUID id);
 
 }

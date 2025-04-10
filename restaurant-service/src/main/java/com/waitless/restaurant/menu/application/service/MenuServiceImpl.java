@@ -26,20 +26,24 @@ public class MenuServiceImpl implements MenuService{
     @Transactional(readOnly = true)
     // TODO : 예외처리
     public MenuDto getMenu(UUID id) {
-        return menuServiceMapper.toMenuDto(menuRepository.getMenu(id));
+        return menuServiceMapper.toMenuDto(getMenuFromRepo(id));
     }
 
     @Transactional
     public MenuDto deleteMenu(UUID id) {
-        Menu menu = menuRepository.getMenu(id);
+        Menu menu = getMenuFromRepo(id);;
         menu.delete();
         return menuServiceMapper.toMenuDto(menuRepository.save(menu));
     }
 
     @Transactional
     public UpdatedMenuResponseDto updateMenu(UUID id, UpdateMenuDto updateMenuDto) {
-        Menu oldMenu = menuRepository.getMenu(id);
+        Menu oldMenu = getMenuFromRepo(id);
         Menu updateMenu = menuServiceMapper.toMenuFromUpdateMenu(updateMenuDto);
         return menuServiceMapper.toUpdateResponseDto(menuRepository.save(Menu.of(oldMenu, updateMenu)));
+    }
+
+    private Menu getMenuFromRepo(UUID id){
+        return menuRepository.getMenu(id).orElseThrow(()-> new NullPointerException("메뉴 id 없음"));
     }
 }

@@ -18,5 +18,5 @@ public class MenuRepositoryImpl implements MenuRepository {
         return menuJpaRepository.save(menu);
     }
 
-    public Menu getMenu(UUID id) {return menuJpaRepository.findById(id).orElseThrow(()-> new NullPointerException("메뉴 id 없음"));}
+    public Optional<Menu> getMenu(UUID id) {return menuJpaRepository.findById(id);}
 }
