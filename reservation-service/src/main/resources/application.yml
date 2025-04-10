@@ -18,10 +18,21 @@ spring:
         default_batch_fetch_size: 100
     open-in-view: false
 
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 2000
+    redis:
+      host: localhost
+      port: 6379
+      username: default
+      password: systempass
+
 logging:
   level:
     root: info
-    com.waitless.reservation: debug
+    com.waitless.reservation: info
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql: trace
 
