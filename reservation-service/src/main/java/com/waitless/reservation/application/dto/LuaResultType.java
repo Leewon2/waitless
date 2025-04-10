@@ -5,7 +5,8 @@ import java.util.Optional;
 public enum LuaResultType {
     SUCCESS,
     MISSING,
-    INSUFFICIENT;
+    INSUFFICIENT,
+    TEAM_OVER;
 
     public static Optional<LuaResultType> from(String value) {
         for (LuaResultType type : values()) {

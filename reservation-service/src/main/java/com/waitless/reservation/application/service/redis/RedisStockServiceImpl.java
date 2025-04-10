@@ -30,7 +30,16 @@ public class RedisStockServiceImpl implements RedisStockService {
         validateMenuKeysExist(restaurantId, menus);
 
         List<String> keys = new ArrayList<>();
+        keys.add("reservation:teamCount:" + restaurantId);
+
+        String teamLimit = redisTemplate.opsForValue().get("reservation:teamLimit:" + restaurantId);
+        if (teamLimit == null) {
+            throw new RuntimeException("식당 팀 최대 인원 없음");
+        }
+
         List<String> args = new ArrayList<>();
+        args.add(teamLimit);
+        args.add(String.valueOf(menus.size()));
 
         for (MenuCommandDto menu : menus) {
             keys.add("stock:" + restaurantId + ":" + menu.menuId());
@@ -51,15 +60,22 @@ public class RedisStockServiceImpl implements RedisStockService {
             throw BusinessException.from(ReservationErrorCode.UNKNOWN_LUA_RESULT, result);
         }
 
-        if (LuaResultType.from(result.get(0))
-                .map(type -> type == LuaResultType.SUCCESS)
-                .orElse(false)) {
+        String resultTypeString = result.get(0);
+        LuaResultType type = LuaResultType.from(resultTypeString)
+                .orElseThrow(() -> BusinessException.from(ReservationErrorCode.UNKNOWN_LUA_RESULT, result));
+
+        if (type == LuaResultType.SUCCESS) {
             return createReservationNumber(restaurantId);
         }
 
-        // 실패 메뉴 ID 리스트
-        List<UUID> insufficient = result.stream().map(UUID::fromString).toList();
-        throw BusinessException.from(ReservationErrorCode.RESERVATION_STOCK_ERROR, insufficient);
+        switch (type) {
+            case TEAM_OVER -> throw BusinessException.from(ReservationErrorCode.RESERVATION_TEAM_LIMIT_EXCEEDED);
+            case INSUFFICIENT -> {
+                List<UUID> insufficient = result.stream().skip(1).map(UUID::fromString).toList();
+                throw BusinessException.from(ReservationErrorCode.RESERVATION_STOCK_ERROR, insufficient);
+            }
+            default -> throw new RuntimeException("Lua Script ERROR");
+        }
     }
 
     /**
