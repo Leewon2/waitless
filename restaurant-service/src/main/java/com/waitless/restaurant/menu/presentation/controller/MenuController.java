@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/menus")
@@ -22,6 +24,11 @@ public class MenuController {
         return ResponseEntity.ok(SingleResponse.success(
                 menuService.createMenu(
                         menuControllerMapper.toServiceDto(createMenuRequestDto))));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getMenu(@PathVariable UUID id){
+        return ResponseEntity.ok(SingleResponse.success(menuService.getMenu(id)));
     }
 
 
