@@ -1,7 +1,9 @@
 package com.waitless.restaurant.restaurant.presentation.mapper;
 
 import com.waitless.restaurant.restaurant.application.dto.CreateRestaurantDto;
+import com.waitless.restaurant.restaurant.application.dto.UpdateRestaurantDto;
 import com.waitless.restaurant.restaurant.presentation.dto.CreateRestaurantRequestDto;
+import com.waitless.restaurant.restaurant.presentation.dto.UpdateRestaurantRequestDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -9,4 +11,6 @@ import org.mapstruct.ReportingPolicy;
 public interface RestaurantControllerMapper {
 
     CreateRestaurantDto toServiceDto(CreateRestaurantRequestDto requestDto);
+
+    UpdateRestaurantDto toServiceDto(UpdateRestaurantRequestDto requestDto);
 }
