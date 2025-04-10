@@ -31,6 +31,11 @@ public class MenuController {
         return ResponseEntity.ok(SingleResponse.success(menuService.getMenu(id)));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMenu(@PathVariable UUID id){
+        return ResponseEntity.ok(SingleResponse.success(menuService.deleteMenu(id)));
+    }
+
 
 
     /**
