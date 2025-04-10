@@ -5,7 +5,6 @@ import com.waitless.review.presentation.dto.request.PostReviewRequestDto;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface ReviewMapper {
-
+public interface ReviewControllerMapper {
     PostReviewCommand toCommand(PostReviewRequestDto requestDto);
 }
