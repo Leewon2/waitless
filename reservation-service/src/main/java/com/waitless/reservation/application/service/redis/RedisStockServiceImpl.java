@@ -27,17 +27,14 @@ public class RedisStockServiceImpl implements RedisStockService {
     @Override
     public Long decrementStock(UUID restaurantId, List<MenuCommandDto> menus) {
         validateExistRestaurant(restaurantId);
+        validateMenuKeysExist(restaurantId, menus);
+
         List<String> keys = new ArrayList<>();
         List<String> args = new ArrayList<>();
 
-        menus.forEach(menu -> {
-            var menuId = menu.menuId();
-            var quantity = menu.quantity();
-            keys.add("stock:" + restaurantId + ":" + menuId);
-            args.add(quantity.toString());
-        });
-
         for (MenuCommandDto menu : menus) {
+            keys.add("stock:" + restaurantId + ":" + menu.menuId());
+            args.add(menu.quantity().toString());
             args.add(menu.menuId().toString());
         }
 
@@ -50,38 +47,19 @@ public class RedisStockServiceImpl implements RedisStockService {
         @SuppressWarnings("unchecked")
         List<String> result = redisTemplate.execute(redisScript, keys, args.toArray());
 
-        if (result.isEmpty()) throw new RuntimeException("Redis Lua 실행 실패");
+        if (result == null || result.isEmpty()) {
+            throw BusinessException.from(ReservationErrorCode.UNKNOWN_LUA_RESULT, result);
+        }
 
-        if (LuaResultType.from(result.get(0)).orElse(null) == LuaResultType.SUCCESS) {
+        if (LuaResultType.from(result.get(0))
+                .map(type -> type == LuaResultType.SUCCESS)
+                .orElse(false)) {
             return createReservationNumber(restaurantId);
         }
 
-        //재고가 부족한 메뉴인지, 존재하지 않는 메뉴인지 구분하기 위한 로직
-        List<UUID> missingMenus = new ArrayList<>();
-        List<UUID> insufficientMenus = new ArrayList<>();
-
-        for (String res : result) {
-            String[] parts = res.split(":");
-
-            LuaResultType.from(parts[0]).ifPresent(type -> {
-                UUID menuId = UUID.fromString(parts[1]);
-
-                switch (type) {
-                    case MISSING -> missingMenus.add(menuId);
-                    case INSUFFICIENT -> insufficientMenus.add(menuId);
-                }
-            });
-        }
-
-        if (!missingMenus.isEmpty()) {
-            throw BusinessException.from(ReservationErrorCode.RESERVATION_MENU_NOTFOUND_ERROR, missingMenus);
-        }
-
-        if (!insufficientMenus.isEmpty()) {
-            throw BusinessException.from(ReservationErrorCode.RESERVATION_STOCK_ERROR, insufficientMenus);
-        }
-
-        throw BusinessException.from(ReservationErrorCode.UNKNOWN_LUA_RESULT, result);
+        // 실패 메뉴 ID 리스트
+        List<UUID> insufficient = result.stream().map(UUID::fromString).toList();
+        throw BusinessException.from(ReservationErrorCode.RESERVATION_STOCK_ERROR, insufficient);
     }
 
     /**
@@ -96,5 +74,23 @@ public class RedisStockServiceImpl implements RedisStockService {
      */
     private void validateExistRestaurant(UUID restaurantId) {
         redisReservationService.validateRestaurantExists(restaurantId);
+    }
+
+    /**
+     * 존재하는 메뉴인지 체크
+     */
+    private void validateMenuKeysExist(UUID restaurantId, List<MenuCommandDto> menus) {
+        List<String> missing = new ArrayList<>();
+
+        for (MenuCommandDto menu : menus) {
+            String key = "stock:" + restaurantId + ":" + menu.menuId();
+            if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
+                missing.add(menu.menuId().toString());
+            }
+        }
+
+        if (!missing.isEmpty()) {
+            throw BusinessException.from(ReservationErrorCode.RESERVATION_MENU_NOTFOUND_ERROR, missing);
+        }
     }
 }

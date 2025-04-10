@@ -1,15 +1,13 @@
-local failed = {}
 local total = #KEYS
+local failed = {}
 
 for i = 1, total do
   local stock = tonumber(redis.call("GET", KEYS[i]))
-  local quantity = tonumber(ARGV[i])
-  local menuId = ARGV[total + i]
+  local quantity = tonumber(ARGV[(i - 1) * 2 + 1])
+  local menuId = ARGV[(i - 1) * 2 + 2]
 
-  if stock == nil then
-    table.insert(failed, "MISSING:" .. menuId)
-  elseif stock < quantity then
-    table.insert(failed, "INSUFFICIENT:" .. menuId)
+  if stock < quantity then
+    table.insert(failed, menuId)
   end
 end
 
@@ -18,7 +16,7 @@ if #failed > 0 then
 end
 
 for i = 1, total do
-  redis.call("DECRBY", KEYS[i], ARGV[i])
+  redis.call("DECRBY", KEYS[i], ARGV[(i - 1) * 2 + 1])
 end
 
 return {"SUCCESS"}
