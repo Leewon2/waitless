@@ -5,6 +5,7 @@ import com.waitless.restaurant.menu.domain.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,4 +20,8 @@ public class MenuRepositoryImpl implements MenuRepository {
     }
 
     public Optional<Menu> getMenu(UUID id) {return menuJpaRepository.findById(id);}
+
+    public List<Menu> findAllByRestaurantId(UUID restaurantId) {
+        return menuJpaRepository.findAllByRestaurantId(restaurantId);
+    }
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -41,6 +42,10 @@ public class MenuServiceImpl implements MenuService{
         Menu oldMenu = getMenuFromRepo(id);
         Menu updateMenu = menuServiceMapper.toMenuFromUpdateMenu(updateMenuDto);
         return menuServiceMapper.toUpdateResponseDto(menuRepository.save(Menu.of(oldMenu, updateMenu)));
+    }
+
+    public List<Menu> getMenus(UUID restaurantId) {
+        return menuRepository.findAllByRestaurantId(restaurantId);
     }
 
     private Menu getMenuFromRepo(UUID id){
