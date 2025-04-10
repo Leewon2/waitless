@@ -8,7 +8,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.waitless.auth.infrastructure.security.JwtAuthenticationFilter;
+import com.waitless.auth.infrastructure.security.AuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,18 +16,18 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final AuthenticationFilter authenticationFilter;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-			.csrf(csrf -> csrf.disable()) // CSRF 비활성화 (JWT 사용 시 필수)
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 STATELESS 모드로 설정
+			.csrf(csrf -> csrf.disable())
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/api/v1/auth/login", "/api/v1/auth/token/refresh").permitAll() // 로그인 및 토큰 갱신 API는 인증 없이 허용
+				.requestMatchers("/api/auth/login").permitAll() // 로그인 및 토큰 갱신 API는 인증 없이 허용
 				.anyRequest().authenticated() // 나머지 모든 요청은 인증 필요
 			)
-			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 
 		return http.build();

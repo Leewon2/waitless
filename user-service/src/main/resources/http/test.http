@@ -1,3 +1,4 @@
+### 회원가입
 POST http://localhost:19091/api/users/signup
 Content-Type: application/json
 
@@ -8,4 +9,13 @@ Content-Type: application/json
   "phone": "010-1234-1236",
   "role" : "ADMIN",
   "slackId": "user3@gmail.com"
+}
+
+### 유저 검증
+POST http://localhost:19092/api/users/app/validate
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "user1"
 }

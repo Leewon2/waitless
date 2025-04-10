@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class AuthenticationFilter extends OncePerRequestFilter {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final UserServiceClient userServiceClient;
@@ -46,6 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			ValidateUserResponseDto validateUserResponseDto = userServiceClient.validateUser(
 				new ValidateUserRequestDto(loginRequestDto.email(), loginRequestDto.password())
 			);
+			log.info("userId = {}", validateUserResponseDto.userId());
 			if (validateUserResponseDto == null) {
 				throw AuthBusinessException.from(AuthErrorCode.AUTH_LOGIN_FAILED);
 			}
@@ -59,6 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			// Refresh Token 저장
 
+			// Header에 Token 응답
 			response.setHeader("Authorization", accessToken);
 			response.setHeader("Refresh-Token", refreshToken);
 			response.setContentType("application/json");
