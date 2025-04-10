@@ -1,11 +1,9 @@
 package com.waitless.restaurant.menu.domain.entity;
 
 import com.waitless.common.domain.BaseTimeEntity;
-import com.waitless.restaurant.menu.application.dto.CreateMenuDto;
 import com.waitless.restaurant.menu.domain.entity.enums.MenuCategory;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Filter;
@@ -31,20 +29,28 @@ public class Menu extends BaseTimeEntity {
     private MenuCategory menuCategory;
 
     @Column(nullable = false)
-    private int amount;
+    private Integer amount;
 
     @Column(nullable = false)
-    private int price;
+    private Integer price;
 
     @Column(nullable = false)
     private String name;
 
-    public Menu(UUID id, UUID restaurantId, MenuCategory category, int amount, int price, String name){
-        this.id=id;
-        this.restaurantId=restaurantId;
-        this.menuCategory=category;
-        this.amount=amount;
-        this.price=price;
-        this.name=name;
+    public Menu(UUID id, UUID restaurantId, MenuCategory category, Integer amount, Integer price, String name) {
+        this.id = id;
+        this.restaurantId = restaurantId;
+        this.menuCategory = category;
+        this.amount = amount;
+        this.price = price;
+        this.name = name;
+    }
+
+    public static Menu of(Menu oldMenu, Menu updateMenu) {
+        return new Menu(oldMenu.id, oldMenu.restaurantId,
+                updateMenu.menuCategory == null ? oldMenu.menuCategory : updateMenu.menuCategory,
+                updateMenu.amount == null ? oldMenu.amount : updateMenu.amount,
+                updateMenu.price == null ? oldMenu.price : updateMenu.price,
+                updateMenu.name == null ? oldMenu.name : updateMenu.name);
     }
 }

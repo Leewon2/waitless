@@ -1,8 +1,6 @@
 package com.waitless.restaurant.menu.application.service;
 
-import com.waitless.restaurant.menu.application.dto.CreateMenuDto;
-import com.waitless.restaurant.menu.application.dto.CreatedMenuResponseDto;
-import com.waitless.restaurant.menu.application.dto.MenuDto;
+import com.waitless.restaurant.menu.application.dto.*;
 import com.waitless.restaurant.menu.application.mapper.MenuServiceMapper;
 import com.waitless.restaurant.menu.domain.entity.Menu;
 import com.waitless.restaurant.menu.domain.repository.MenuRepository;
@@ -36,5 +34,12 @@ public class MenuServiceImpl implements MenuService{
         Menu menu = menuRepository.getMenu(id);
         menu.delete();
         return menuServiceMapper.toMenuDto(menuRepository.save(menu));
+    }
+
+    @Transactional
+    public UpdatedMenuResponseDto updateMenu(UUID id, UpdateMenuDto updateMenuDto) {
+        Menu oldMenu = menuRepository.getMenu(id);
+        Menu updateMenu = menuServiceMapper.toMenuFromUpdateMenu(updateMenuDto);
+        return menuServiceMapper.toUpdateResponseDto(menuRepository.save(Menu.of(oldMenu, updateMenu)));
     }
 }
