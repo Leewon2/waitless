@@ -36,4 +36,17 @@ public class ReservationMenu {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
+
+    public static ReservationMenu create(Integer quantity, Integer price, UUID menuId, String menuName) {
+        ReservationMenu menu = new ReservationMenu();
+        menu.quantity = quantity;
+        menu.price = price;
+        menu.menuId = menuId;
+        menu.menuName = menuName;
+        return menu;
+    }
+
+    public void addReservation(Reservation reservation) {
+        this.reservation = reservation;
+    }
 }

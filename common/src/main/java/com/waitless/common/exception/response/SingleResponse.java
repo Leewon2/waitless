@@ -26,11 +26,22 @@ public class SingleResponse<T> {
         this.errorCode = errorCode;
     }
 
+    // 에러 응답 + 데이터 포함
+    public SingleResponse(T data, String errorMessage, String errorCode) {
+        this.data = data;
+        this.errorMessage = errorMessage;
+        this.errorCode = errorCode;
+    }
+
     public static <T> SingleResponse<T> success(T data) {
         return new SingleResponse<>(data);
     }
 
     public static <T> SingleResponse<T> error(String errorMessage, String errorCode) {
         return new SingleResponse<>(errorMessage, errorCode);
+    }
+
+    public static <T> SingleResponse<T> errorWithData(String errorMessage, String errorCode, T data) {
+        return new SingleResponse<>(data, errorMessage, errorCode);
     }
 }
