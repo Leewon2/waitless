@@ -9,4 +9,6 @@ public interface RestaurantService {
     RestaurantResponseDto createRestaurant(CreateRestaurantDto requestDto);
 
     RestaurantResponseDto updateRestaurant(UUID id, UpdateRestaurantDto serviceDto);
+
+    RestaurantResponseDto deleteRestaurant(UUID id);
 }

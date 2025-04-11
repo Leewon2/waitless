@@ -1,5 +1,6 @@
 package com.waitless.restaurant.restaurant.application.service;
 
+import com.waitless.restaurant.menu.application.service.MenuService;
 import com.waitless.restaurant.restaurant.application.dto.CreateRestaurantDto;
 import com.waitless.restaurant.restaurant.application.dto.RestaurantResponseDto;
 import com.waitless.restaurant.restaurant.application.dto.UpdateRestaurantDto;
@@ -19,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class RestaurantServiceImpl implements RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-    private final CategoryService categoryService;
     private final RestaurantServiceMapper restaurantServiceMapper;
+    private final CategoryService categoryService;
 
     @Transactional
     public RestaurantResponseDto createRestaurant(CreateRestaurantDto createRestaurantDto) {
@@ -46,6 +47,15 @@ public class RestaurantServiceImpl implements RestaurantService {
     public RestaurantResponseDto updateRestaurant(UUID id, UpdateRestaurantDto updateRestaurantDto) {
         Restaurant restaurant = findById(id);
         restaurant.update(updateRestaurantDto.phone(), updateRestaurantDto.openingTime(), updateRestaurantDto.closingTime());
+
+        return restaurantServiceMapper.toResponseDto(restaurant);
+    }
+
+    @Transactional
+    public RestaurantResponseDto deleteRestaurant(UUID id) {
+
+        Restaurant restaurant = findById(id);
+        restaurant.delete();
 
         return restaurantServiceMapper.toResponseDto(restaurant);
     }

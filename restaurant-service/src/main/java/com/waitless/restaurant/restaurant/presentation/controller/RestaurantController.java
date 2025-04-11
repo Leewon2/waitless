@@ -10,6 +10,7 @@ import com.waitless.restaurant.restaurant.presentation.mapper.RestaurantControll
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,6 +39,14 @@ public class RestaurantController {
     public ResponseEntity<?> updateRestaurant(@PathVariable UUID id,@RequestBody UpdateRestaurantRequestDto requestDto){
         RestaurantResponseDto responseDto = restaurantService.updateRestaurant(id,
             restaurantControllerMapper.toServiceDto(requestDto));
+
+        return ResponseEntity.ok(SingleResponse.success(responseDto));
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteRestaurant(@PathVariable UUID id) {
+        RestaurantResponseDto responseDto = restaurantService.deleteRestaurant(id);
 
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
