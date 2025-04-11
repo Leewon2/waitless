@@ -19,3 +19,6 @@ Content-Type: application/json
   "email": "user1@gmail.com",
   "password": "user1"
 }
+
+### 유저 단건 조회
+GET http://localhost:19091/api/users/1

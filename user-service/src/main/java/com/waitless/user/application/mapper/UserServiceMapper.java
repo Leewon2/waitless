@@ -6,6 +6,7 @@ import org.mapstruct.ReportingPolicy;
 
 import com.waitless.user.application.dto.SignupDto;
 import com.waitless.user.application.dto.SignupResponseDto;
+import com.waitless.user.application.dto.UserResponseDto;
 import com.waitless.user.application.dto.ValidateUserDto;
 import com.waitless.user.application.dto.ValidateUserResponseDto;
 import com.waitless.user.domain.entity.User;
@@ -21,4 +22,6 @@ public interface UserServiceMapper {
 	@Mapping(target = "userId", source = "id")
 	@Mapping(target = "role", source = "role")
 	ValidateUserResponseDto toValidateUserResponseDto(User user);
+
+	UserResponseDto toUserResponseDto(User user);
 }

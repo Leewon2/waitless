@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.waitless.user.application.dto.SignupDto;
 import com.waitless.user.application.dto.SignupResponseDto;
+import com.waitless.user.application.dto.UserResponseDto;
 import com.waitless.user.application.dto.ValidateUserDto;
 import com.waitless.user.application.dto.ValidateUserResponseDto;
 import com.waitless.user.application.exception.UserBusinessException;
@@ -39,6 +40,12 @@ public class UserServiceImpl implements UserService {
 			throw UserBusinessException.from(UserErrorCode.USER_INVALID_PASSWORD);
 		}
 		return userServiceMapper.toValidateUserResponseDto(user);
+	}
+
+	@Override
+	public UserResponseDto findUser(Long id) {
+		User user = userRepository.findById(id).orElseThrow(()-> UserBusinessException.from(UserErrorCode.USER_NOT_FOUND));
+		return userServiceMapper.toUserResponseDto(user);
 	}
 
 }
