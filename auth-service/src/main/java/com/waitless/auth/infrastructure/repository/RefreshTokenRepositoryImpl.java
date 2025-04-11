@@ -33,4 +33,10 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 		String refreshToken = (String) redisTemplate.opsForValue().get("RT:" + userId);
 		return Optional.ofNullable(refreshToken);
 	}
+
+	// 저장된 Refresh Token 삭제
+	@Override
+	public void deleteRefreshToken(Long userId) {
+		redisTemplate.delete("RT:" + userId);
+	}
 }
