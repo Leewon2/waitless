@@ -13,8 +13,8 @@ import java.util.UUID;
 public class SlackRepositoryImpl implements SlackRepository {
 
     private final SlackJpaRepository slackJpaRepository;
-    public void save(SlackMessage slackMessage) {
-        slackJpaRepository.save(slackMessage);
+    public SlackMessage save(SlackMessage slackMessage) {
+        return slackJpaRepository.save(slackMessage);
     }
 
     @Override
