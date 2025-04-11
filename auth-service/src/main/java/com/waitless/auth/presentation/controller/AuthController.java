@@ -27,18 +27,14 @@ public class AuthController {
 	@PostMapping("/refresh")
 	public ResponseEntity<SingleResponse<String>> generateNewAccessTokenByRefreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDto) {
 		Optional<String> newAccessToken = authService.generateNewAccessTokenByRefreshToken(refreshTokenRequestDto.refreshToken());
-		if(newAccessToken.isPresent()) {
-			return ResponseEntity.ok(SingleResponse.success(newAccessToken.get()));
-		}
-		return null;
-		// return newAccessToken
-		// 	.map(token -> ResponseEntity.ok(SingleResponse.success(token)))
-		// 	.orElseGet(() -> ResponseEntity
-		// 		.badRequest()
-		// 		.body(SingleResponse.error(
-		// 			AuthErrorCode.AUTH_TOKEN_INVALID.getCode(),
-		// 			AuthErrorCode.AUTH_TOKEN_INVALID.getMessage()
-		// 		))
-		// 	);
+		return newAccessToken
+			.map(token -> ResponseEntity.ok(SingleResponse.success(token)))
+			.orElseGet(() -> ResponseEntity
+				.badRequest()
+				.body(SingleResponse.error(
+					AuthErrorCode.AUTH_TOKEN_INVALID.getCode(),
+					AuthErrorCode.AUTH_TOKEN_INVALID.getMessage()
+				))
+			);
 	}
 }
