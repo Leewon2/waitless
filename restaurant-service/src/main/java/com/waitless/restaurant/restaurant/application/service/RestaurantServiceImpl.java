@@ -3,6 +3,7 @@ package com.waitless.restaurant.restaurant.application.service;
 import com.waitless.restaurant.menu.application.service.MenuService;
 import com.waitless.restaurant.restaurant.application.dto.CreateRestaurantDto;
 import com.waitless.restaurant.restaurant.application.dto.RestaurantResponseDto;
+import com.waitless.restaurant.restaurant.application.dto.RestaurantWithMenuResponseDto;
 import com.waitless.restaurant.restaurant.application.dto.UpdateRestaurantDto;
 import com.waitless.restaurant.restaurant.application.mapper.RestaurantServiceMapper;
 import com.waitless.restaurant.restaurant.domain.entity.Category;
@@ -60,6 +61,13 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.delete();
 
         return restaurantServiceMapper.toResponseDto(restaurant);
+    }
+
+    @Transactional(readOnly = true)
+    public RestaurantWithMenuResponseDto getRestaurantWithMenu(UUID id) {
+        Restaurant restaurant = findById(id);
+
+       return restaurantServiceMapper.toWithMenuDto(restaurant, menuService.getMenus(id));
     }
 
     @Transactional(readOnly = true)

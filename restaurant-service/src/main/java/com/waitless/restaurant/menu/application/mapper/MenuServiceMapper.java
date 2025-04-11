@@ -2,6 +2,7 @@ package com.waitless.restaurant.menu.application.mapper;
 
 import com.waitless.restaurant.menu.application.dto.*;
 import com.waitless.restaurant.menu.domain.entity.Menu;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -20,4 +21,7 @@ public interface MenuServiceMapper {
 
     @Mapping(source = "id", target = "menuId")
     UpdatedMenuResponseDto toUpdateResponseDto(Menu menu);
+
+    @Mapping(source = "id", target = "menuId")
+    List<MenuDto> toMenuDtoList(List<Menu> menuList);
 }

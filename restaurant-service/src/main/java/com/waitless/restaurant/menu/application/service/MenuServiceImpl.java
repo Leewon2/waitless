@@ -47,8 +47,9 @@ public class MenuServiceImpl implements MenuService{
         return menuServiceMapper.toUpdateResponseDto(menuRepository.save(Menu.of(oldMenu, updateMenu)));
     }
 
-    public List<Menu> getMenus(UUID restaurantId) {
-        return menuRepository.findAllByRestaurantId(restaurantId);
+    @Transactional(readOnly = true)
+    public List<MenuDto> getMenus(UUID restaurantId) {
+        return menuServiceMapper.toMenuDtoList(menuRepository.findAllByRestaurantId(restaurantId));
     }
 
     @Transactional
