@@ -1,5 +1,7 @@
 package com.waitless.user.infrastructure.repository;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 
 import com.waitless.user.domain.entity.User;
@@ -17,4 +19,11 @@ public class UserRepositoryImpl implements UserRepository {
 	public User save(User user) {
 		return jpaUserRepository.save(user);
 	}
+
+	@Override
+	public Optional<User> findByEmail(String email) {
+		return jpaUserRepository.findByEmail(email);
+	}
+
+	// querydsl 구현
 }

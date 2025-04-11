@@ -12,9 +12,16 @@ spring:
         - id: user-service
           uri: lb://user-service
           predicates:
-            - Path=/api/users/**, /api/auth/**, /user-service/**
+            - Path=/api/users/**, /user-service/**
           filters:
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        # auth
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**, /auth-service/**
+          filters:
+            - RewritePath=/auth-service/(?<segment>.*), /$\{segment}
         # 식당
         - id: restaurant-service
           uri: lb://restaurant-service
@@ -56,6 +63,7 @@ spring:
             allowedOriginPatterns:
               - "http://localhost:19091"  # 게이트웨이
               - "http://localhost:19092"  # 유저
+              - "http://localhost:19098"  # auth
               - "http://localhost:19093"  # 식당
               - "http://localhost:19094"  # 예약
               - "http://localhost:19095"  # 리뷰
@@ -74,9 +82,13 @@ spring:
       discovery:
             locator:
               enabled: true
+  config:
+    import: optional:file:.env[.properties]
+
 eureka:
   client:
     service-Url:
       defaultZone: http://localhost:19090/eureka/
 
-
+jwt:
+  secret: ${JWT_SECRET_KEY}

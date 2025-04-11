@@ -1,6 +1,7 @@
 package com.waitless.user.domain.entity;
 
 import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.Where;
 
 import com.waitless.common.domain.BaseTimeEntity;
 
@@ -19,7 +20,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "p_user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Filter(name = "deletedFilter", condition = "(deleted_at IS NOT NULL) = :isDeleted")
+@Where(clause = "is_deleted=false")
+// @Filter(name = "deletedFilter", condition = "(deleted_at IS NOT NULL) = :isDeleted")
 public class User  extends BaseTimeEntity {
 	@Id
 	@GeneratedValue

@@ -1,0 +1,28 @@
+server:
+  port: 19098
+spring:
+  application:
+    name: auth-service
+  config:
+    import: optional:file:.env[.properties]
+  data:
+    redis:
+      host: redis
+      port: 6379
+      password:
+      database: 0
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  access-expiration: ${JWT_ACCESS_EXPIRATION}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION}
+
+eureka:
+  client:
+    service-Url:
+      defaultZone: http://localhost:19090/eureka/
+
