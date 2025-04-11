@@ -1,15 +1,18 @@
 package com.waitless.restaurant.menu.application.service;
 
-import com.waitless.restaurant.menu.application.dto.*;
+import com.waitless.restaurant.menu.application.dto.CreateMenuDto;
+import com.waitless.restaurant.menu.application.dto.CreatedMenuResponseDto;
+import com.waitless.restaurant.menu.application.dto.MenuDto;
+import com.waitless.restaurant.menu.application.dto.UpdateMenuDto;
+import com.waitless.restaurant.menu.application.dto.UpdatedMenuResponseDto;
 import com.waitless.restaurant.menu.application.mapper.MenuServiceMapper;
 import com.waitless.restaurant.menu.domain.entity.Menu;
 import com.waitless.restaurant.menu.domain.repository.MenuRepository;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +35,7 @@ public class MenuServiceImpl implements MenuService{
 
     @Transactional
     public MenuDto deleteMenu(UUID id) {
-        Menu menu = getMenuFromRepo(id);;
+        Menu menu = getMenuFromRepo(id);
         menu.delete();
         return menuServiceMapper.toMenuDto(menuRepository.save(menu));
     }
@@ -46,6 +49,12 @@ public class MenuServiceImpl implements MenuService{
 
     public List<Menu> getMenus(UUID restaurantId) {
         return menuRepository.findAllByRestaurantId(restaurantId);
+    }
+
+    @Transactional
+    public void deleteAllMenusByRestaurantId(UUID RestaurantId) {
+        List<Menu> menuList = menuRepository.findAllByRestaurantId(RestaurantId);
+        menuList.forEach(Menu::delete);
     }
 
     private Menu getMenuFromRepo(UUID id){

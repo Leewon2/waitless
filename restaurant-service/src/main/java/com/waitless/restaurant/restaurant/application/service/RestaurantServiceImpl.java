@@ -22,6 +22,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final RestaurantServiceMapper restaurantServiceMapper;
     private final CategoryService categoryService;
+    private final MenuService menuService;
 
     @Transactional
     public RestaurantResponseDto createRestaurant(CreateRestaurantDto createRestaurantDto) {
@@ -53,6 +54,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Transactional
     public RestaurantResponseDto deleteRestaurant(UUID id) {
+        menuService.deleteAllMenusByRestaurantId(id);
 
         Restaurant restaurant = findById(id);
         restaurant.delete();

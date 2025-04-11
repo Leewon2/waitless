@@ -16,4 +16,6 @@ public interface MenuService {
     UpdatedMenuResponseDto updateMenu(UUID id, UpdateMenuDto updateMenuDto);
 
     List<Menu> getMenus(UUID id);
+
+    void deleteAllMenusByRestaurantId(UUID RestaurantId);
 }
