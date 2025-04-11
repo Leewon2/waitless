@@ -1,7 +1,9 @@
 package com.waitless.message.application.service;
 
+import com.waitless.message.application.dto.SlackDeleteResponseDto;
 import com.waitless.message.application.dto.SlackSaveDto;
 import com.waitless.message.application.mapper.SlackServiceMapper;
+import com.waitless.message.domain.entity.SlackMessage;
 import com.waitless.message.domain.repository.SlackRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,10 +11,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.MediaType;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +48,13 @@ public class SlackServiceImpl implements SlackService {
         } catch (Exception e) {
             log.error("Slack 메시지 전송 실패", e);
         }
+    }
+
+    @Transactional
+    @Override
+    public SlackDeleteResponseDto deleteMessage(UUID id) {
+        SlackMessage slackMessage = slackRepository.findById(id).orElseThrow(()-> new NullPointerException("슬랙 메세지 없음"));
+        slackMessage.delete();
+        return new SlackDeleteResponseDto(slackMessage.getId(),slackMessage.getReceiverId(),slackMessage.getMessage(),slackMessage.isDeleted());
     }
 }
