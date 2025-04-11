@@ -10,6 +10,7 @@ import java.util.Arrays;
 public enum MenuCategory {
     KOREAN, CHINESE, WESTERN, JAPANESE, OTHER;
     public static MenuCategory from(String name) {
+        if(name==null) return null;
         return Arrays.stream(MenuCategory.values())
                 .filter(category -> category.name().equalsIgnoreCase(name))
                 .findFirst()
