@@ -3,6 +3,7 @@ package com.waitless.restaurant.restaurant.presentation.controller;
 
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.restaurant.restaurant.application.dto.RestaurantResponseDto;
+import com.waitless.restaurant.restaurant.application.dto.RestaurantWithMenuResponseDto;
 import com.waitless.restaurant.restaurant.application.service.RestaurantService;
 import com.waitless.restaurant.restaurant.presentation.dto.CreateRestaurantRequestDto;
 import com.waitless.restaurant.restaurant.presentation.dto.UpdateRestaurantRequestDto;
@@ -10,6 +11,7 @@ import com.waitless.restaurant.restaurant.presentation.mapper.RestaurantControll
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,9 +37,16 @@ public class RestaurantController {
 
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateRestaurant(@PathVariable UUID id,@RequestBody UpdateRestaurantRequestDto requestDto){
+    public ResponseEntity<?> updateRestaurant(@PathVariable UUID id, @RequestBody UpdateRestaurantRequestDto requestDto){
         RestaurantResponseDto responseDto = restaurantService.updateRestaurant(id,
             restaurantControllerMapper.toServiceDto(requestDto));
+
+        return ResponseEntity.ok(SingleResponse.success(responseDto));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getRestaurant(@PathVariable UUID id) {
+        RestaurantWithMenuResponseDto responseDto = restaurantService.getRestaurantWithMenu(id);
 
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
