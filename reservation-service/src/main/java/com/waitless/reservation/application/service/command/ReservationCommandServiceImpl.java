@@ -2,6 +2,7 @@ package com.waitless.reservation.application.service.command;
 
 import com.waitless.reservation.application.dto.ReservationCreateCommand;
 import com.waitless.reservation.application.mapper.ReservationServiceMapper;
+import com.waitless.reservation.application.service.redis.RedisReservationService;
 import com.waitless.reservation.application.service.redis.RedisStockService;
 import com.waitless.reservation.domain.entity.Reservation;
 import com.waitless.reservation.domain.entity.ReservationMenu;
@@ -25,6 +26,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
     private final RedisStockService redisStockService;
     private final ReservationRepository reservationRepository;
     private final ReservationServiceMapper reservationServiceMapper;
+    private final RedisReservationService redisReservationService;
 
     @Override
     public ReservationCreateResponse createReservation(ReservationCreateCommand reservationCreateCommand) {
@@ -46,6 +48,9 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         );
 
         reservationRepository.save(reservation);
+        redisReservationService.registerToWaitingQueue(reservation.getId(), reservation.getReservationDate(), reservation.getRestaurantId(), reservationNumber);
+
+
 
         /**
          * todo: 카프카 메시지 발행

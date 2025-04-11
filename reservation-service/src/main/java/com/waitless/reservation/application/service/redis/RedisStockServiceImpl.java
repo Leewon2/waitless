@@ -31,6 +31,7 @@ public class RedisStockServiceImpl implements RedisStockService {
 
         List<String> keys = new ArrayList<>();
         keys.add("reservation:teamCount:" + restaurantId);
+        keys.add("reservation:number:" + restaurantId); // 대기표 순번을 위한 키
 
         String teamLimit = redisTemplate.opsForValue().get("reservation:teamLimit:" + restaurantId);
         if (teamLimit == null) {
@@ -65,7 +66,7 @@ public class RedisStockServiceImpl implements RedisStockService {
                 .orElseThrow(() -> BusinessException.from(ReservationErrorCode.UNKNOWN_LUA_RESULT, result));
 
         if (type == LuaResultType.SUCCESS) {
-            return createReservationNumber(restaurantId);
+            return Long.parseLong(result.get(1));
         }
 
         switch (type) {
@@ -76,13 +77,6 @@ public class RedisStockServiceImpl implements RedisStockService {
             }
             default -> throw new RuntimeException("Lua Script ERROR");
         }
-    }
-
-    /**
-     * 대기번호 발급
-     */
-    private Long createReservationNumber(UUID restaurantId) {
-        return redisReservationService.createReservationNumber(restaurantId);
     }
 
     /**
