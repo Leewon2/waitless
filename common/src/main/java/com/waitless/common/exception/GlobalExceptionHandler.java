@@ -5,6 +5,7 @@ import com.waitless.common.exception.code.ErrorCode;
 import com.waitless.common.exception.response.SingleResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,8 +43,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.warn("Method Not Supported: {}", e.getMessage());
-        return ResponseEntity.badRequest().body(SingleResponse.error(CommonErrorCode.METHOD_NOT_ALLOWED.getMessage(), CommonErrorCode.METHOD_NOT_ALLOWED.getCode()));
-    }
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(SingleResponse.error(CommonErrorCode.METHOD_NOT_ALLOWED.getMessage(), CommonErrorCode.METHOD_NOT_ALLOWED.getCode()));}
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity handleIllegalArgumentException(IllegalArgumentException e) {
