@@ -24,6 +24,7 @@ end
 
 -- 재고 부족 시 반환
 if #failed > 0 then
+  table.insert(failed, 1, "INSUFFICIENT")  -- 첫 번째 자리에 결과 타입 명시
   return failed
 end
 
