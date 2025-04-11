@@ -4,8 +4,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.waitless.auth.domain.repository.RefreshTokenRepository;
-import com.waitless.auth.domain.service.RefreshTokenService;
 import com.waitless.auth.infrastructure.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;

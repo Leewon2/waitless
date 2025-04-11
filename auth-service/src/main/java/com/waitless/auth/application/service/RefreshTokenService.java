@@ -1,4 +1,4 @@
-package com.waitless.auth.domain.service;
+package com.waitless.auth.application.service;
 
 import java.util.Optional;
 

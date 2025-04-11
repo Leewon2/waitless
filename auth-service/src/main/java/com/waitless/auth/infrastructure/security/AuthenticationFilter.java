@@ -12,7 +12,7 @@ import com.waitless.auth.application.dto.ValidateUserRequestDto;
 import com.waitless.auth.application.dto.ValidateUserResponseDto;
 import com.waitless.auth.application.exception.AuthBusinessException;
 import com.waitless.auth.application.exception.AuthErrorCode;
-import com.waitless.auth.domain.service.RefreshTokenService;
+import com.waitless.auth.application.service.RefreshTokenService;
 import com.waitless.auth.presentation.dto.LoginRequestDto;
 
 import feign.FeignException;

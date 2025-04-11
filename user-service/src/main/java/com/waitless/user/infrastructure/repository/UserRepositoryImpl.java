@@ -24,4 +24,6 @@ public class UserRepositoryImpl implements UserRepository {
 	public Optional<User> findByEmail(String email) {
 		return jpaUserRepository.findByEmail(email);
 	}
+
+	// querydsl 구현
 }
