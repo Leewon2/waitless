@@ -31,7 +31,8 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
 		String path = request.getURI().getPath();
 		log.debug("Request path: {}", path);
 
-		if (path.startsWith("/api/users/signup") || path.startsWith("/api/auth/login") || path.startsWith("/api/auth/users/validate")) {
+		if (path.startsWith("/api/users/signup") || path.startsWith("/api/auth/login") || path.startsWith("/api/auth/validate")
+			|| path.startsWith("/api/auth/refresh")) {
 			log.debug("인증 예외 경로 → 필터 통과");
 			return chain.filter(exchange);
 		}

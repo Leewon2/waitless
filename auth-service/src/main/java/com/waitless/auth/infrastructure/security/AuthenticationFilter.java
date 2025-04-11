@@ -12,6 +12,7 @@ import com.waitless.auth.application.dto.ValidateUserRequestDto;
 import com.waitless.auth.application.dto.ValidateUserResponseDto;
 import com.waitless.auth.application.exception.AuthBusinessException;
 import com.waitless.auth.application.exception.AuthErrorCode;
+import com.waitless.auth.domain.service.RefreshTokenService;
 import com.waitless.auth.presentation.dto.LoginRequestDto;
 
 import feign.FeignException;
@@ -30,6 +31,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final UserServiceClient userServiceClient;
 	private final JwtUtil jwtUtil;
+	private final RefreshTokenService refreshTokenService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -51,14 +53,15 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 				throw AuthBusinessException.from(AuthErrorCode.AUTH_LOGIN_FAILED);
 			}
 
-			Long userId = validateUserResponseDto.userId();	// 유저 id(pk)
+			String userId = String.valueOf(validateUserResponseDto.userId());	// 유저 id(pk)
 			String role = validateUserResponseDto.role();	// 유저 역할
 
 			// JWT Token 생성
 			String accessToken = jwtUtil.generateAccessToken(userId, role);
 			String refreshToken = jwtUtil.generateRefreshToken(userId);
 
-			// Refresh Token 저장
+			// Refresh Token Redis에 저장
+			refreshTokenService.saveOrUpdateToken(userId, refreshToken);
 
 			// Header에 Token 응답
 			response.setHeader("Authorization", accessToken);

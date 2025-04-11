@@ -36,21 +36,21 @@ public class JwtUtil {
 	}
 
 	// Access Token 생성
-	public String generateAccessToken(Long userId, String role) {
+	public String generateAccessToken(String userId, String role) {
 		String token = generateToken(userId, role, accessTokenExpiration);
 		return BEARER_PREFIX + token;
 	}
 
 	// Refresh Token 생성
-	public String generateRefreshToken(Long userId) {
+	public String generateRefreshToken(String userId) {
 		String token = generateToken(userId, "REFRESH", refreshTokenExpiration);
 		return BEARER_PREFIX + token;
 	}
 
 	// JWT Token 생성
-	private String generateToken(Long userId, String role, long expiration) {
+	private String generateToken(String userId, String role, long expiration) {
 		return Jwts.builder()
-			.subject(String.valueOf(userId))
+			.subject(userId)
 			.claim("role", role)
 			.issuedAt(new Date())
 			.expiration(new Date(System.currentTimeMillis() + expiration))
@@ -75,8 +75,8 @@ public class JwtUtil {
 	}
 
 	// userId 파싱
-	public Long getUserIdFromToken(String token) {
-		return Long.parseLong(getClaimFromToken(removeBearerPrefix(token), Claims::getSubject));
+	public String getUserIdFromToken(String token) {
+		return getClaimFromToken(removeBearerPrefix(token), Claims::getSubject);
 	}
 
 	// role 파싱
