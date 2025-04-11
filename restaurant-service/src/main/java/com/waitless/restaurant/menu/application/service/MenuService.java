@@ -15,5 +15,5 @@ public interface MenuService {
 
     UpdatedMenuResponseDto updateMenu(UUID id, UpdateMenuDto updateMenuDto);
 
-    List<Menu> getMenus(UUID id);
+    List<MenuDto> getMenus(UUID id);
 }
