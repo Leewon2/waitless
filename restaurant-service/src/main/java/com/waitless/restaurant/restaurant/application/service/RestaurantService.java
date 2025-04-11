@@ -12,4 +12,6 @@ public interface RestaurantService {
     RestaurantResponseDto updateRestaurant(UUID id, UpdateRestaurantDto serviceDto);
 
     RestaurantWithMenuResponseDto getRestaurantWithMenu(UUID id);
+
+    RestaurantResponseDto deleteRestaurant(UUID id);
 }

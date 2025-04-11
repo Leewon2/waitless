@@ -12,6 +12,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,6 +48,14 @@ public class RestaurantController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getRestaurant(@PathVariable UUID id) {
         RestaurantWithMenuResponseDto responseDto = restaurantService.getRestaurantWithMenu(id);
+
+        return ResponseEntity.ok(SingleResponse.success(responseDto));
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteRestaurant(@PathVariable UUID id) {
+        RestaurantResponseDto responseDto = restaurantService.deleteRestaurant(id);
 
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }

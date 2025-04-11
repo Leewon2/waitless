@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class RestaurantServiceImpl implements RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-    private final CategoryService categoryService;
     private final RestaurantServiceMapper restaurantServiceMapper;
+    private final CategoryService categoryService;
     private final MenuService menuService;
 
     @Transactional
@@ -49,6 +49,16 @@ public class RestaurantServiceImpl implements RestaurantService {
     public RestaurantResponseDto updateRestaurant(UUID id, UpdateRestaurantDto updateRestaurantDto) {
         Restaurant restaurant = findById(id);
         restaurant.update(updateRestaurantDto.phone(), updateRestaurantDto.openingTime(), updateRestaurantDto.closingTime());
+
+        return restaurantServiceMapper.toResponseDto(restaurant);
+    }
+
+    @Transactional
+    public RestaurantResponseDto deleteRestaurant(UUID id) {
+        menuService.deleteAllMenusByRestaurantId(id);
+
+        Restaurant restaurant = findById(id);
+        restaurant.delete();
 
         return restaurantServiceMapper.toResponseDto(restaurant);
     }
