@@ -14,7 +14,7 @@ import java.util.UUID;
 @Table(name = "p_slack")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Where(clause = "is_deleted=false")
-public class Slack extends BaseTimeEntity {
+public class SlackMessage extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -24,4 +24,9 @@ public class Slack extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String message;
+
+    public SlackMessage(String receiverId, String message) {
+        this.receiverId=receiverId;
+        this.message = message;
+    }
 }
