@@ -78,6 +78,14 @@ public class UserServiceImpl implements UserService {
 		return userServiceMapper.toUserResponseDto(user);
 	}
 
+	// 유저 삭제
+	@Override
+	@Transactional
+	public void removeUser(Long id) {
+		User user = findUserById(id);
+		user.delete();
+	}
+
 	private User findUserById(Long id) {
 		User user = userRepository.findById(id)
 			.orElseThrow(()-> UserBusinessException.from(UserErrorCode.USER_NOT_FOUND));

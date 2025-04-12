@@ -27,4 +27,6 @@ public interface UserService {
 	Page<UserResponseDto> findAndSearchUsers(ReadUsersDto readUsersDto, Pageable pageable);
 
 	UserResponseDto modifyUser(Long id, Map<String, Object> updates);
+
+	void removeUser(Long id);
 }
