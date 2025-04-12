@@ -1,6 +1,7 @@
 package com.waitless.user.application.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,7 +21,6 @@ import com.waitless.user.application.exception.UserErrorCode;
 import com.waitless.user.application.mapper.UserServiceMapper;
 import com.waitless.user.domain.entity.User;
 import com.waitless.user.domain.repository.UserRepository;
-import com.waitless.user.presentation.dto.ReadUsersRequestDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 	// 유저 단건 조회
 	@Override
 	public UserResponseDto findUser(Long id) {
-		User user = userRepository.findById(id).orElseThrow(()-> UserBusinessException.from(UserErrorCode.USER_NOT_FOUND));
+		User user = findUserById(id);
 		return userServiceMapper.toUserResponseDto(user);
 	}
 
@@ -67,6 +67,21 @@ public class UserServiceImpl implements UserService {
 			.map(userServiceMapper::toUserResponseDto)
 			.toList();
 		return new PageImpl<>(dtoList, pageable, userList.getTotalElements());
+	}
+
+	// 유저 수정
+	@Override
+	@Transactional
+	public UserResponseDto modifyUser(Long id, Map<String, Object> updates) {
+		User user = findUserById(id);
+		updates.forEach((key, value) -> user.modifyUserInfo(key, value));
+		return userServiceMapper.toUserResponseDto(user);
+	}
+
+	private User findUserById(Long id) {
+		User user = userRepository.findById(id)
+			.orElseThrow(()-> UserBusinessException.from(UserErrorCode.USER_NOT_FOUND));
+		return user;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.waitless.user.domain.entity;
 
+import java.sql.Timestamp;
+
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.Where;
 
@@ -55,5 +57,14 @@ public class User  extends BaseTimeEntity {
 		this.phone = phone;
 		this.role = role;
 		this.slackId = slackId;
+	}
+
+	public void modifyUserInfo(String key, Object value) {
+		switch (key) {
+			case "name" -> this.name = (String) value;
+			case "phone" -> this.phone = (String) value;
+			case "slackId" -> this.slackId = (String) value;
+			default -> throw new IllegalArgumentException("잘못된 필드명 : " + key);
+		}
 	}
 }
