@@ -26,10 +26,11 @@ public class ReviewCreatedEventHandler {
 
         PostPointCommand command = new PostPointCommand(
                 event.getUserId(),
-                100,
+                REWARD_POINT,
                 PointType.Type.REVIEW_REWARD,
                 "[리뷰 작성 보상] 리뷰 ID: " + event.getReviewId()
         );
         pointService.createPoint(command);
+        log.info("포인트 적립 완료: userId={}, point={}", event.getUserId(), REWARD_POINT);
     }
 }
