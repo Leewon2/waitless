@@ -2,10 +2,11 @@ package com.waitless.benefit.point.application.service;
 
 import com.waitless.benefit.point.application.dto.command.PostPointCommand;
 import com.waitless.benefit.point.application.dto.result.PostPointResult;
+import com.waitless.benefit.point.application.mapper.PointServiceMapper;
+import com.waitless.benefit.point.application.port.out.PointOutboxPort;
 import com.waitless.benefit.point.domain.entity.Point;
 import com.waitless.benefit.point.domain.repository.PointRepository;
-import com.waitless.benefit.point.domain.vo.PointAmount;
-import com.waitless.benefit.point.domain.vo.PointType;
+import com.waitless.common.event.PointIssuedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,17 +16,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class PointServiceImpl implements PointService{
 
     private final PointRepository pointRepository;
+    private final PointServiceMapper pointServiceMapper;
+    private final PointOutboxPort pointOutboxPort;
 
     @Override
     @Transactional
     public PostPointResult createPoint(PostPointCommand command) {
-        Point point = Point.of(
-                command.userId(),
-                PointAmount.of(command.amount()),
-                PointType.of(command.pointType()),
-                command.description()
-        );
+        Point point = pointServiceMapper.toEntity(command);
         Point saved = pointRepository.save(point);
+
+        PointIssuedEvent event = PointIssuedEvent.builder()
+                .pointId(saved.getId())
+                .userId(saved.getUserId())
+                .amount(saved.getAmount().getPointValue())
+                .description(saved.getDescription())
+                .issuedAt(saved.getCreatedAt())
+                .build();
+        pointOutboxPort.savePointIssuedEvent(event);
         return PostPointResult.from(saved);
     }
 }
