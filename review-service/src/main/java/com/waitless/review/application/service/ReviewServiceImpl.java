@@ -4,7 +4,7 @@ import com.waitless.common.event.ReviewCreatedEvent;
 import com.waitless.review.application.dto.command.PostReviewCommand;
 import com.waitless.review.application.dto.result.PostReviewResult;
 import com.waitless.review.application.mapper.ReviewServiceMapper;
-import com.waitless.review.application.port.out.ReviewEventPublisher;
+import com.waitless.review.application.port.out.ReviewOutboxPort;
 import com.waitless.review.domain.entity.Review;
 import com.waitless.review.domain.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ReviewServiceMapper reviewServiceMapper;
-    private final ReviewEventPublisher reviewEventPublisher;
+    private final ReviewOutboxPort reviewOutboxPort;
 
     @Override
     @Transactional
@@ -30,7 +30,7 @@ public class ReviewServiceImpl implements ReviewService {
                 saved.getUserId(),
                 saved.getRestaurantId()
         );
-        reviewEventPublisher.publishReviewCreated(event);
+        reviewOutboxPort.saveReviewCreatedEvent(event);
         return PostReviewResult.from(saved);
     }
 }
