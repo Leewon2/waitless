@@ -1,6 +1,7 @@
 package com.waitless.restaurant.menu.application.mapper;
 
 import com.waitless.restaurant.menu.application.dto.*;
+import com.waitless.restaurant.menu.domain.dto.MenuSearchDomainDto;
 import com.waitless.restaurant.menu.domain.entity.Menu;
 import java.util.List;
 import org.mapstruct.Mapper;
@@ -24,4 +25,8 @@ public interface MenuServiceMapper {
 
     @Mapping(source = "id", target = "menuId")
     List<MenuDto> toMenuDtoList(List<Menu> menuList);
+
+    MenuSearchDomainDto toMenuDomain(SearchMenuDto searchMenuDto);
+
+    SearchResponseDto toSearchResponse(Menu menu);
 }

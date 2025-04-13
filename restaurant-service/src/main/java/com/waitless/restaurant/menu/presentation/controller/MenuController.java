@@ -1,12 +1,18 @@
 package com.waitless.restaurant.menu.presentation.controller;
 
+import com.waitless.common.exception.response.MultiResponse;
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.restaurant.menu.application.dto.CreatedMenuResponseDto;
+import com.waitless.restaurant.menu.application.dto.SearchResponseDto;
 import com.waitless.restaurant.menu.application.service.MenuService;
 import com.waitless.restaurant.menu.presentation.dto.CreateMenuRequestDto;
+import com.waitless.restaurant.menu.presentation.dto.SearchRequestDto;
 import com.waitless.restaurant.menu.presentation.dto.UpdateMenuRequestDto;
 import com.waitless.restaurant.menu.presentation.mapper.MenuControllerMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +48,21 @@ public class MenuController {
         return ResponseEntity.ok(SingleResponse.success(
                 menuService.updateMenu(
                         id,menuControllerMapper.toUpdateMenuDto(updateMenuRequestDto))));
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<?> search(@RequestParam(required = false) Integer minPrice,
+                                    @RequestParam(required = false) Integer maxPrice,
+                                    @RequestParam(required = false) String category,
+                                    @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                    @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size
+                                    ){
+
+        SearchRequestDto searchRequestDto = new SearchRequestDto(minPrice, maxPrice, category, sortBy, page, size);
+        Pageable pageable = PageRequest.of(page-1,size);
+        Page<SearchResponseDto> res = menuService.searchMenu(menuControllerMapper.toSearchMenuDto(searchRequestDto),pageable);
+        return ResponseEntity.ok(MultiResponse.success(res));
     }
 
 
