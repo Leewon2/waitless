@@ -27,4 +27,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
 	public Optional<String> findRefreshTokenByUserId(String userId) {
 		return refreshTokenRepository.findRefreshTokenByUserId(userId);
 	}
+
+	// Refresh Token 삭제
+	@Override
+	public void deleteRefreshToken(Long userId) {
+		refreshTokenRepository.deleteRefreshToken(userId);
+	}
 }

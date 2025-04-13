@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.waitless.auth.application.exception.AuthErrorCode;
@@ -36,5 +36,12 @@ public class AuthController {
 					AuthErrorCode.AUTH_TOKEN_INVALID.getMessage()
 				))
 			);
+	}
+
+	// 로그아웃
+	@PostMapping("/logout")
+	public ResponseEntity<SingleResponse<String>> logout(@RequestHeader("X-User-Id")String userId) {
+		authService.logout(Long.parseLong(userId));
+		return ResponseEntity.ok(SingleResponse.success("로그아웃 완료"));
 	}
 }
