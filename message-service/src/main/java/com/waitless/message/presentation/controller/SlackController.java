@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/slacks")
@@ -13,6 +15,11 @@ public class SlackController {
 
     private final SlackService slackService;
 
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteSlackMessage(@PathVariable UUID id){
+        return ResponseEntity.ok(SingleResponse.success(slackService.deleteMessage(id)));
+    }
 
     /**
      임시 controller
