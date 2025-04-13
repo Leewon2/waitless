@@ -32,22 +32,23 @@ public class SlackServiceImpl implements SlackService {
 
 
     @Override
-    public void createSlack(String receiverId, Integer mySequence) {
+    public SlackMessage createSlack(String receiverId, Integer mySequence) {
         String fullMessage = String.format("[예약 성공 알림] 예약자: %s 님의 대기 순번은 %d 입니다. %n", receiverId, mySequence);
         Map<String, String> payload = Map.of("text", fullMessage);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Map<String, String>> request = new HttpEntity<>(payload, headers);
-
+        SlackMessage slackMessage = null;
         try {
             restTemplate.postForEntity(webhookUrl, request, Void.class);
 
-            slackRepository.save(slackServiceMapper.toSlackMessage(new SlackSaveDto(receiverId, fullMessage)));
+            slackMessage=slackRepository.save(slackServiceMapper.toSlackMessage(new SlackSaveDto(receiverId, fullMessage)));
 
         } catch (Exception e) {
             log.error("Slack 메시지 전송 실패", e);
         }
+        return slackMessage;
     }
 
     @Transactional
