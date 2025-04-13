@@ -25,11 +25,11 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewServiceMapper.toEntity(command);
         Review saved = reviewRepository.save(review);
 
-        ReviewCreatedEvent event = ReviewCreatedEvent.of(
-                saved.getId(),
-                saved.getUserId(),
-                saved.getRestaurantId()
-        );
+        ReviewCreatedEvent event = ReviewCreatedEvent.builder()
+                .reviewId(saved.getId())
+                .userId(saved.getUserId())
+                .restaurantId(saved.getRestaurantId())
+                .build();
         reviewOutboxPort.saveReviewCreatedEvent(event);
         return PostReviewResult.from(saved);
     }
