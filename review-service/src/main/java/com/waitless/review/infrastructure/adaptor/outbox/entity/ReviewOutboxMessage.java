@@ -27,7 +27,7 @@ public class ReviewOutboxMessage {
     private String type; // 이벤트 타입: review-created
 
     @Lob
-    @Column(nullable = false)
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
     private String payload; // JSON 형태의 이벤트 본문
 
     @Enumerated(EnumType.STRING)
