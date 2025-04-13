@@ -1,5 +1,7 @@
 package com.waitless.user.application.service;
 
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,4 +25,8 @@ public interface UserService {
 	UserResponseDto findUser(Long id);
 
 	Page<UserResponseDto> findAndSearchUsers(ReadUsersDto readUsersDto, Pageable pageable);
+
+	UserResponseDto modifyUser(Long id, Map<String, Object> updates);
+
+	void removeUser(Long id);
 }
