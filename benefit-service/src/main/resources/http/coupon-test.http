@@ -14,3 +14,13 @@ GET http://localhost:19091/api/coupons/b3ff9d68-1b7e-439f-8636-5835c2798113
 
 ### 쿠폰 전체 조회
 GET http://localhost:19091/api/coupons?title=할인
+
+### 쿠폰 수정
+PATCH http://localhost:19091/api/coupons/a63296a0-48d8-4361-a7f7-12a74250c5d2
+Content-Type: application/json
+
+{
+  "title" : "15% 할인 쿠폰",
+  "amount": 50,
+  "validPeriod": 20
+}

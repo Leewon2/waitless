@@ -50,4 +50,12 @@ public class Coupon extends BaseTimeEntity {
 		this.validPeriod = validPeriod;
 	}
 
+	public void modifyCouponInfo(String key, Object value) {
+		switch (key) {
+			case "title" -> this.title = (String) value;
+			case "amount" -> this.amount = (int) value;
+			case "issuanceDate" -> this.issuanceDate = (LocalDateTime) value;
+			case "validPeriod" -> this.validPeriod = (int) value;
+		}
+	}
 }

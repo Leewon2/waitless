@@ -1,6 +1,7 @@
 package com.waitless.benefit.coupon.application.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -47,7 +48,7 @@ public class CouponServiceImpl implements CouponService {
 		return couponServiceMapper.toCouponResponseDto(coupon);
 	}
 
-	// 쿠폰 전체 조회
+	// 쿠폰 전체 조회 + 검색
 	@Override
 	public Page<CouponResponseDto> findAndSearchCoupons(ReadCouponsDto readCouponsDto, Pageable pageable) {
 		Page<Coupon> couponList = couponRepository.findAndSearchCoupons(readCouponsDto.title(), readCouponsDto.sortDirection(), readCouponsDto.sortBy(), pageable);
@@ -56,6 +57,15 @@ public class CouponServiceImpl implements CouponService {
 			.map(couponServiceMapper::toCouponResponseDto)
 			.toList();
 		return new PageImpl<>(dtoList, pageable, couponList.getTotalElements());
+	}
+
+	// 쿠폰 수정
+	@Override
+	@Transactional
+	public CouponResponseDto modifyCoupon(UUID id, Map<String, Object> updates) {
+		Coupon coupon = findCouponById(id);
+		updates.forEach((key, value) -> coupon.modifyCouponInfo(key, value));
+		return couponServiceMapper.toCouponResponseDto(coupon);
 	}
 
 	private Coupon findCouponById(UUID id) {

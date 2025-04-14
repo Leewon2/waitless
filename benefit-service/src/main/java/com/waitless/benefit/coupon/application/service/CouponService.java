@@ -1,5 +1,6 @@
 package com.waitless.benefit.coupon.application.service;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -15,4 +16,6 @@ public interface CouponService {
 	CouponResponseDto findCoupon(UUID id);
 
 	Page<CouponResponseDto> findAndSearchCoupons(ReadCouponsDto readCouponsDto, Pageable pageable);
+
+	CouponResponseDto modifyCoupon(UUID id, Map<String, Object> updates);
 }
