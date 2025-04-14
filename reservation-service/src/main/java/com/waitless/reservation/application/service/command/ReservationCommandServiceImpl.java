@@ -8,7 +8,7 @@ import com.waitless.reservation.domain.entity.Reservation;
 import com.waitless.reservation.domain.entity.ReservationMenu;
 import com.waitless.reservation.domain.entity.ReservationStatus;
 import com.waitless.reservation.domain.repository.ReservationRepository;
-import com.waitless.reservation.presentation.dto.ReservationCreateResponse;
+import com.waitless.reservation.application.dto.ReservationCreateResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
