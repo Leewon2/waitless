@@ -15,10 +15,28 @@ spring:
         show_sql: true
         default_batch_fetch_size: 50
     open-in-view: false
-
   jackson:
     serialization:
       fail-on-empty-beans: false
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: ${spring.application.name}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.waitless.common.event
+        spring.json.type.mapping: >
+          review-created:com.waitless.common.event.ReviewCreatedEvent,
+          review-deleted:com.waitless.common.event.ReviewDeletedEvent
+    listener:
+      ack-mode: MANUAL_IMMEDIATE
+app:
+  kafka:
+    topics:
+      review-events: review-events
+      point-events: point-events
 
 #point:
 #  max-bonus: 1000
