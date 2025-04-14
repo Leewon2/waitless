@@ -37,12 +37,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		if (!request.getRequestURI().equals("/api/auth/login")) {
-			log.info(request.getRequestURI());
+			log.info("i'm not login: " + request.getRequestURI());
 			filterChain.doFilter(request, response);
 			return;
 		}
 		try {
-			log.info(request.getRequestURI());
+			log.info("login: " + request.getRequestURI());
 			// 로그인 요청 데이터
 			LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
 			// 유저 검증

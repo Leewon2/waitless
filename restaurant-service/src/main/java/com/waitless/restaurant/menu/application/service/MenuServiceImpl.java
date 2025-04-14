@@ -1,22 +1,26 @@
 package com.waitless.restaurant.menu.application.service;
 
-import com.waitless.restaurant.menu.application.dto.CreateMenuDto;
-import com.waitless.restaurant.menu.application.dto.CreatedMenuResponseDto;
-import com.waitless.restaurant.menu.application.dto.MenuDto;
-import com.waitless.restaurant.menu.application.dto.UpdateMenuDto;
-import com.waitless.restaurant.menu.application.dto.UpdatedMenuResponseDto;
+import com.waitless.restaurant.menu.application.dto.*;
 import com.waitless.restaurant.menu.application.mapper.MenuServiceMapper;
 import com.waitless.restaurant.menu.domain.entity.Menu;
 import com.waitless.restaurant.menu.domain.repository.MenuRepository;
+
 import java.util.List;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
-public class MenuServiceImpl implements MenuService{
+public class MenuServiceImpl implements MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuServiceMapper menuServiceMapper;
@@ -47,6 +51,8 @@ public class MenuServiceImpl implements MenuService{
         return menuServiceMapper.toUpdateResponseDto(menuRepository.save(Menu.of(oldMenu, updateMenu)));
     }
 
+
+
     @Transactional(readOnly = true)
     public List<MenuDto> getMenus(UUID restaurantId) {
         return menuServiceMapper.toMenuDtoList(menuRepository.findAllByRestaurantId(restaurantId));
@@ -58,7 +64,15 @@ public class MenuServiceImpl implements MenuService{
         menuList.forEach(Menu::delete);
     }
 
-    private Menu getMenuFromRepo(UUID id){
-        return menuRepository.getMenu(id).orElseThrow(()-> new NullPointerException("메뉴 id 없음"));
+    @Transactional(readOnly = true)
+    public Page<SearchResponseDto> searchMenu(SearchMenuDto searchMenuDto, Pageable pageable) {
+        Page<Menu> menuList = menuRepository.searchMenu(menuServiceMapper.toMenuDomain(searchMenuDto), pageable);
+        System.out.println(menuList.getContent());
+
+        return menuList.map(menuServiceMapper::toSearchResponse);
+    }
+
+    private Menu getMenuFromRepo(UUID id) {
+        return menuRepository.getMenu(id).orElseThrow(() -> new NullPointerException("메뉴 id 없음"));
     }
 }

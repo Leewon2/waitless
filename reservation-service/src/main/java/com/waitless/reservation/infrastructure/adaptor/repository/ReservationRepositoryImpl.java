@@ -23,4 +23,9 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     public Optional<Reservation> findById(UUID id) {
         return reservationJpaRepository.findById(id);
     }
+
+    @Override
+    public Optional<Reservation> findFetchById(UUID id) {
+        return reservationJpaRepository.findFetchById(id);
+    }
 }

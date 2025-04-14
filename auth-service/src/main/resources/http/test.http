@@ -3,8 +3,8 @@ POST http://localhost:19091/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "user2@gmail.com",
-  "password": "user2"
+  "email": "user1@gmail.com",
+  "password": "user1"
 }
 
 ### New Access Token
@@ -14,3 +14,8 @@ Content-Type: application/json
 {
   "refreshToken": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDIiLCJyb2xlIjoiUkVGUkVTSCIsImlhdCI6MTc0NDMzNjc0NywiZXhwIjoxNzQ0OTQxNTQ3fQ.MZfcVYl-gWvFutX0cenNEIMXENiqKvIOEVRDjI8ElrU"
 }
+
+### 로그아웃
+POST http://localhost:19091/api/auth/logout
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzQ0Mzc5ODk3LCJleHAiOjE3NDQzODM0OTd9.WvR9QMD9cJNxmdkwsfVd3inH-_4SUOGvlIpbPXAv7_Y

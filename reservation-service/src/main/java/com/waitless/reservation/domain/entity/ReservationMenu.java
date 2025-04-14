@@ -1,5 +1,6 @@
 package com.waitless.reservation.domain.entity;
 
+import com.waitless.common.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @Where(clause = "is_deleted = false")
 @Table(name = "p_reservation_menu")
-public class ReservationMenu {
+public class ReservationMenu extends BaseTimeEntity {
     @Id
     @GeneratedValue
     @Column(name = "reservation_menu_id")
