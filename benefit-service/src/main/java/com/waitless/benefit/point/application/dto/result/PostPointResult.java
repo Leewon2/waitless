@@ -10,6 +10,7 @@ import java.util.UUID;
 public record PostPointResult(
         UUID pointId,
         Long userId,
+        UUID reviewId,
         PointAmount amount,
         PointType type,
         String description,
@@ -19,6 +20,7 @@ public record PostPointResult(
         return new PostPointResult(
                 point.getId(),
                 point.getUserId(),
+                point.getReviewId(),
                 point.getAmount(),
                 point.getType(),
                 point.getDescription(),

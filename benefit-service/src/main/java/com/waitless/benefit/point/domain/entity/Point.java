@@ -23,6 +23,9 @@ public class Point extends BaseTimeEntity {
     @Column(nullable = false)
     private Long userId;
 
+    @Column(nullable = false)
+    private UUID reviewId;
+
     @Embedded
     private PointAmount amount;
 
@@ -32,10 +35,11 @@ public class Point extends BaseTimeEntity {
     @Column(length = 255)
     private String description;
 
-    public static Point of(Long userId, PointAmount amount, PointType type, String description) {
+    public static Point of(Long userId, UUID reviewId, PointAmount amount, PointType type, String description) {
         return Point.builder()
                 .id(UUID.randomUUID())
                 .userId(userId)
+                .reviewId(reviewId)
                 .amount(amount)
                 .type(type)
                 .description(description)
