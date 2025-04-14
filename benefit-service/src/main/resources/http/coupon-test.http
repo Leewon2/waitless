@@ -24,3 +24,6 @@ Content-Type: application/json
   "amount": 50,
   "validPeriod": 20
 }
+
+### 쿠폰 삭제
+DELETE http://localhost:19091/api/coupons/6b52df77-56e4-44f0-a71d-2ffdb2371a60

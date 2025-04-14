@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,5 +69,12 @@ public class CouponController {
 	public ResponseEntity<SingleResponse<CouponResponseDto>> updateCoupon(@PathVariable UUID id, @RequestBody Map<String, Object> updates) {
 		CouponResponseDto couponResponseDto = couponService.modifyCoupon(id, updates);
 		return ResponseEntity.ok(SingleResponse.success(couponResponseDto));
+	}
+
+	// 쿠폰 삭제
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteCoupon(@PathVariable UUID id) {
+		couponService.removeCoupon(id);
+		return ResponseEntity.noContent().build();
 	}
 }
