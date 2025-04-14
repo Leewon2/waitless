@@ -80,8 +80,8 @@ spring:
             allowCredentials: true
 
       discovery:
-            locator:
-              enabled: true
+        locator:
+          enabled: true
   config:
     import: optional:file:.env[.properties]
 
