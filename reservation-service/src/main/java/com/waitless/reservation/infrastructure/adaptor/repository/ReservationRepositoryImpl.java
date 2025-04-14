@@ -1,8 +1,11 @@
 package com.waitless.reservation.infrastructure.adaptor.repository;
 
+import com.waitless.reservation.application.dto.ReservationSearchQuery;
 import com.waitless.reservation.domain.entity.Reservation;
+import com.waitless.reservation.domain.repository.ReservationQueryRepository;
 import com.waitless.reservation.domain.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -13,6 +16,7 @@ import java.util.UUID;
 public class ReservationRepositoryImpl implements ReservationRepository {
 
     private final ReservationJpaRepository reservationJpaRepository;
+    private final ReservationQueryRepository reservationQueryRepository;
 
     @Override
     public void save(Reservation reservation) {
@@ -28,4 +32,10 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     public Optional<Reservation> findFetchById(UUID id) {
         return reservationJpaRepository.findFetchById(id);
     }
+
+    @Override
+    public Page<Reservation> findByCustomCondition(ReservationSearchQuery reservationSearchQuery) {
+        return reservationQueryRepository.findByCustomCondition(reservationSearchQuery);
+    }
+
 }
