@@ -1,6 +1,7 @@
 package com.waitless.restaurant.restaurant.presentation.controller;
 
 
+import com.waitless.common.dto.RestaurantStockResponseDto;
 import com.waitless.common.exception.response.MultiResponse;
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.restaurant.restaurant.application.dto.RestaurantResponseDto;
@@ -10,6 +11,7 @@ import com.waitless.restaurant.restaurant.presentation.dto.CreateRestaurantReque
 import com.waitless.restaurant.restaurant.presentation.dto.SearchRestaurantRequestDto;
 import com.waitless.restaurant.restaurant.presentation.dto.UpdateRestaurantRequestDto;
 import com.waitless.restaurant.restaurant.presentation.mapper.RestaurantControllerMapper;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,7 +36,7 @@ public class RestaurantController {
     private final RestaurantControllerMapper restaurantControllerMapper;
 
     @PostMapping
-    public ResponseEntity<?> createRestaurant(@RequestBody CreateRestaurantRequestDto requestDto) {
+    public ResponseEntity<?> createRestaurant(@Valid @RequestBody CreateRestaurantRequestDto requestDto) {
         RestaurantResponseDto responseDto = restaurantService.createRestaurant(
             restaurantControllerMapper.toServiceDto(requestDto)
         );
@@ -73,4 +75,6 @@ public class RestaurantController {
 
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
+
+
 }
