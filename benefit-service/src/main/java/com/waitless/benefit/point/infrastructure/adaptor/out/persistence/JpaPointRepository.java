@@ -1,4 +1,4 @@
-package com.waitless.benefit.point.infrastructure.persistence;
+package com.waitless.benefit.point.infrastructure.adaptor.out.persistence;
 
 import com.waitless.benefit.point.domain.entity.Point;
 import com.waitless.benefit.point.domain.repository.PointRepository;

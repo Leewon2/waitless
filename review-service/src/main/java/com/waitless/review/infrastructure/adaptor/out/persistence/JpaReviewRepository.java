@@ -1,4 +1,4 @@
-package com.waitless.review.infrastructure.persistence;
+package com.waitless.review.infrastructure.adaptor.out.persistence;
 
 import com.waitless.review.domain.entity.Review;
 import com.waitless.review.domain.repository.ReviewRepository;
