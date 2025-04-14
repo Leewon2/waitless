@@ -1,6 +1,10 @@
 package com.waitless.benefit.coupon.presentation.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,5 +31,11 @@ public class CouponController {
 	@PostMapping
 	public ResponseEntity<SingleResponse<CouponResponseDto>> createCoupon(@RequestBody CreateCouponRequestDto createCouponRequestDto) {
 		return ResponseEntity.ok(SingleResponse.success(couponService.generateCoupon(couponControllerMapper.toCreateCouponDto(createCouponRequestDto))));
+	}
+
+	// 쿠폰 단건 조회
+	@GetMapping("/{id}")
+	public ResponseEntity<SingleResponse<CouponResponseDto>> readCoupon(@PathVariable UUID id) {
+		return ResponseEntity.ok(SingleResponse.success(couponService.findCoupon(id)));
 	}
 }

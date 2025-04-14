@@ -45,6 +45,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 			log.info("login: " + request.getRequestURI());
 			// 로그인 요청 데이터
 			LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
+			log.info("email : {}",loginRequestDto.email());
+			log.info("password : {}",loginRequestDto.password());
 			// 유저 검증
 			ValidateUserResponseDto validateUserResponseDto = userServiceClient.validateUser(
 				new ValidateUserRequestDto(loginRequestDto.email(), loginRequestDto.password())
