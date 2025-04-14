@@ -2,19 +2,26 @@ package com.waitless.benefit.coupon.presentation.controller;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
 import com.waitless.benefit.coupon.application.service.CouponService;
 import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.presentation.dto.CreateCouponRequestDto;
+import com.waitless.benefit.coupon.presentation.dto.ReadCouponsRequestDto;
 import com.waitless.benefit.coupon.presentation.mapper.CouponControllerMapper;
+import com.waitless.common.exception.response.MultiResponse;
 import com.waitless.common.exception.response.SingleResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -37,5 +44,20 @@ public class CouponController {
 	@GetMapping("/{id}")
 	public ResponseEntity<SingleResponse<CouponResponseDto>> readCoupon(@PathVariable UUID id) {
 		return ResponseEntity.ok(SingleResponse.success(couponService.findCoupon(id)));
+	}
+
+	// 쿠폰 전체 조회
+	@GetMapping
+	public ResponseEntity<?> readCoupons(
+		@RequestParam(required = false) String title,
+		@RequestParam(defaultValue = "1", required = false) int page,
+		@RequestParam(defaultValue = "10", required = false) int size,
+		@RequestParam(defaultValue = "DESC", required = false) Sort.Direction sortDirection,
+		@RequestParam(defaultValue = "updatedAt", required = false) String sortBy
+	) {
+		ReadCouponsRequestDto readCouponsRequestDto = new ReadCouponsRequestDto(title, page, size, sortDirection, sortBy);
+		Pageable pageable = PageRequest.of(page - 1, size);
+		Page<CouponResponseDto> response = couponService.findAndSearchCoupons(couponControllerMapper.toReadCouponsDto(readCouponsRequestDto), pageable);
+		return ResponseEntity.ok(MultiResponse.success(response));
 	}
 }

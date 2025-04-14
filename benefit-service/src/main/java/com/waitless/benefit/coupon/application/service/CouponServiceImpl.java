@@ -1,12 +1,17 @@
 package com.waitless.benefit.coupon.application.service;
 
+import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
 import com.waitless.benefit.coupon.application.dto.CreateCouponDto;
+import com.waitless.benefit.coupon.application.dto.ReadCouponsDto;
 import com.waitless.benefit.coupon.application.exception.CouponBusinessException;
 import com.waitless.benefit.coupon.application.exception.CouponErrorCode;
 import com.waitless.benefit.coupon.application.mapper.CouponServiceMapper;
@@ -40,6 +45,17 @@ public class CouponServiceImpl implements CouponService {
 	public CouponResponseDto findCoupon(UUID id) {
 		Coupon coupon = findCouponById(id);
 		return couponServiceMapper.toCouponResponseDto(coupon);
+	}
+
+	// 쿠폰 전체 조회
+	@Override
+	public Page<CouponResponseDto> findAndSearchCoupons(ReadCouponsDto readCouponsDto, Pageable pageable) {
+		Page<Coupon> couponList = couponRepository.findAndSearchCoupons(readCouponsDto.title(), readCouponsDto.sortDirection(), readCouponsDto.sortBy(), pageable);
+		List<CouponResponseDto> dtoList = couponList
+			.stream()
+			.map(couponServiceMapper::toCouponResponseDto)
+			.toList();
+		return new PageImpl<>(dtoList, pageable, couponList.getTotalElements());
 	}
 
 	private Coupon findCouponById(UUID id) {

@@ -3,11 +3,14 @@ POST http://localhost:19091/api/coupons
 Content-Type: application/json
 
 {
-  "title" : "10% 할인 쿠폰",
+  "title" : "20% 할인 쿠폰",
   "amount" : 100,
-  "issuanceDate": "2025-04-20T18:00:00",
-  "validPeriod": 14
+  "issuanceDate": "2025-04-25T18:00:00",
+  "validPeriod": 7
 }
 
 ### 쿠폰 단건 조회
 GET http://localhost:19091/api/coupons/b3ff9d68-1b7e-439f-8636-5835c2798113
+
+### 쿠폰 전체 조회
+GET http://localhost:19091/api/coupons?title=할인
