@@ -2,6 +2,7 @@ package com.waitless.benefit.point.infrastructure.adaptor.out.messaging;
 
 import com.waitless.benefit.point.application.port.out.PointEventPublisher;
 import com.waitless.common.event.PointIssuedEvent;
+import com.waitless.common.event.PointIssuedFailedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,4 +21,11 @@ public class PointEventPublisherImpl implements PointEventPublisher {
         kafkaTemplate.send(TOPIC, "point-issued", event);
         log.info("[Kafka] PointIssuedEvent 발행 완료: {}", event);
     }
+
+    @Override
+    public void publishPointIssuedFailed(PointIssuedFailedEvent event) {
+        kafkaTemplate.send(TOPIC, "point-issued-failed", event);
+        log.info("[Kafka] PointIssuedFailedEvent 발행 완료: {}", event);
+    }
+
 }
