@@ -11,6 +11,7 @@ public interface PointServiceMapper {
     default Point toEntity(PostPointCommand command) {
         return Point.of(
                 command.userId(),
+                command.reviewId(),
                 PointAmount.of(command.amount()),
                 PointType.of(command.pointType()),
                 command.description()
