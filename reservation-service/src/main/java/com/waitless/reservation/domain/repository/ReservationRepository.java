@@ -9,4 +9,6 @@ public interface ReservationRepository {
     void save(Reservation reservation);
 
     Optional<Reservation> findById(UUID id);
+
+    Optional<Reservation> findFetchById(UUID id);
 }
