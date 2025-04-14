@@ -6,6 +6,7 @@ import com.waitless.benefit.point.application.port.out.PointOutboxPort;
 import com.waitless.benefit.point.infrastructure.adaptor.outbox.entity.PointOutboxMessage;
 import com.waitless.benefit.point.infrastructure.adaptor.outbox.repository.JpaPointOutboxRepository;
 import com.waitless.common.event.PointIssuedEvent;
+import com.waitless.common.event.PointIssuedFailedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +21,21 @@ public class PointOutboxAdaptor implements PointOutboxPort {
 
     @Override
     public void savePointIssuedEvent(PointIssuedEvent event) {
+        saveEvent(event, "point-issued");
+    }
+
+    @Override
+    public void savePointIssuedFailedEvent(PointIssuedFailedEvent event) {
+        saveEvent(event, "point-issued-failed");
+    }
+
+    private void saveEvent(Object event, String type) {
         try {
             String payload = objectMapper.writeValueAsString(event);
 
             PointOutboxMessage message = PointOutboxMessage.builder()
                     .aggregateType("POINT")
-                    .type("point-issued")
+                    .type(type)
                     .payload(payload)
                     .status(PointOutboxMessage.OutboxStatus.PENDING)
                     .createdAt(LocalDateTime.now())
@@ -33,7 +43,7 @@ public class PointOutboxAdaptor implements PointOutboxPort {
 
             outboxRepository.save(message);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Outbox 직렬화 실패", e);
+            throw new RuntimeException("Outbox 직렬화 실패 [" + type + "]", e);
         }
     }
 }
