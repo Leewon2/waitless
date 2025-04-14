@@ -18,4 +18,6 @@ public interface CouponService {
 	Page<CouponResponseDto> findAndSearchCoupons(ReadCouponsDto readCouponsDto, Pageable pageable);
 
 	CouponResponseDto modifyCoupon(UUID id, Map<String, Object> updates);
+
+	void removeCoupon(UUID id);
 }

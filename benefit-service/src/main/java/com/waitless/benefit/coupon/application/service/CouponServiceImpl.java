@@ -68,6 +68,14 @@ public class CouponServiceImpl implements CouponService {
 		return couponServiceMapper.toCouponResponseDto(coupon);
 	}
 
+	// 쿠폰 삭제
+	@Override
+	@Transactional
+	public void removeCoupon(UUID id) {
+		Coupon coupon = findCouponById(id);
+		coupon.delete();
+	}
+
 	private Coupon findCouponById(UUID id) {
 		Coupon coupon = couponRepository.findById(id)
 			.orElseThrow(()-> CouponBusinessException.from(CouponErrorCode.COUPON_NOT_FOUND));
