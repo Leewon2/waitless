@@ -1,0 +1,29 @@
+server:
+  port: 19097
+
+spring:
+  application:
+    name: restaurant-service
+  datasource:
+    url: jdbc:mariadb://localhost:3306/hangry-database
+    username: root
+    password: root
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        hibernate.format_sql: true
+        hibernate.use_sql_comments: true
+        format_sql: true
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+
+
+slack:
+  webhook:
+    url: "https://hooks.slack.com/services/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"
