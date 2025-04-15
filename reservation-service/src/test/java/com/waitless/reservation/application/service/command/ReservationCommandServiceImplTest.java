@@ -6,7 +6,7 @@ import com.waitless.reservation.application.service.redis.RedisStockService;
 import com.waitless.reservation.domain.entity.Reservation;
 import com.waitless.reservation.domain.repository.ReservationRepository;
 import com.waitless.reservation.exception.exception.ReservationErrorCode;
-import com.waitless.reservation.presentation.dto.ReservationCreateResponse;
+import com.waitless.reservation.application.dto.ReservationCreateResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

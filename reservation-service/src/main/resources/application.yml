@@ -32,9 +32,9 @@ spring:
 logging:
   level:
     root: info
-    com.waitless.reservation: info
+    com.waitless.reservation: debug
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql: trace
 
 server:
-  port: 19099 # 임시
+  port: 19093
