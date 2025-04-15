@@ -14,13 +14,15 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.waitless.benefit.coupon.application.dto.CouponHistoryResponseDto;
 import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
+import com.waitless.benefit.coupon.application.service.CouponHistoryService;
 import com.waitless.benefit.coupon.application.service.CouponService;
-import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.presentation.dto.CreateCouponRequestDto;
 import com.waitless.benefit.coupon.presentation.dto.ReadCouponsRequestDto;
 import com.waitless.benefit.coupon.presentation.mapper.CouponControllerMapper;
@@ -36,6 +38,7 @@ public class CouponController {
 
 	private final CouponService couponService;
 	private final CouponControllerMapper couponControllerMapper;
+	private final CouponHistoryService couponHistoryService;
 
 	// 쿠폰 생성
 	@PostMapping
@@ -77,4 +80,14 @@ public class CouponController {
 		couponService.removeCoupon(id);
 		return ResponseEntity.noContent().build();
 	}
+
+	// Coupon-Histroy --------------------------------------------------------------------------------------------
+
+	@PostMapping("/issued/{couponId}")
+	public ResponseEntity<SingleResponse<CouponHistoryResponseDto>> issuedCoupon(
+		@PathVariable UUID couponId, @RequestHeader("X-User-Id") String userId) {
+		CouponHistoryResponseDto couponHistoryResponseDto = couponHistoryService.issuedCoupon(couponId, userId);
+		return ResponseEntity.ok(SingleResponse.success(couponHistoryResponseDto));
+	}
+
 }

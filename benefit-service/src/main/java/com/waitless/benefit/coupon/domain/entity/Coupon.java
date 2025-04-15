@@ -58,4 +58,8 @@ public class Coupon extends BaseTimeEntity {
 			case "validPeriod" -> this.validPeriod = (int) value;
 		}
 	}
+
+	public void decrease() {
+		this.amount -= 1;
+	}
 }
