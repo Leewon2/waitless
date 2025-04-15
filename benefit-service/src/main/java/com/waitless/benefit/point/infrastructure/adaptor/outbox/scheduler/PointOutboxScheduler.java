@@ -25,6 +25,7 @@ public class PointOutboxScheduler {
     @Scheduled(fixedDelay = 10000)
     public void publishPendingMessages() {
         List<PointOutboxMessage> messages = outboxRepository.findByStatus(PointOutboxMessage.OutboxStatus.PENDING);
+        messages.addAll(outboxRepository.findByStatusAndRetryCountLessThan(PointOutboxMessage.OutboxStatus.FAILED, 5));
 
         for (PointOutboxMessage message : messages) {
             try {
@@ -44,11 +45,13 @@ public class PointOutboxScheduler {
                         continue;
                     }
                 }
-                // 발행 성공 시 상태 업데이트
                 message.markAsSent();
                 outboxRepository.save(message);
             } catch (Exception e) {
-                log.error("[Outbox] Kafka 발행 실패: {}", message.getId(), e);
+                message.incrementRetry();
+                message.markAsFailed();
+                outboxRepository.save(message);
+                log.error("[Outbox] Kafka 발행 실패 (재시도 {}회): {}", message.getRetryCount(), message.getId(), e);
             }
         }
     }
