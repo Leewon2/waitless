@@ -95,4 +95,8 @@ public class Reservation extends BaseTimeEntity {
                 .mapToInt(m -> m.getPrice() * m.getQuantity())
                 .sum();
     }
+
+    public void cancel() {
+        this.status = ReservationStatus.CANCELLED;
+    }
 }

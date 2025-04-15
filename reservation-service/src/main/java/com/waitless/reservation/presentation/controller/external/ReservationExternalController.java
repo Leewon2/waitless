@@ -45,4 +45,11 @@ public class ReservationExternalController {
         Page<ReservationSearchResponse> result = queryService.search(queryMapper.toReservationSearchQuery(request));
         return ResponseEntity.ok(MultiResponse.success(result));
     }
+
+    @PatchMapping("/{reservationId}/cancel")
+    public ResponseEntity cancel(@PathVariable UUID reservationId){
+        commandService.cancelReservation(reservationId);
+        return ResponseEntity.ok().build();
+    }
+
 }
