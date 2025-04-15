@@ -11,7 +11,10 @@ public enum ReservationErrorCode implements ErrorCode {
     RESERVATION_RESTAURANT_NOT_FOUND("RES_003", "존재하지 않는 식당입니다."),
     UNKNOWN_LUA_RESULT("RES_999", "알 수 없는 Redis Lua 실행 결과입니다."),
     RESERVATION_TEAM_LIMIT_EXCEEDED("RES_004", "웨이팅이 마감되었습니다"),
-    RESERVATION_NOT_FOUND("RES_005", "예약을 찾을 수 없습니다");
+    RESERVATION_NOT_FOUND("RES_005", "예약을 찾을 수 없습니다"),
+    RESTAURANT_NOT_FOUND("RES_006", "존재하지 않는 가게입니다."),
+    RESTAURANT_SERVER_ERROR("RES_007", "레스토랑 서버에 문제가 발생하였습니다."),
+    RESERVATION_STOCK_RESTORE_ERROR("RES_008", "존재하지 않는 메뉴입니다");
     private final String code;
     private final String message;
 
