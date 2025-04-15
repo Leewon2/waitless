@@ -3,6 +3,7 @@ package com.waitless.benefit.coupon.infrastructure.repository;
 import static com.waitless.benefit.coupon.domain.entity.QCoupon.*;
 import static com.waitless.benefit.coupon.domain.entity.QCouponHistory.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -70,6 +71,18 @@ public class CouponHistoryRepositoryImpl implements CouponHistoryRepository, Cus
 			.where(builder);
 
 		return PageableExecutionUtils.getPage(couponHistories, pageable, countQuery::fetchOne);
+	}
+
+	@Override
+	public List<CouponHistory> findInvalidIssuedCoupons() {
+		BooleanBuilder builder = new BooleanBuilder();
+		builder.or(couponHistory.isValid.eq(false));
+		builder.or(couponHistory.expiredAt.before(LocalDateTime.now()));
+		List<CouponHistory> couponHistories = queryFactory
+			.selectFrom(couponHistory)
+			.where(builder)
+			.fetch();
+		return couponHistories;
 	}
 
 	private OrderSpecifier<?> getOrderSpecifier(Sort.Direction direction, String sortBy) {

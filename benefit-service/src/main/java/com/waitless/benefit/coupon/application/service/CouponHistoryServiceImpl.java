@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +17,6 @@ import com.waitless.benefit.coupon.application.dto.ReadCouponHistoriesDto;
 import com.waitless.benefit.coupon.application.exception.CouponBusinessException;
 import com.waitless.benefit.coupon.application.exception.CouponErrorCode;
 import com.waitless.benefit.coupon.application.mapper.CouponHistoryServiceMapper;
-import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.entity.CouponHistory;
 import com.waitless.benefit.coupon.domain.repository.CouponHistoryRepository;
 import com.waitless.benefit.coupon.infrastructure.repository.CustomCouponHistoryRepository;
@@ -89,6 +89,16 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 			throw CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_UNAUTHORIZED);
 		}
 		couponHistory.delete();
+	}
+
+	// 만료된 쿠폰발급내역 자동삭제 - 이미 사용했거나, 사용가능일자를 지난 경우
+	// @Scheduled(cron = "*/10 * * * * *") // 10초마다
+	@Transactional
+	public void removeInvalidIssuedCoupons() {
+		List<CouponHistory> invalidIssuedCoupons = customCouponHistoryRepository.findInvalidIssuedCoupons();
+		for (CouponHistory coupon : invalidIssuedCoupons) {
+			coupon.delete();
+		}
 	}
 
 	private CouponHistory findCouponHistoryById(UUID id) {
