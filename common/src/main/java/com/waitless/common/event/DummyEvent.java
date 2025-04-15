@@ -1,4 +1,9 @@
 package com.waitless.common.event;
 
-public class DummyEvent {
-}
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class DummyEvent extends Event {}
