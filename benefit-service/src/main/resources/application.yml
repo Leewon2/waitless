@@ -28,8 +28,8 @@ spring:
           point-issued:com.waitless.common.event.PointIssuedEvent,
           point-issued-failed:com.waitless.common.event.PointIssuedFailedEvent
     consumer:
-      group-id: ${spring.application.name}
-      auto-offset-reset: earliest
+      group-id: point-service
+      auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
@@ -42,8 +42,10 @@ spring:
 app:
   kafka:
     topics:
-      review-events: review-events
-      point-events: point-events
+      review-created-events: review-created-events
+      review-deleted-events: review-deleted-events
+      point-issued-events: point-issued-events
+      point-issued-failed-events: point-issued-failed-events
 
 #point:
 #  max-bonus: 1000

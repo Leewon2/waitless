@@ -19,18 +19,13 @@ public class PointIssuedFailedEventHandler {
     private final ReviewCommandUseCase reviewCommandUseCase;
 
     @KafkaListener(
-            topics = "point-events",
-            groupId = "review-service",
-            properties = {"spring.json.value.default.type=com.waitless.common.event.PointIssuedFailedEvent"
-            })
+            topics = "point-issued-failed-events",
+            groupId = "review-service"
+            )
     public void handlePointIssuedFailedEvent(
             @Payload PointIssuedFailedEvent event,
             @Header(KafkaHeaders.RECEIVED_KEY) String key
     ) {
-        if (!"point-issued-failed".equals(key)) {
-            log.debug("PointIssuedFailedEventHandler: 필터링된 메시지 key={}", key);
-            return;
-        }
         log.warn("[Kafka] 포인트 발급 실패 이벤트 수신: {}", event);
         CancelReviewCommand command = new CancelReviewCommand(
                 event.getReviewId(),

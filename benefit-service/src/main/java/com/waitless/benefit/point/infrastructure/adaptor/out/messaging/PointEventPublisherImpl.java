@@ -14,17 +14,18 @@ import org.springframework.stereotype.Component;
 public class PointEventPublisherImpl implements PointEventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private static final String TOPIC = "point-events";
+    private static final String TOPIC_ISSUED = "point-issued-events";
+    private static final String TOPIC_FAILED = "point-issued-failed-events";
 
     @Override
     public void publishPointIssued(PointIssuedEvent event) {
-        kafkaTemplate.send(TOPIC, "point-issued", event);
+        kafkaTemplate.send(TOPIC_ISSUED, "point-issued", event);
         log.info("[Kafka] PointIssuedEvent 발행 완료: {}", event);
     }
 
     @Override
     public void publishPointIssuedFailed(PointIssuedFailedEvent event) {
-        kafkaTemplate.send(TOPIC, "point-issued-failed", event);
+        kafkaTemplate.send(TOPIC_FAILED, "point-issued-failed", event);
         log.info("[Kafka] PointIssuedFailedEvent 발행 완료: {}", event);
     }
 
