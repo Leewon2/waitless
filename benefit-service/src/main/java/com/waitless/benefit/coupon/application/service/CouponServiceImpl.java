@@ -76,6 +76,14 @@ public class CouponServiceImpl implements CouponService {
 		coupon.delete();
 	}
 
+	// 쿠폰 수량 감소
+	@Override
+	@Transactional
+	public void decreaseCouponAmount(UUID id) {
+		Coupon coupon = findCouponById(id);
+		coupon.decrease();
+	}
+
 	private Coupon findCouponById(UUID id) {
 		Coupon coupon = couponRepository.findById(id)
 			.orElseThrow(()-> CouponBusinessException.from(CouponErrorCode.COUPON_NOT_FOUND));

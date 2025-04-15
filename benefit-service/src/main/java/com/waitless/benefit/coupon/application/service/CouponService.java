@@ -20,4 +20,6 @@ public interface CouponService {
 	CouponResponseDto modifyCoupon(UUID id, Map<String, Object> updates);
 
 	void removeCoupon(UUID id);
+
+	void decreaseCouponAmount(UUID id);
 }

@@ -3,6 +3,7 @@ package com.waitless.benefit.coupon.application.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.waitless.benefit.coupon.application.dto.CouponInfoDto;
 import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
 import com.waitless.benefit.coupon.domain.entity.Coupon;
 

@@ -30,7 +30,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final UserServiceClient userServiceClient;
-	private final JwtUtil jwtUtil;
+	private final JwtTokenManager jwtTokenManager;
 	private final RefreshTokenService refreshTokenService;
 
 	@Override
@@ -60,8 +60,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 			String role = validateUserResponseDto.role();	// 유저 역할
 
 			// JWT Token 생성
-			String accessToken = jwtUtil.generateAccessToken(userId, role);
-			String refreshToken = jwtUtil.generateRefreshToken(userId);
+			String accessToken = jwtTokenManager.generateAccessToken(userId, role);
+			String refreshToken = jwtTokenManager.generateRefreshToken(userId);
 
 			// Refresh Token Redis에 저장
 			refreshTokenService.saveOrUpdateToken(userId, refreshToken);
