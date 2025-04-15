@@ -37,4 +37,7 @@ logging:
     org.hibernate.type.descriptor.sql: trace
 
 server:
-  port: 19093
+  port: 19094
+
+gateway:
+  url: http://localhost:19091
