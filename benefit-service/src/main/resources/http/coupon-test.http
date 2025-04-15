@@ -5,8 +5,8 @@ Content-Type: application/json
 {
   "title" : "20% 할인 쿠폰",
   "amount" : 100,
-  "issuanceDate": "2025-04-25T18:00:00",
-  "validPeriod": 7
+  "issuanceDate": "2025-04-30T18:00:00",
+  "validPeriod": 14
 }
 
 ### 쿠폰 단건 조회
@@ -29,7 +29,10 @@ Content-Type: application/json
 DELETE http://localhost:19091/api/coupons/6b52df77-56e4-44f0-a71d-2ffdb2371a60
 
 ### 쿠폰 받기
-POST http://localhost:19091/api/coupons/issued/07a84357-accd-4459-a953-e764fcaf13e8
+POST http://localhost:19091/api/coupons/issued/56500d20-4abe-4845-bdb0-46219c10eacd
 
 ### 쿠폰발급내역 단건 조회
 GET http://localhost:19091/api/coupons/history/e05e6199-8755-4b44-ac39-2aa2c0c4c758
+
+### 쿠폰발급내역 목록 조회
+GET http://localhost:19091/api/coupons/history?title=2

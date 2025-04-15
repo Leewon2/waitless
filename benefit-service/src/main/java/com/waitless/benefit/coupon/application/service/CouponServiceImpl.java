@@ -18,6 +18,7 @@ import com.waitless.benefit.coupon.application.exception.CouponErrorCode;
 import com.waitless.benefit.coupon.application.mapper.CouponServiceMapper;
 import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.repository.CouponRepository;
+import com.waitless.benefit.coupon.infrastructure.repository.CustomCouponRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +28,7 @@ public class CouponServiceImpl implements CouponService {
 
 	private final CouponServiceMapper couponServiceMapper;
 	private final CouponRepository couponRepository;
+	private final CustomCouponRepository customCouponRepository;
 
 	// 쿠폰 생성
 	@Override
@@ -51,7 +53,7 @@ public class CouponServiceImpl implements CouponService {
 	// 쿠폰 전체 조회 + 검색
 	@Override
 	public Page<CouponResponseDto> findAndSearchCoupons(ReadCouponsDto readCouponsDto, Pageable pageable) {
-		Page<Coupon> couponList = couponRepository.findAndSearchCoupons(readCouponsDto.title(), readCouponsDto.sortDirection(), readCouponsDto.sortBy(), pageable);
+		Page<Coupon> couponList = customCouponRepository.findAndSearchCoupons(readCouponsDto.title(), readCouponsDto.sortDirection(), readCouponsDto.sortBy(), pageable);
 		List<CouponResponseDto> dtoList = couponList
 			.stream()
 			.map(couponServiceMapper::toCouponResponseDto)

@@ -1,19 +1,25 @@
 package com.waitless.benefit.coupon.application.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.waitless.benefit.coupon.application.dto.CouponHistoryResponseDto;
 import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
+import com.waitless.benefit.coupon.application.dto.ReadCouponHistoriesDto;
 import com.waitless.benefit.coupon.application.exception.CouponBusinessException;
 import com.waitless.benefit.coupon.application.exception.CouponErrorCode;
 import com.waitless.benefit.coupon.application.mapper.CouponHistoryServiceMapper;
 import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.entity.CouponHistory;
 import com.waitless.benefit.coupon.domain.repository.CouponHistoryRepository;
+import com.waitless.benefit.coupon.infrastructure.repository.CustomCouponHistoryRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class CouponHistoryServiceImpl implements CouponHistoryService{
 
 	private final CouponHistoryRepository couponHistoryRepository;
+	private final CustomCouponHistoryRepository customCouponHistoryRepository;
 	private final CouponHistoryServiceMapper couponHistoryServiceMapper;
 	private final CouponService couponService;
 
@@ -55,6 +62,24 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		CouponHistory couponHistory = findCouponHistoryById(id);
 		return couponHistoryServiceMapper.toCouponHistoryResponseDto(couponHistory);
 	}
+
+	// 쿠폰발급내역 목록 조회 + 검색
+	@Override
+	public Page<CouponHistoryResponseDto> findAndSearchCouponHistories(ReadCouponHistoriesDto readCouponHistoriesDto, Pageable pageable) {
+		Page<CouponHistory> couponHistoryList = customCouponHistoryRepository.findAndSearchCouponHistories(
+			readCouponHistoriesDto.title(),
+			readCouponHistoriesDto.sortDirection(),
+			readCouponHistoriesDto.sortBy(),
+			readCouponHistoriesDto.userId(),
+			pageable
+		);
+		List<CouponHistoryResponseDto> dtoList = couponHistoryList
+			.stream()
+			.map(couponHistoryServiceMapper::toCouponHistoryResponseDto)
+			.toList();
+		return new PageImpl<>(dtoList, pageable, couponHistoryList.getTotalElements());
+	}
+
 
 	private CouponHistory findCouponHistoryById(UUID id) {
 		CouponHistory couponHistory = couponHistoryRepository.findById(id)

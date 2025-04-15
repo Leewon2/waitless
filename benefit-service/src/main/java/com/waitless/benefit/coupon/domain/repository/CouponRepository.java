@@ -14,5 +14,4 @@ public interface CouponRepository {
 
 	Optional<Coupon> findById(UUID id);
 
-	Page<Coupon> findAndSearchCoupons(String title, Sort.Direction direction, String sortBy, Pageable pageable);
 }
