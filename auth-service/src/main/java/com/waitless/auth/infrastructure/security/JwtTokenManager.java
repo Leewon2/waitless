@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.waitless.auth.application.exception.AuthBusinessException;
 import com.waitless.auth.application.exception.AuthErrorCode;
+import com.waitless.auth.application.service.TokenManager;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -20,14 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class JwtUtil {
+public class JwtTokenManager implements TokenManager {
 
 	private static final String BEARER_PREFIX = "Bearer ";
 	private final Key key;
 	private final long accessTokenExpiration;
 	private final long refreshTokenExpiration;
 
-	public JwtUtil(@Value("${jwt.secret}") String secretKey,
+	public JwtTokenManager(@Value("${jwt.secret}") String secretKey,
 		@Value("${jwt.access-expiration}") long accessTokenExpiration,
 		@Value("${jwt.refresh-expiration}") long refreshTokenExpiration) {
 		this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
