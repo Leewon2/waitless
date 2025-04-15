@@ -29,22 +29,22 @@ spring:
           review-created:com.waitless.common.event.ReviewCreatedEvent,
           review-deleted:com.waitless.common.event.ReviewDeletedEvent
     consumer:
-      group-id: ${spring.application.name}
-      auto-offset-reset: earliest
+      group-id: review-service
+      auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: com.waitless.common.event
         spring.json.type.mapping: >
-          point-issued:com.waitless.common.event.DummyEvent,
           point-issued-failed:com.waitless.common.event.PointIssuedFailedEvent
     listener:
       ack-mode: MANUAL_IMMEDIATE
 app:
   kafka:
     topics:
-      review-events: review-events
-      point-events: point-events
+      review-created-events: review-created-events
+      review-deleted-events: review-deleted-events
+      point-issued-failed-events: point-issued-failed-events
 
 eureka:
   client:

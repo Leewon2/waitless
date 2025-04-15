@@ -15,8 +15,8 @@ public class ReviewEventPublisherImpl implements ReviewEventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    private static final String TOPIC_REVIEW_CREATED = "review-events";
-    private static final String TOPIC_REVIEW_DELETED = "review-events";
+    private static final String TOPIC_REVIEW_CREATED = "review-created-events";
+    private static final String TOPIC_REVIEW_DELETED = "review-deleted-events";
 
     @Override
     public void publishReviewCreated(ReviewCreatedEvent event) {
