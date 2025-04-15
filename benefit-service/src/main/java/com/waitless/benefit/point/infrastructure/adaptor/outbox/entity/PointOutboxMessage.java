@@ -37,12 +37,27 @@ public class PointOutboxMessage {
     private LocalDateTime createdAt;
     private LocalDateTime sentAt;
 
+    @Column(nullable = false)
+    private int retryCount = 0;
+
+    private LocalDateTime lastTriedAt;
+
     public enum OutboxStatus {
         PENDING, SENT, FAILED
     }
-
     public void markAsSent() {
         this.status = OutboxStatus.SENT;
         this.sentAt = LocalDateTime.now();
+    }
+    public void markAsFailed() {
+        this.status = OutboxStatus.FAILED;
+        this.lastTriedAt = LocalDateTime.now();
+    }
+    public void incrementRetry() {
+        this.retryCount++;
+        this.lastTriedAt = LocalDateTime.now();
+    }
+    public boolean isRetryable(int maxRetry) {
+        return this.retryCount < maxRetry;
     }
 }
