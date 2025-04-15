@@ -79,7 +79,7 @@ public class RestaurantController {
     }
 
     @PostMapping("/app/stock")
-    public ResponseEntity<?> getRestaurantStock(@RequestBody List<UUID> restaurantIdList) {
+    public ResponseEntity<?> getRestaurantStock(@RequestBody(required = false) List<UUID> restaurantIdList) {
         List<RestaurantStockResponseDto> responseDto = restaurantService.getRestaurantStock(restaurantIdList);
 
         return ResponseEntity.ok(MultiResponse.success(responseDto));

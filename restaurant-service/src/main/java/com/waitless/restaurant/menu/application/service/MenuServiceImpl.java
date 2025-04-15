@@ -1,24 +1,26 @@
 package com.waitless.restaurant.menu.application.service;
 
-import com.waitless.restaurant.menu.application.dto.*;
+import com.waitless.common.dto.StockDto;
+import com.waitless.restaurant.menu.application.dto.CreateMenuDto;
+import com.waitless.restaurant.menu.application.dto.CreatedMenuResponseDto;
+import com.waitless.restaurant.menu.application.dto.MenuDto;
+import com.waitless.restaurant.menu.application.dto.SearchMenuDto;
+import com.waitless.restaurant.menu.application.dto.SearchResponseDto;
+import com.waitless.restaurant.menu.application.dto.UpdateMenuDto;
+import com.waitless.restaurant.menu.application.dto.UpdatedMenuResponseDto;
 import com.waitless.restaurant.menu.application.mapper.MenuServiceMapper;
 import com.waitless.restaurant.menu.domain.entity.Menu;
 import com.waitless.restaurant.menu.domain.repository.MenuRepository;
-
 import com.waitless.restaurant.restaurant.application.exception.RestaurantBusinessException;
 import com.waitless.restaurant.restaurant.application.exception.RestaurantErrorCode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +68,7 @@ public class MenuServiceImpl implements MenuService {
         menuList.forEach(Menu::delete);
     }
 
+
     @Transactional(readOnly = true)
     public Page<SearchResponseDto> searchMenu(SearchMenuDto searchMenuDto, Pageable pageable) {
         Page<Menu> menuList = menuRepository.searchMenu(menuServiceMapper.toMenuDomain(searchMenuDto), pageable);
@@ -73,6 +76,21 @@ public class MenuServiceImpl implements MenuService {
 
         return menuList.map(menuServiceMapper::toSearchResponse);
     }
+
+    @Transactional
+    public void decreaseMenuAmount(List<StockDto> stockList) {
+
+        List<Menu> menuList = new ArrayList<>();
+
+        stockList.forEach(stock -> {
+
+            Menu menu = getMenuFromRepo(stock.menuId());
+            menu.decreaseAmount(stock.amount());
+
+            menuList.add(menu);
+        });
+
+        }
 
     private Menu getMenuFromRepo(UUID id) {
         return menuRepository.getMenu(id).orElseThrow(() -> RestaurantBusinessException.from(
