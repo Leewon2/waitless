@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -48,5 +50,13 @@ public class PointServiceImpl implements PointCommandUseCase {
                 .build();
         pointOutboxPort.savePointIssuedEvent(event);
         return PostPointResult.from(saved);
+    }
+
+    @Override
+    @Transactional
+    public void deletePointByReview(UUID reviewId, Long userId) {
+        Point point = pointRepository.findByReviewIdAndUserId(reviewId, userId)
+                .orElseThrow(() -> new IllegalStateException("해당 리뷰에 대한 포인트가 없습니다."));
+        point.softDelete(); //
     }
 }
