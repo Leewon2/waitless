@@ -1,5 +1,6 @@
 package com.waitless.restaurant.restaurant.application.service;
 
+import com.waitless.common.dto.RestaurantStockResponseDto;
 import com.waitless.restaurant.menu.application.service.MenuService;
 import com.waitless.restaurant.restaurant.application.dto.CreateRestaurantDto;
 import com.waitless.restaurant.restaurant.application.dto.RestaurantResponseDto;
@@ -13,6 +14,7 @@ import com.waitless.restaurant.restaurant.domain.repository.RestaurantQueryRepos
 import com.waitless.restaurant.restaurant.domain.repository.RestaurantRepository;
 import com.waitless.restaurant.restaurant.domain.vo.Location;
 import com.waitless.restaurant.restaurant.domain.vo.OperatingHours;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,6 +44,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             createRestaurantDto.ownerId(),
             createRestaurantDto.phone(),
             category,
+            createRestaurantDto.maxTableCount(),
             Location.of(createRestaurantDto.latitude(), createRestaurantDto.longitude()),
             OperatingHours.of(createRestaurantDto.openingTime(),createRestaurantDto.closingTime())
         );
@@ -81,6 +84,21 @@ public class RestaurantServiceImpl implements RestaurantService {
         Page<Restaurant> restaurantList = restaurantQueryRepository.searchRestaurant(searchRestaurantDto.name(),searchRestaurantDto.categoryId(),pageable);
 
         return restaurantList.map(restaurantServiceMapper::toResponseDto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RestaurantStockResponseDto> getRestaurantStock(List<UUID> restaurantIdList) {
+
+        List<Restaurant> restaurantList;
+
+        if(restaurantIdList.isEmpty()){
+            restaurantList = restaurantRepository.findAll();
+        }else {
+            restaurantList = restaurantRepository.findByIdIn(restaurantIdList);
+        }
+
+        return restaurantList.stream().map(restaurant ->
+            restaurantServiceMapper.toStockResponseDto(restaurant, menuService.getMenus(restaurant.getId()))).toList();
     }
 
     @Transactional(readOnly = true)
