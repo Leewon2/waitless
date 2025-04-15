@@ -80,12 +80,21 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		return new PageImpl<>(dtoList, pageable, couponHistoryList.getTotalElements());
 	}
 
+	// 쿠폰발급내역 삭제
+	@Override
+	@Transactional
+	public void removeCouponHistory(UUID id, String userId) {
+		CouponHistory couponHistory = findCouponHistoryById(id);
+		if (!couponHistory.getUserId().equals(Long.parseLong(userId))) {
+			throw CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_UNAUTHORIZED);
+		}
+		couponHistory.delete();
+	}
 
 	private CouponHistory findCouponHistoryById(UUID id) {
 		CouponHistory couponHistory = couponHistoryRepository.findById(id)
 			.orElseThrow(()-> CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_NOT_FOUND));
 		return couponHistory;
 	}
-
 
 }
