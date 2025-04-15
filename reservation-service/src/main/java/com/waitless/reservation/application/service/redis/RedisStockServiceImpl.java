@@ -1,6 +1,7 @@
 package com.waitless.reservation.application.service.redis;
 
 import com.waitless.common.exception.BusinessException;
+import com.waitless.reservation.application.dto.CancelMenuDto;
 import com.waitless.reservation.application.dto.LuaResultType;
 import com.waitless.reservation.exception.exception.ReservationErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -20,20 +21,23 @@ public class RedisStockServiceImpl implements RedisStockService {
 
     private final StringRedisTemplate redisTemplate;
     private final RedisLuaScriptService redisLuaScriptService;
-    private final RedisReservationService redisReservationService;
 
+    private static final String RESERVATION_NUMBER_PREFIX = "reservation:number:";
+    private static final String RESERVATION_TEAM_COUNT_PREFIX = "reservation:teamCount:";
+    private static final String RESERVATION_TEAM_LIMIT_PREFIX = "reservation:teamLimit:";
     private static final String DECREASE_STOCK_SCRIPT = "classpath:lua/stock_decrease.lua";
+    private static final String INCREMENT_STOCK_SCRIPT = "classpath:lua/stock_increment.lua";
 
     @Override
     public Long decrementStock(UUID restaurantId, List<MenuCommandDto> menus) {
-        validateExistRestaurant(restaurantId);
+        validateRestaurantExists(restaurantId);
         validateMenuKeysExist(restaurantId, menus);
 
         List<String> keys = new ArrayList<>();
-        keys.add("reservation:teamCount:" + restaurantId);
-        keys.add("reservation:number:" + restaurantId); // 대기표 순번을 위한 키
+        keys.add(RESERVATION_TEAM_COUNT_PREFIX + restaurantId);
+        keys.add(RESERVATION_NUMBER_PREFIX + restaurantId); // 대기표 순번을 위한 키
 
-        String teamLimit = redisTemplate.opsForValue().get("reservation:teamLimit:" + restaurantId);
+        String teamLimit = redisTemplate.opsForValue().get(RESERVATION_TEAM_LIMIT_PREFIX + restaurantId);
         if (teamLimit == null) {
             throw new RuntimeException("식당 팀 최대 인원 없음");
         }
@@ -79,11 +83,52 @@ public class RedisStockServiceImpl implements RedisStockService {
         }
     }
 
+    @Override
+    public void incrementStock(UUID restaurantId, List<CancelMenuDto> menus) {
+        List<String> keys = new ArrayList<>();
+        keys.add(RESERVATION_TEAM_COUNT_PREFIX + restaurantId);
+
+        List<String> args = new ArrayList<>();
+        args.add(String.valueOf(menus.size()));
+
+        for (CancelMenuDto menu : menus) {
+            keys.add("stock:" + restaurantId + ":" + menu.menuId());
+            args.add(menu.quantity().toString());
+            args.add(menu.menuId().toString());
+        }
+
+        String luaScript = redisLuaScriptService.loadScript(INCREMENT_STOCK_SCRIPT);
+
+        DefaultRedisScript<List> redisScript = new DefaultRedisScript<>();
+        redisScript.setScriptText(luaScript);
+        redisScript.setResultType(List.class);
+
+        @SuppressWarnings("unchecked")
+        List<String> result = redisTemplate.execute(redisScript, keys, args.toArray());
+
+        if (result == null || result.isEmpty()) {
+            throw BusinessException.from(ReservationErrorCode.UNKNOWN_LUA_RESULT, result);
+        }
+
+        String resultType = result.get(0);
+        if ("SUCCESS".equals(resultType)) return;
+
+        if ("MISSING_STOCK".equals(resultType)) {
+            UUID menuId = UUID.fromString(result.get(1));
+            throw BusinessException.from(ReservationErrorCode.RESERVATION_STOCK_RESTORE_ERROR, menuId);
+        }
+
+        throw new RuntimeException("Lua Script ERROR");
+    }
+
     /**
-     * 식당 존재 유무 확인
+     * 존재하는 식당인지 체크
      */
-    private void validateExistRestaurant(UUID restaurantId) {
-        redisReservationService.validateRestaurantExists(restaurantId);
+    private void validateRestaurantExists(UUID restaurantId) {
+        Boolean exists = redisTemplate.hasKey(RESERVATION_NUMBER_PREFIX + restaurantId);
+        if (Boolean.FALSE.equals(exists)) {
+            throw BusinessException.from(ReservationErrorCode.RESERVATION_RESTAURANT_NOT_FOUND);
+        }
     }
 
     /**
