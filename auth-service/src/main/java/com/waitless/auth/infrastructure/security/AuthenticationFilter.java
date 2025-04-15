@@ -30,21 +30,23 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final UserServiceClient userServiceClient;
-	private final JwtUtil jwtUtil;
+	private final JwtTokenManager jwtTokenManager;
 	private final RefreshTokenService refreshTokenService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		if (!request.getRequestURI().equals("/api/auth/login")) {
-			log.info(request.getRequestURI());
+			log.info("i'm not login: " + request.getRequestURI());
 			filterChain.doFilter(request, response);
 			return;
 		}
 		try {
-			log.info(request.getRequestURI());
+			log.info("login: " + request.getRequestURI());
 			// 로그인 요청 데이터
 			LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
+			log.info("email : {}",loginRequestDto.email());
+			log.info("password : {}",loginRequestDto.password());
 			// 유저 검증
 			ValidateUserResponseDto validateUserResponseDto = userServiceClient.validateUser(
 				new ValidateUserRequestDto(loginRequestDto.email(), loginRequestDto.password())
@@ -58,8 +60,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 			String role = validateUserResponseDto.role();	// 유저 역할
 
 			// JWT Token 생성
-			String accessToken = jwtUtil.generateAccessToken(userId, role);
-			String refreshToken = jwtUtil.generateRefreshToken(userId);
+			String accessToken = jwtTokenManager.generateAccessToken(userId, role);
+			String refreshToken = jwtTokenManager.generateRefreshToken(userId);
 
 			// Refresh Token Redis에 저장
 			refreshTokenService.saveOrUpdateToken(userId, refreshToken);

@@ -9,6 +9,7 @@ public record RestaurantResponseDto(UUID id,
                                     String phone,
                                     String categoryName,
                                     Double latitude,
+                                    int maxTableCount,
                                     Double longitude,
                                     LocalTime openingTime,
                                     LocalTime closingTime

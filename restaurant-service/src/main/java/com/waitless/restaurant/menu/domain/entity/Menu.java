@@ -1,12 +1,9 @@
 package com.waitless.restaurant.menu.domain.entity;
 
-import java.util.UUID;
-
-import org.hibernate.annotations.Where;
-
 import com.waitless.common.domain.BaseTimeEntity;
 import com.waitless.restaurant.menu.domain.entity.enums.MenuCategory;
-
+import com.waitless.restaurant.restaurant.application.exception.RestaurantBusinessException;
+import com.waitless.restaurant.restaurant.application.exception.RestaurantErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,14 +12,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.Where;
-
-import java.util.UUID;
 
 @Getter
 @Entity
@@ -66,5 +60,12 @@ public class Menu extends BaseTimeEntity {
                 updateMenu.amount == null ? oldMenu.amount : updateMenu.amount,
                 updateMenu.price == null ? oldMenu.price : updateMenu.price,
                 updateMenu.name == null ? oldMenu.name : updateMenu.name);
+    }
+
+    public void decreaseAmount(int amount) {
+        if(amount > this.amount) {
+            throw new RestaurantBusinessException(RestaurantErrorCode.MENU_DECREASE_FAILED);
+        }
+        this.amount -= amount;
     }
 }

@@ -1,5 +1,7 @@
 package com.waitless.restaurant.restaurant.application.mapper;
 
+import com.waitless.common.dto.RestaurantStockResponseDto;
+import com.waitless.common.dto.StockDto;
 import com.waitless.restaurant.menu.application.dto.MenuDto;
 import com.waitless.restaurant.restaurant.application.dto.RestaurantResponseDto;
 import com.waitless.restaurant.restaurant.application.dto.RestaurantWithMenuResponseDto;
@@ -24,4 +26,10 @@ public interface RestaurantServiceMapper {
     @Mapping(source = "restaurant.operatingHours.closingTime", target = "closingTime")
     RestaurantWithMenuResponseDto toWithMenuDto(Restaurant restaurant, List<MenuDto> menuList);
 
+    @Mapping(source = "restaurant.id", target = "restaurantId")
+    @Mapping(source = "restaurant.maxTableCount", target = "maxTableCount")
+    @Mapping(source = "menuList", target = "stockList")
+    RestaurantStockResponseDto toStockResponseDto(Restaurant restaurant, List<MenuDto> menuList);
+
+    StockDto toStockDto(MenuDto menuDto);
 }

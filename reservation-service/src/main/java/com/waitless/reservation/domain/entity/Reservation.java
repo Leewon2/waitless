@@ -89,4 +89,14 @@ public class Reservation extends BaseTimeEntity {
         this.menus.add(menu);
         menu.addReservation(this);
     }
+
+    public Integer getTotalPrice() {
+        return menus.stream()
+                .mapToInt(m -> m.getPrice() * m.getQuantity())
+                .sum();
+    }
+
+    public void cancel() {
+        this.status = ReservationStatus.CANCELLED;
+    }
 }

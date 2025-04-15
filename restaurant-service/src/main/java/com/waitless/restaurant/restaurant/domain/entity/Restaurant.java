@@ -45,6 +45,8 @@ public class Restaurant extends BaseTimeEntity {
     @JoinColumn(name="category_id", nullable = false)
     private Category category;
 
+    private Integer maxTableCount;
+
     @Embedded
     private Location location;
 
@@ -53,12 +55,14 @@ public class Restaurant extends BaseTimeEntity {
 
 
     public static Restaurant of(String name, Long ownerId, String phone, Category category,
+        int maxTableCount,
         Location location, OperatingHours operatingHours) {
 
         Restaurant restaurant = new Restaurant();
         restaurant.name = name;
         restaurant.ownerId = ownerId;
         restaurant.phone = phone;
+        restaurant.maxTableCount = maxTableCount;
         restaurant.location = location;
         restaurant.operatingHours = operatingHours;
         restaurant.category = category;
