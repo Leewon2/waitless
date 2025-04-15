@@ -17,12 +17,10 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
 import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.repository.CouponRepository;
 
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
 
 @Repository
 public class CouponRepositoryImpl implements CouponRepository, CustomCouponRepository {
@@ -53,7 +51,7 @@ public class CouponRepositoryImpl implements CouponRepository, CustomCouponRepos
 			builder.and(coupon.title.containsIgnoreCase(title));
 		}
 
-		List<Coupon> users = queryFactory
+		List<Coupon> coupons = queryFactory
 			.selectFrom(coupon)
 			.where(builder)
 			.orderBy(orderSpecifier)
@@ -66,7 +64,7 @@ public class CouponRepositoryImpl implements CouponRepository, CustomCouponRepos
 			.from(coupon)
 			.where(builder);
 
-		return PageableExecutionUtils.getPage(users, pageable, countQuery::fetchOne);
+		return PageableExecutionUtils.getPage(coupons, pageable, countQuery::fetchOne);
 	}
 
 	private OrderSpecifier<?> getOrderSpecifier(Sort.Direction direction, String sortBy) {

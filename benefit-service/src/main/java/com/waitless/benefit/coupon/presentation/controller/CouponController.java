@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.waitless.benefit.coupon.application.dto.CouponHistoryResponseDto;
 import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
+import com.waitless.benefit.coupon.presentation.dto.ReadCouponHistoriesRequestDto;
 import com.waitless.benefit.coupon.application.service.CouponHistoryService;
 import com.waitless.benefit.coupon.application.service.CouponService;
 import com.waitless.benefit.coupon.presentation.dto.CreateCouponRequestDto;
@@ -83,11 +84,35 @@ public class CouponController {
 
 	// Coupon-Histroy --------------------------------------------------------------------------------------------
 
+	// 쿠폰 받기
 	@PostMapping("/issued/{couponId}")
 	public ResponseEntity<SingleResponse<CouponHistoryResponseDto>> issuedCoupon(
 		@PathVariable UUID couponId, @RequestHeader("X-User-Id") String userId) {
 		CouponHistoryResponseDto couponHistoryResponseDto = couponHistoryService.issuedCoupon(couponId, userId);
 		return ResponseEntity.ok(SingleResponse.success(couponHistoryResponseDto));
+	}
+
+	// 쿠폰발급내역 단건 조회
+	@GetMapping("/history/{id}")
+	public ResponseEntity<SingleResponse<CouponHistoryResponseDto>> readCouponHistory(@PathVariable UUID id) {
+		CouponHistoryResponseDto couponHistoryResponseDto = couponHistoryService.findCouponHistory(id);
+		return ResponseEntity.ok(SingleResponse.success(couponHistoryResponseDto));
+	}
+
+	// 쿠폰발급내역 목록 조회
+	@GetMapping("/history")
+	public ResponseEntity<?> readCouponHistories(
+		@RequestParam(required = false) String title,
+		@RequestParam(defaultValue = "1", required = false) int page,
+		@RequestParam(defaultValue = "10", required = false) int size,
+		@RequestParam(defaultValue = "DESC", required = false) Sort.Direction sortDirection,
+		@RequestParam(defaultValue = "updatedAt", required = false) String sortBy,
+		@RequestHeader("X-User-Id") String userId
+	) {
+		ReadCouponHistoriesRequestDto readCouponHistoriesRequestDto = new ReadCouponHistoriesRequestDto(title, page, size, sortDirection, sortBy, Long.parseLong(userId));
+		Pageable pageable = PageRequest.of(page - 1, size);
+		Page<CouponHistoryResponseDto> response = couponHistoryService.findAndSearchCouponHistories(couponControllerMapper.toReadCouponHistoriesDto(readCouponHistoriesRequestDto), pageable);
+		return ResponseEntity.ok(MultiResponse.success(response));
 	}
 
 }

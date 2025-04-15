@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import org.hibernate.annotations.Where;
 
+import com.waitless.common.domain.BaseTimeEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Where(clause = "is_deleted=false")
 @Builder
-public class CouponHistory {
+public class CouponHistory extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id")
@@ -38,13 +40,17 @@ public class CouponHistory {
 	private UUID couponId;
 
 	@Column(nullable = false)
+	private boolean isValid;
+
+	@Column(nullable = false)
 	private LocalDateTime expiredAt;
 
-	public CouponHistory(UUID id, String title, Long userId, UUID couponId, LocalDateTime expiredAt) {
+	public CouponHistory(UUID id, String title, Long userId, UUID couponId, boolean isValid, LocalDateTime expiredAt) {
 		this.id = id;
 		this.title = title;
 		this.userId = userId;
 		this.couponId = couponId;
+		this.isValid = isValid;
 		this.expiredAt = expiredAt;
 	}
 
