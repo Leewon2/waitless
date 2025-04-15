@@ -10,7 +10,8 @@ import lombok.Getter;
 public enum CouponErrorCode implements ErrorCode {
 
 	COUPON_NOT_FOUND("COUPON_001", "해당 쿠폰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-	COUPON_ISSUED_IMPOSSIBLE("COUPON_002", "해당 쿠폰을 발급할 수 있는 날짜가 지났습니다.", HttpStatus.BAD_REQUEST);
+	COUPON_ISSUED_IMPOSSIBLE("COUPON_002", "해당 쿠폰을 발급할 수 있는 날짜가 지났습니다.", HttpStatus.BAD_REQUEST),
+	COUPONHISTORY_NOT_FOUND("COUPON_001", "해당 쿠폰발급내역을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
 	private final String code;
 	private final String message;

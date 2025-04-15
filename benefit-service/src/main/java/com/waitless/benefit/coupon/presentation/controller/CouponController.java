@@ -23,12 +23,14 @@ import com.waitless.benefit.coupon.application.dto.CouponHistoryResponseDto;
 import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
 import com.waitless.benefit.coupon.application.service.CouponHistoryService;
 import com.waitless.benefit.coupon.application.service.CouponService;
+import com.waitless.benefit.coupon.domain.entity.CouponHistory;
 import com.waitless.benefit.coupon.presentation.dto.CreateCouponRequestDto;
 import com.waitless.benefit.coupon.presentation.dto.ReadCouponsRequestDto;
 import com.waitless.benefit.coupon.presentation.mapper.CouponControllerMapper;
 import com.waitless.common.exception.response.MultiResponse;
 import com.waitless.common.exception.response.SingleResponse;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -83,10 +85,18 @@ public class CouponController {
 
 	// Coupon-Histroy --------------------------------------------------------------------------------------------
 
+	// 쿠폰 받기
 	@PostMapping("/issued/{couponId}")
 	public ResponseEntity<SingleResponse<CouponHistoryResponseDto>> issuedCoupon(
 		@PathVariable UUID couponId, @RequestHeader("X-User-Id") String userId) {
 		CouponHistoryResponseDto couponHistoryResponseDto = couponHistoryService.issuedCoupon(couponId, userId);
+		return ResponseEntity.ok(SingleResponse.success(couponHistoryResponseDto));
+	}
+
+	// 쿠폰발급내역 단건 조회
+	@GetMapping("/history/{id}")
+	public ResponseEntity<SingleResponse<CouponHistoryResponseDto>> readCouponHistory(@PathVariable UUID id) {
+		CouponHistoryResponseDto couponHistoryResponseDto = couponHistoryService.findCouponHistory(id);
 		return ResponseEntity.ok(SingleResponse.success(couponHistoryResponseDto));
 	}
 

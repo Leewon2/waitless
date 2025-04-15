@@ -11,6 +11,7 @@ import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
 import com.waitless.benefit.coupon.application.exception.CouponBusinessException;
 import com.waitless.benefit.coupon.application.exception.CouponErrorCode;
 import com.waitless.benefit.coupon.application.mapper.CouponHistoryServiceMapper;
+import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.entity.CouponHistory;
 import com.waitless.benefit.coupon.domain.repository.CouponHistoryRepository;
 
@@ -40,10 +41,26 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 			.title(couponInfo.title())
 			.couponId(couponId)
 			.userId(Long.parseLong(userId))
+			.isValid(true)
 			.expiredAt(expiredDate)
 			.build();
 		// 쿠폰 발급가능수량 -1 차감
 		couponService.decreaseCouponAmount(couponId);
 		return couponHistoryServiceMapper.toCouponHistoryResponseDto(couponHistoryRepository.save(couponHistory));
 	}
+
+	// 쿠폰발급내역 단건 조회
+	@Override
+	public CouponHistoryResponseDto findCouponHistory(UUID id) {
+		CouponHistory couponHistory = findCouponHistoryById(id);
+		return couponHistoryServiceMapper.toCouponHistoryResponseDto(couponHistory);
+	}
+
+	private CouponHistory findCouponHistoryById(UUID id) {
+		CouponHistory couponHistory = couponHistoryRepository.findById(id)
+			.orElseThrow(()-> CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_NOT_FOUND));
+		return couponHistory;
+	}
+
+
 }
