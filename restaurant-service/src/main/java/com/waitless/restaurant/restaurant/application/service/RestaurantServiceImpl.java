@@ -7,6 +7,8 @@ import com.waitless.restaurant.restaurant.application.dto.RestaurantResponseDto;
 import com.waitless.restaurant.restaurant.application.dto.RestaurantWithMenuResponseDto;
 import com.waitless.restaurant.restaurant.application.dto.SearchRestaurantDto;
 import com.waitless.restaurant.restaurant.application.dto.UpdateRestaurantDto;
+import com.waitless.restaurant.restaurant.application.exception.RestaurantBusinessException;
+import com.waitless.restaurant.restaurant.application.exception.RestaurantErrorCode;
 import com.waitless.restaurant.restaurant.application.mapper.RestaurantServiceMapper;
 import com.waitless.restaurant.restaurant.domain.entity.Category;
 import com.waitless.restaurant.restaurant.domain.entity.Restaurant;
@@ -103,7 +105,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Transactional(readOnly = true)
     public Restaurant findById(UUID id) {
-      return restaurantRepository.findById(id).orElseThrow(()-> new NullPointerException("식당을 찾을 수 없습니다."));
+      return restaurantRepository.findById(id).orElseThrow(()-> RestaurantBusinessException.from(
+          RestaurantErrorCode.RESTAURANT_NOT_FOUND));
     }
-
 }

@@ -5,6 +5,8 @@ import com.waitless.restaurant.menu.application.mapper.MenuServiceMapper;
 import com.waitless.restaurant.menu.domain.entity.Menu;
 import com.waitless.restaurant.menu.domain.repository.MenuRepository;
 
+import com.waitless.restaurant.restaurant.application.exception.RestaurantBusinessException;
+import com.waitless.restaurant.restaurant.application.exception.RestaurantErrorCode;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,6 +75,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     private Menu getMenuFromRepo(UUID id) {
-        return menuRepository.getMenu(id).orElseThrow(() -> new NullPointerException("메뉴 id 없음"));
+        return menuRepository.getMenu(id).orElseThrow(() -> RestaurantBusinessException.from(
+            RestaurantErrorCode.MENU_NOT_FOUND));
     }
 }
