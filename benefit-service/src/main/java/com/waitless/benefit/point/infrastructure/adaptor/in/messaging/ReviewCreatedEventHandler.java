@@ -21,8 +21,7 @@ public class ReviewCreatedEventHandler {
     @KafkaListener(
             topics = "review-events",
             groupId = "point-service",
-            properties = {
-            "spring.json.value.default.type=com.waitless.common.event.ReviewCreatedEvent"
+            properties = {"spring.json.value.default.type=com.waitless.common.event.ReviewCreatedEvent"
             })
     public void handleReviewCreatedEvent(ReviewCreatedEvent event) {
         log.info("[Kafka] ReviewCreatedEvent 수신: {}", event);
