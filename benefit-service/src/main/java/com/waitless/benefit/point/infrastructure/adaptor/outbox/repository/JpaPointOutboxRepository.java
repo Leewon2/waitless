@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface JpaPointOutboxRepository extends JpaRepository<PointOutboxMessage, UUID> {
     List<PointOutboxMessage> findByStatus(PointOutboxMessage.OutboxStatus status);
+    List<PointOutboxMessage> findByStatusAndRetryCountLessThan(PointOutboxMessage.OutboxStatus status, int maxRetry);
 }
