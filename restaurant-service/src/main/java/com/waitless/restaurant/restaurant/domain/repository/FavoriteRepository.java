@@ -10,4 +10,5 @@ public interface FavoriteRepository {
 
    Optional<Favorite> findByRestaurantAndUserId(UUID restaurantId, Long userId);
 
+   Optional<Favorite> findById(UUID id);
 }

@@ -19,5 +19,9 @@ public class FavoriteRepositoryImpl implements FavoriteRepository {
         return favoriteJpaRepository.findByRestaurant_IdAndUserId(restaurantId,userId);
     }
 
+    public Optional<Favorite> findById(UUID id) {
+        return favoriteJpaRepository.findById(id);
+    }
+
 
 }

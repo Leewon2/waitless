@@ -24,8 +24,6 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Transactional
     public FavoriteResponseDto addFavorite(UUID restaurantId, Long userId) {
         Favorite favorite;
-
-        // 즐겨찾기 중복 확인
         Optional<Favorite> favoriteOptional = favoriteRepository.findByRestaurantAndUserId(restaurantId, userId);
 
         if(favoriteOptional.isPresent()) {
@@ -40,11 +38,22 @@ public class FavoriteServiceImpl implements FavoriteService {
             favoriteRepository.save(favorite);
         }
 
+        return favoriteServiceMapper.toResponseDto(favorite);
+    }
+
+    @Transactional
+    public FavoriteResponseDto deleteFavorite(UUID id) {
+        Favorite favorite = findFavoriteById(id);
+        favorite.delete();
 
         return favoriteServiceMapper.toResponseDto(favorite);
     }
 
-
+    @Transactional
+    public Favorite findFavoriteById(UUID id) {
+        return favoriteRepository.findById(id)
+            .orElseThrow(()->RestaurantBusinessException.from(RestaurantErrorCode.FAVORITE_NOT_FOUND));
+    }
 
 
 }

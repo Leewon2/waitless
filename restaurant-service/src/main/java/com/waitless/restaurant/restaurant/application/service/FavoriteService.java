@@ -6,4 +6,6 @@ import java.util.UUID;
 public interface FavoriteService {
 
     FavoriteResponseDto addFavorite(UUID uuid, Long userId);
+
+    FavoriteResponseDto deleteFavorite(UUID id);
 }
