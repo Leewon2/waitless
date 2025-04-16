@@ -33,6 +33,8 @@ public abstract class BaseTimeEntity {
     public void delete() {
         this.isDeleted = true;
     }
+
+    public void revert() {this.isDeleted = false;}
     public boolean isDeleted() {
         return this.isDeleted;
     }
