@@ -23,7 +23,67 @@ spring:
         naming:
           physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: default
+      password: systempass
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 slack:
   webhook:
-    url: "https://hooks.slack.com/services/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"
+    urls:
+      - "https://hooks.slack.com/services/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"
+      - "https://hooks.slack.com/services/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"
+      - "https://hooks.slack.com/services/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"
+
+resilience4j:
+  retry:
+    instances:
+      slackRetry:
+        max-attempts: 3
+        wait-duration: 2s
+        retry-exceptions:
+          - java.net.SocketTimeoutException
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.web.client.ResourceAccessException
+
+  circuitbreaker:
+    instances:
+      slackCircuitBreaker:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 30
+        wait-duration-in-open-state: 5s
+
+  ratelimiter:
+    instances:
+      slackRateLimiter:
+        limit-for-period: 3
+        limit-refresh-period: 1s
+        timeout-duration: 0
+
+  bulkhead:
+    instances:
+      slackBulkhead:
+        max-concurrent-calls: 3
+        max-wait-duration: 2s
+
+  timelimiter:
+    instances:
+      slackTimeLimiter:
+        timeout-duration: 3s
+
+logging:
+  level:
+    io.github.resilience4j: DEBUG
