@@ -6,6 +6,7 @@ import com.waitless.restaurant.restaurant.application.exception.RestaurantErrorC
 import com.waitless.restaurant.restaurant.application.mapper.CategoryServiceMapper;
 import com.waitless.restaurant.restaurant.domain.entity.Category;
 import com.waitless.restaurant.restaurant.domain.repository.CategoryRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,11 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         return  categoryServiceMapper.toResponseDto(categoryRepository.save(Category.of(name)));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryResponseDto> getAllCategoryList() {
+        return categoryServiceMapper.toResponseDto(categoryRepository.findAll());
     }
 
     @Transactional(readOnly = true)

@@ -2,6 +2,7 @@ package com.waitless.restaurant.restaurant.application.service;
 
 import com.waitless.restaurant.restaurant.application.dto.CategoryResponseDto;
 import com.waitless.restaurant.restaurant.domain.entity.Category;
+import java.util.List;
 
 public interface CategoryService {
 
@@ -9,4 +10,5 @@ public interface CategoryService {
 
     CategoryResponseDto createCategory(String name);
 
+    List<CategoryResponseDto> getAllCategoryList();
 }

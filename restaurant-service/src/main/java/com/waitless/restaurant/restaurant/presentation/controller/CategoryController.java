@@ -1,5 +1,6 @@
 package com.waitless.restaurant.restaurant.presentation.controller;
 
+import com.waitless.common.exception.response.MultiResponse;
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.restaurant.restaurant.application.dto.CategoryResponseDto;
 import com.waitless.restaurant.restaurant.application.service.CategoryService;
@@ -24,5 +25,8 @@ public class CategoryController {
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
 
-
+    @GetMapping
+    public ResponseEntity<?> getAllCategoryList() {
+        return ResponseEntity.ok(MultiResponse.success(categoryService.getAllCategoryList()));
+    }
 }
