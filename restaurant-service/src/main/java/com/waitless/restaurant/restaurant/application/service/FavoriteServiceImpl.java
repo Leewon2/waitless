@@ -10,6 +10,8 @@ import com.waitless.restaurant.restaurant.domain.repository.FavoriteRepository;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,12 @@ public class FavoriteServiceImpl implements FavoriteService {
         favorite.delete();
 
         return favoriteServiceMapper.toResponseDto(favorite);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<FavoriteResponseDto> getFavoriteList(Long userId, Pageable pageable) {
+        Page<Favorite> favoritePage = favoriteRepository.findAllByUserId(userId, pageable);
+        return favoriteServiceMapper.toResponseDtoPage(favoritePage);
     }
 
     @Transactional
