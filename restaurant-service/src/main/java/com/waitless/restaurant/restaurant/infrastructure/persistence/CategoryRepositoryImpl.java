@@ -10,8 +10,12 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class CategoryRepositoryImpl implements CategoryRepository {
 
-    private final CategoryJpaRepository CategoryJpaRepository;
+    private final CategoryJpaRepository categoryJpaRepository;
 
-    public Optional<Category> findById(Long id) {return CategoryJpaRepository.findById(id);}
+    public Category save(Category category) {return categoryJpaRepository.save(category);}
+
+    public Optional<Category> findById(Long id) {return categoryJpaRepository.findById(id);}
+
+    public boolean existsByName(String name) {return categoryJpaRepository.existsByName(name);}
 
 }
