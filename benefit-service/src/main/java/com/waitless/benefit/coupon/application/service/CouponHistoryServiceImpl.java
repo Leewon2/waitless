@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +17,6 @@ import com.waitless.benefit.coupon.application.dto.ReadCouponHistoriesDto;
 import com.waitless.benefit.coupon.application.exception.CouponBusinessException;
 import com.waitless.benefit.coupon.application.exception.CouponErrorCode;
 import com.waitless.benefit.coupon.application.mapper.CouponHistoryServiceMapper;
-import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.entity.CouponHistory;
 import com.waitless.benefit.coupon.domain.repository.CouponHistoryRepository;
 import com.waitless.benefit.coupon.infrastructure.repository.CustomCouponHistoryRepository;
@@ -37,6 +37,10 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 	@Transactional
 	public CouponHistoryResponseDto issuedCoupon(UUID couponId, String userId) { // redisson 분산 락...
 		CouponResponseDto couponInfo = couponService.findCoupon(couponId);
+		// 쿠폰 수량 확인 후
+		if (couponInfo.amount() <= 0) {
+			throw CouponBusinessException.from(CouponErrorCode.COUPON_AMOUNT_EXHAUSTED);
+		}
 		LocalDateTime today = LocalDateTime.now();
 		// 쿠폰 발급 가능일자가 지나면 예외처리
 		if (!today.isBefore(couponInfo.issuanceDate())) {
@@ -80,12 +84,21 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		return new PageImpl<>(dtoList, pageable, couponHistoryList.getTotalElements());
 	}
 
+	// 쿠폰발급내역 삭제
+	@Override
+	@Transactional
+	public void removeCouponHistory(UUID id, String userId) {
+		CouponHistory couponHistory = findCouponHistoryById(id);
+		if (!couponHistory.getUserId().equals(Long.parseLong(userId))) {
+			throw CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_UNAUTHORIZED);
+		}
+		couponHistory.delete();
+	}
 
 	private CouponHistory findCouponHistoryById(UUID id) {
 		CouponHistory couponHistory = couponHistoryRepository.findById(id)
 			.orElseThrow(()-> CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_NOT_FOUND));
 		return couponHistory;
 	}
-
 
 }

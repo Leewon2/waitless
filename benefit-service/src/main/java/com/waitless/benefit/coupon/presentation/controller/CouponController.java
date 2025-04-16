@@ -115,4 +115,11 @@ public class CouponController {
 		return ResponseEntity.ok(MultiResponse.success(response));
 	}
 
+	// 쿠폰발급내역 삭제
+	@DeleteMapping("/history/{id}")
+	public ResponseEntity<Void> deleteCouponHistory(@PathVariable UUID id, @RequestHeader("X-User-Id") String userId) {
+		couponHistoryService.removeCouponHistory(id, userId);
+		return ResponseEntity.noContent().build();
+	}
+
 }
