@@ -2,6 +2,7 @@ package com.waitless.restaurant.restaurant.infrastructure.persistence;
 
 import com.waitless.restaurant.restaurant.domain.entity.Category;
 import com.waitless.restaurant.restaurant.domain.repository.CategoryRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -10,8 +11,15 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class CategoryRepositoryImpl implements CategoryRepository {
 
-    private final CategoryJpaRepository CategoryJpaRepository;
+    private final CategoryJpaRepository categoryJpaRepository;
 
-    public Optional<Category> findById(Long id) {return CategoryJpaRepository.findById(id);}
+    public Category save(Category category) {return categoryJpaRepository.save(category);}
+
+    public Optional<Category> findById(Long id) {return categoryJpaRepository.findById(id);}
+
+    @Override
+    public List<Category> findAll() { return categoryJpaRepository.findAll();}
+
+    public boolean existsByName(String name) {return categoryJpaRepository.existsByName(name);}
 
 }
