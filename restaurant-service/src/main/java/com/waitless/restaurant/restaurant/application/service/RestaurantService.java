@@ -23,4 +23,6 @@ public interface RestaurantService {
     Page<RestaurantResponseDto> getRestaurantList(SearchRestaurantDto serviceDto, Pageable pageable);
 
     List<RestaurantStockResponseDto> getRestaurantStock(List<UUID> restaurantIdList);
+
+    RestaurantResponseDto getRestaurant(UUID id);
 }
