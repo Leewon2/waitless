@@ -37,6 +37,10 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 	@Transactional
 	public CouponHistoryResponseDto issuedCoupon(UUID couponId, String userId) { // redisson 분산 락...
 		CouponResponseDto couponInfo = couponService.findCoupon(couponId);
+		// 쿠폰 수량 확인 후
+		if (couponInfo.amount() <= 0) {
+			throw CouponBusinessException.from(CouponErrorCode.COUPON_AMOUNT_EXHAUSTED);
+		}
 		LocalDateTime today = LocalDateTime.now();
 		// 쿠폰 발급 가능일자가 지나면 예외처리
 		if (!today.isBefore(couponInfo.issuanceDate())) {
@@ -89,16 +93,6 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 			throw CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_UNAUTHORIZED);
 		}
 		couponHistory.delete();
-	}
-
-	// 만료된 쿠폰발급내역 자동삭제 - 이미 사용했거나, 사용가능일자를 지난 경우
-	// @Scheduled(cron = "*/10 * * * * *") // 10초마다
-	@Transactional
-	public void removeInvalidIssuedCoupons() {
-		List<CouponHistory> invalidIssuedCoupons = customCouponHistoryRepository.findInvalidIssuedCoupons();
-		for (CouponHistory coupon : invalidIssuedCoupons) {
-			coupon.delete();
-		}
 	}
 
 	private CouponHistory findCouponHistoryById(UUID id) {

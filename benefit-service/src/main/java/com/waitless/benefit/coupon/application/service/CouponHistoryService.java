@@ -16,4 +16,5 @@ public interface CouponHistoryService {
 	Page<CouponHistoryResponseDto> findAndSearchCouponHistories(ReadCouponHistoriesDto readCouponHistoriesDto, Pageable pageable);
 
 	void removeCouponHistory(UUID id, String userId);
+
 }
