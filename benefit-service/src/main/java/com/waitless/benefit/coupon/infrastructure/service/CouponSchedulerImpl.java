@@ -23,7 +23,7 @@ public class CouponSchedulerImpl implements CouponScheduler {
 
 	// 쿠폰발급가능일자 지난 쿠폰들 자동삭제
 	@Override
-	@Scheduled(cron = "*/10 * * * * *") // 10초마다
+	// @Scheduled(cron = "*/10 * * * * *") // 10초마다
 	@Transactional
 	public void removeInvalidCoupons() {
 		List<Coupon> invalidCoupons = customCouponRepository.findInvalidCoupons();
