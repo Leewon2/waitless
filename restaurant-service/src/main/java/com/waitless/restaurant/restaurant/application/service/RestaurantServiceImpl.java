@@ -93,7 +93,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         List<Restaurant> restaurantList;
 
-        if(restaurantIdList.isEmpty()){
+        if(restaurantIdList == null || restaurantIdList.isEmpty()){
             restaurantList = restaurantRepository.findAll();
         }else {
             restaurantList = restaurantRepository.findByIdIn(restaurantIdList);
@@ -101,6 +101,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         return restaurantList.stream().map(restaurant ->
             restaurantServiceMapper.toStockResponseDto(restaurant, menuService.getMenus(restaurant.getId()))).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public RestaurantResponseDto getRestaurant(UUID id) {
+        return restaurantServiceMapper.toResponseDto(findById(id));
     }
 
     @Transactional(readOnly = true)
