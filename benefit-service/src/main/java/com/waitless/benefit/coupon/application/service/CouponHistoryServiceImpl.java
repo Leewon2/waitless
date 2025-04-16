@@ -17,6 +17,7 @@ import com.waitless.benefit.coupon.application.dto.ReadCouponHistoriesDto;
 import com.waitless.benefit.coupon.application.exception.CouponBusinessException;
 import com.waitless.benefit.coupon.application.exception.CouponErrorCode;
 import com.waitless.benefit.coupon.application.mapper.CouponHistoryServiceMapper;
+import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.entity.CouponHistory;
 import com.waitless.benefit.coupon.domain.repository.CouponHistoryRepository;
 import com.waitless.benefit.coupon.infrastructure.repository.CustomCouponHistoryRepository;
@@ -93,6 +94,24 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 			throw CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_UNAUTHORIZED);
 		}
 		couponHistory.delete();
+	}
+
+	// 발급된 쿠폰 사용
+	@Override
+	@Transactional
+	public void userIssuedCoupon(UUID id, String userId) {
+		CouponHistory couponHistory = findCouponHistoryById(id);
+		long loginuser = Long.parseLong(userId);
+		if (!couponHistory.getUserId().equals(loginuser)) {
+			throw CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_UNAUTHORIZED);
+		}
+		if (couponHistory.getExpiredAt().isBefore(LocalDateTime.now())) {
+			throw CouponBusinessException.from(CouponErrorCode.ISSUED_COUPON_EXPIRED);
+		}
+		if (!couponHistory.isValid()) {
+			throw CouponBusinessException.from(CouponErrorCode.COUPON_ALREADY_USED);
+		}
+		couponHistory.used(couponHistory);
 	}
 
 	private CouponHistory findCouponHistoryById(UUID id) {
