@@ -4,9 +4,10 @@ import com.waitless.message.application.dto.SlackDeleteResponseDto;
 import com.waitless.message.domain.entity.SlackMessage;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface SlackService {
-    SlackMessage createSlack(String receiverId, Integer mySequence);
+    CompletableFuture<SlackMessage> createSlack(String receiverId, Integer mySequence);
 
     SlackDeleteResponseDto deleteMessage(UUID id);
 }

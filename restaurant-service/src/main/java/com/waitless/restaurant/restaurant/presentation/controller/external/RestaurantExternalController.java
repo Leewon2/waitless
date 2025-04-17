@@ -1,4 +1,4 @@
-package com.waitless.restaurant.restaurant.presentation.controller;
+package com.waitless.restaurant.restaurant.presentation.controller.external;
 
 
 import com.waitless.common.dto.RestaurantStockResponseDto;
@@ -26,13 +26,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/restaurants")
 @RequiredArgsConstructor
-public class RestaurantController {
+public class RestaurantExternalController {
 
     private final RestaurantService restaurantService;
     private final RestaurantControllerMapper restaurantControllerMapper;
@@ -78,10 +77,5 @@ public class RestaurantController {
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
 
-    @PostMapping("/app/stock")
-    public ResponseEntity<?> getRestaurantStock(@RequestBody(required = false) List<UUID> restaurantIdList) {
-        List<RestaurantStockResponseDto> responseDto = restaurantService.getRestaurantStock(restaurantIdList);
 
-        return ResponseEntity.ok(MultiResponse.success(responseDto));
-    }
 }

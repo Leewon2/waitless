@@ -54,4 +54,7 @@ public class CouponHistory extends BaseTimeEntity {
 		this.expiredAt = expiredAt;
 	}
 
+	public void used(CouponHistory couponHistory) {
+		this.isValid = false;
+	}
 }
