@@ -12,8 +12,8 @@ public record PostReviewResponseDto(
     Long userId,
     UUID restaurantId,
     String content,
-    Rating rating,
-    ReviewType reviewType,
+    int rating,
+    String reviewType,
     LocalDateTime createdAt
     ) {
     public static PostReviewResponseDto from(PostReviewResult result) {
@@ -22,8 +22,8 @@ public record PostReviewResponseDto(
                 result.userId(),
                 result.restaurantId(),
                 result.content(),
-                result.rating(),
-                result.reviewType(),
+                result.rating().getRatingValue(),
+                result.reviewType().getReviewType().name(),
                 result.createdAt()
         );
     }
