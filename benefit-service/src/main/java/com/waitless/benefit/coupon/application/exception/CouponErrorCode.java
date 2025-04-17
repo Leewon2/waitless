@@ -11,7 +11,7 @@ public enum CouponErrorCode implements ErrorCode {
 
 	COUPON_NOT_FOUND("COUPON_001", "해당 쿠폰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	COUPON_ISSUED_IMPOSSIBLE("COUPON_002", "해당 쿠폰을 발급할 수 있는 날짜가 지났습니다.", HttpStatus.BAD_REQUEST),
-	COUPON_AMOUNT_EXHAUSTED("COUPON_003", "해당 쿠폰을 발급할 수 있는 날짜가 지났습니다.", HttpStatus.INSUFFICIENT_STORAGE),
+	COUPON_AMOUNT_EXHAUSTED("COUPON_003", "해당 쿠폰 발급 가능 수량이 모두 소진되었습니다.", HttpStatus.INSUFFICIENT_STORAGE),
 	COUPONHISTORY_NOT_FOUND("COUPON_004", "해당 쿠폰발급내역을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	COUPONHISTORY_UNAUTHORIZED("COUPON_005", "해당 쿠폰발급내역에 대한 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
 	ISSUED_COUPON_EXPIRED("COUPON_006", "해당 쿠폰은 만료되었습니다.", HttpStatus.BAD_REQUEST),
