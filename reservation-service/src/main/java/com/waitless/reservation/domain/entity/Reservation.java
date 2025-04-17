@@ -1,6 +1,8 @@
 package com.waitless.reservation.domain.entity;
 
 import com.waitless.common.domain.BaseTimeEntity;
+import com.waitless.common.exception.BusinessException;
+import com.waitless.reservation.exception.exception.ReservationErrorCode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -97,6 +99,18 @@ public class Reservation extends BaseTimeEntity {
     }
 
     public void cancel() {
+        validateWaitingStatus();
         this.status = ReservationStatus.CANCELLED;
+    }
+
+    public void visit() {
+        validateWaitingStatus();
+        this.status = ReservationStatus.COMPLETED;
+    }
+
+    private void validateWaitingStatus() {
+        if (this.status != ReservationStatus.WAITING) {
+            throw BusinessException.from(ReservationErrorCode.RESERVATION_STATUS_ERROR);
+        }
     }
 }

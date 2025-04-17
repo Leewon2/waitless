@@ -9,4 +9,6 @@ public interface ReservationCommandService {
     ReservationCreateResponse createReservation(ReservationCreateCommand reservationCreateCommand);
 
     void cancelReservation(UUID reservationId);
+
+    void visitReservation(UUID reservationId);
 }

@@ -4,6 +4,7 @@ import com.waitless.common.exception.BusinessException;
 import com.waitless.reservation.application.dto.CancelMenuDto;
 import com.waitless.reservation.application.dto.ReservationCreateCommand;
 import com.waitless.reservation.application.dto.ReservationCreateResponse;
+import com.waitless.reservation.application.event.dto.ReservationVisitedEvent;
 import com.waitless.reservation.application.mapper.ReservationServiceMapper;
 import com.waitless.reservation.application.service.redis.RedisReservationQueueService;
 import com.waitless.reservation.application.service.redis.RedisStockService;
@@ -12,8 +13,11 @@ import com.waitless.reservation.domain.entity.ReservationMenu;
 import com.waitless.reservation.domain.entity.ReservationStatus;
 import com.waitless.reservation.domain.repository.ReservationRepository;
 import com.waitless.reservation.exception.exception.ReservationErrorCode;
+import com.waitless.reservation.infrastructure.adaptor.client.RestaurantClient;
+import com.waitless.reservation.infrastructure.adaptor.client.dto.RestaurantResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +34,8 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
     private final ReservationRepository reservationRepository;
     private final ReservationServiceMapper reservationServiceMapper;
     private final RedisReservationQueueService redisReservationQueueService;
+    private final RestaurantClient restaurantClient;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     @Override
@@ -67,13 +73,46 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
     @Override
     public void cancelReservation(UUID reservationId) {
-        Reservation findReservation = reservationRepository.findFetchById(reservationId).orElseThrow(()
-                -> BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND));
+        Reservation findReservation = getReservationOrThrow(reservationId);
 
-        List<CancelMenuDto> list = findReservation.getMenus().stream().map(m -> new CancelMenuDto(m.getMenuId(), m.getQuantity())).toList();
+        List<CancelMenuDto> list = findReservation.getMenus().stream()
+                .map(m -> new CancelMenuDto(m.getMenuId(), m.getQuantity()))
+                .toList();
+
         redisStockService.incrementStock(findReservation.getRestaurantId(), list);
-        redisReservationQueueService.removeFromWaitingQueue(findReservation.getId(), findReservation.getReservationDate(), findReservation.getRestaurantId());
+        redisReservationQueueService.removeFromWaitingQueue(
+                findReservation.getId(),
+                findReservation.getReservationDate(),
+                findReservation.getRestaurantId()
+        );
 
         findReservation.cancel(); // 예약 상태 CANCELLED 변경
+    }
+
+    @Override
+    public void visitReservation(UUID reservationId) {
+        Long userId = 1L; // TODO: 쓰레드로컬에서 추출 예정 -> 가게주인의 UserId
+        Reservation findReservation = getReservationOrThrow(reservationId);
+
+        RestaurantResponseDto restaurantResponseDto =
+                restaurantClient.validateOwnerId(findReservation.getRestaurantId());
+
+        if (!restaurantResponseDto.ownerId().equals(userId)) {
+            throw BusinessException.from(ReservationErrorCode.RESTAURANT_OWNER_UNAUTHORIZED);
+        }
+
+        redisReservationQueueService.removeFromWaitingQueue(
+                reservationId,
+                findReservation.getReservationDate(),
+                findReservation.getRestaurantId()
+        );
+
+        findReservation.visit(); // 상태값 방문완료 변경
+        eventPublisher.publishEvent(new ReservationVisitedEvent(findReservation.getId(), findReservation.getRestaurantName(), userId));
+    }
+
+    private Reservation getReservationOrThrow(UUID reservationId) {
+        return reservationRepository.findFetchById(reservationId)
+                .orElseThrow(() -> BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND));
     }
 }

@@ -52,4 +52,10 @@ public class ReservationExternalController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/{reservationId}/visit")
+    public ResponseEntity visit(@PathVariable UUID reservationId){
+        commandService.visitReservation(reservationId);
+        return ResponseEntity.ok().build();
+    }
+
 }
