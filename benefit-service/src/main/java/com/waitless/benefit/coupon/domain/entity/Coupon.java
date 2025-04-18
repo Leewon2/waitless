@@ -60,6 +60,6 @@ public class Coupon extends BaseTimeEntity {
 	}
 
 	public void decrease() {
-		this.amount -= 1;
+		this.amount = this.amount - 1;
 	}
 }
