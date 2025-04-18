@@ -17,4 +17,5 @@ public interface CouponHistoryService {
 
 	void removeCouponHistory(UUID id, String userId);
 
+	void userIssuedCoupon(UUID id, String userId);
 }
