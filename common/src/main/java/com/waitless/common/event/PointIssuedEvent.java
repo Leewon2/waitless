@@ -13,6 +13,7 @@ public class PointIssuedEvent extends Event{
     private UUID pointId;
     private UUID reviewId;
     private Long userId;
+    private UUID reservationId;
     private Integer amount;
     private String description;
     private LocalDateTime issuedAt;
