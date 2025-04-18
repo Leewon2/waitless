@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.Where;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waitless.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;

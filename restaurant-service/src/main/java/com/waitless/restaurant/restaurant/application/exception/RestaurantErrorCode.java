@@ -15,7 +15,8 @@ public enum RestaurantErrorCode implements ErrorCode {
     CATEGORY_NOT_FOUND("CATEGORY_1","해당 카테고리를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     CATEGORY_DUPLICATE("CATEGORY_2","카테고리 이름은 중복될 수 없습니다.", HttpStatus.BAD_REQUEST),
 
-    FAVORITE_DUPLICATE("FAVORITE_1", "해당 식당은 이미 즐겨찾기가 되어있습니다.", HttpStatus.BAD_REQUEST);
+    FAVORITE_NOT_FOUND("FAVORITE_1", "해당 식당은 이미 즐겨찾기가 되어있습니다.", HttpStatus.NOT_FOUND),
+    FAVORITE_DUPLICATE("FAVORITE_2", "해당 식당은 이미 즐겨찾기가 되어있습니다.", HttpStatus.BAD_REQUEST);
 
 
     private final String code;

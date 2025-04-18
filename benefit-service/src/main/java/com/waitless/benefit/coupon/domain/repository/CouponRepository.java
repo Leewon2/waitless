@@ -14,4 +14,5 @@ public interface CouponRepository {
 
 	Optional<Coupon> findById(UUID id);
 
+	Optional<Coupon> findByIdForUpdate(UUID id);
 }

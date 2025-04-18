@@ -9,6 +9,9 @@ public record DeleteReviewResponseDto(
         boolean deleted
 ) {
     public static DeleteReviewResponseDto from(DeleteReviewResult result) {
-        return new DeleteReviewResponseDto(result.reviewId(), result.deleted());
+        return new DeleteReviewResponseDto(
+                result.reviewId(),
+                result.deleted()
+        );
     }
 }

@@ -38,6 +38,7 @@ public class PointOutboxMessage {
     private LocalDateTime sentAt;
 
     @Column(nullable = false)
+    @Builder.Default
     private int retryCount = 0;
 
     private LocalDateTime lastTriedAt;
