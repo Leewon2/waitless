@@ -1,5 +1,6 @@
 package com.waitless.reservation.application.service.query;
 
+import com.waitless.reservation.application.dto.ReservationCurrentResponse;
 import com.waitless.reservation.application.dto.ReservationSearchQuery;
 import com.waitless.reservation.presentation.dto.ReservationFindResponse;
 import com.waitless.reservation.application.dto.ReservationSearchResponse;
@@ -11,4 +12,6 @@ public interface ReservationQueryService {
     ReservationFindResponse findOne(UUID reservationId);
 
     Page<ReservationSearchResponse> search(ReservationSearchQuery reservationSearchQuery);
+
+    ReservationCurrentResponse currentNumber(UUID reservationId);
 }

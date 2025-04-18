@@ -3,6 +3,7 @@ package com.waitless.reservation.presentation.controller.external;
 import com.waitless.common.exception.response.MultiResponse;
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.reservation.application.dto.ReservationCreateResponse;
+import com.waitless.reservation.application.dto.ReservationCurrentResponse;
 import com.waitless.reservation.presentation.dto.ReservationFindResponse;
 import com.waitless.reservation.application.dto.ReservationSearchResponse;
 import com.waitless.reservation.application.service.command.ReservationCommandService;
@@ -58,4 +59,9 @@ public class ReservationExternalController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{reservationId}/queue-position")
+    public ResponseEntity current(@PathVariable("reservationId") UUID reservationId) {
+        ReservationCurrentResponse response = queryService.currentNumber(reservationId);
+        return ResponseEntity.ok(SingleResponse.success(response));
+    }
 }
