@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
 import com.waitless.benefit.coupon.application.dto.CreateCouponDto;
 import com.waitless.benefit.coupon.application.dto.ReadCouponsDto;
+import com.waitless.benefit.coupon.domain.entity.Coupon;
 
 public interface CouponService {
 	CouponResponseDto generateCoupon(CreateCouponDto createCouponDto);
@@ -21,5 +22,5 @@ public interface CouponService {
 
 	void removeCoupon(UUID id);
 
-	void decreaseCouponAmount(UUID id);
+	Coupon decreaseCouponAmount(UUID id);
 }

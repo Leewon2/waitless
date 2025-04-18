@@ -45,6 +45,11 @@ public class CouponRepositoryImpl implements CouponRepository, CustomCouponRepos
 	}
 
 	@Override
+	public Optional<Coupon> findByIdForUpdate(UUID id) {
+		return jpaCouponRepository.findByIdForUpdate(id);
+	}
+
+	@Override
 	public Page<Coupon> findAndSearchCoupons(String title, Sort.Direction sortDirection, String sortBy, Pageable pageable) {
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sortDirection, sortBy);
 		BooleanBuilder builder = new BooleanBuilder();
