@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public record PostReviewResult(
         UUID reviewId,
+        UUID reservationID,
         Long userId,
         UUID restaurantId,
         String content,
@@ -19,6 +20,7 @@ public record PostReviewResult(
     public static PostReviewResult from(Review review) {
         return new PostReviewResult(
                 review.getId(),
+                review.getReservationId(),
                 review.getUserId(),
                 review.getRestaurantId(),
                 review.getContent(),

@@ -20,6 +20,9 @@ public class Review extends BaseTimeEntity {
     @Column(nullable = false, updatable = false)
     private UUID id;
 
+    @Column(nullable = false, unique = true)
+    private UUID reservationId;
+
     @Column(nullable = false)
     private Long userId;
 
@@ -35,9 +38,10 @@ public class Review extends BaseTimeEntity {
     @Column(length = 255, nullable = false)
     private String content;
 
-    public static Review of(Long userId, UUID restaurantId, String content, Rating rating) {
+    public static Review of(UUID reservationId, Long userId, UUID restaurantId, String content, Rating rating) {
         return Review.builder()
                 .id(UUID.randomUUID())
+                .reservationId(reservationId)
                 .userId(userId)
                 .restaurantId(restaurantId)
                 .content(content)
