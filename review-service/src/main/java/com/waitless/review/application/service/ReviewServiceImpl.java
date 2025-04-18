@@ -6,20 +6,25 @@ import com.waitless.common.event.ReviewDeletedEvent;
 import com.waitless.review.application.dto.command.DeleteReviewCommand;
 import com.waitless.review.application.dto.command.PageCommand;
 import com.waitless.review.application.dto.command.PostReviewCommand;
-import com.waitless.review.domain.vo.ReviewSearchCondition;
 import com.waitless.review.application.dto.result.*;
 import com.waitless.review.application.mapper.ReviewServiceMapper;
 import com.waitless.review.application.port.in.ReviewCommandUseCase;
 import com.waitless.review.application.port.out.ReviewOutboxPort;
+import com.waitless.review.application.port.out.VisitedReservationPort;
 import com.waitless.review.domain.entity.Review;
 import com.waitless.review.domain.repository.ReviewRepository;
 import com.waitless.review.domain.repository.ReviewRepositoryCustom;
+import com.waitless.review.domain.vo.ReviewSearchCondition;
+import com.waitless.review.application.dto.client.VisitedReservationRequestDto;
+import com.waitless.review.application.dto.client.VisitedReservationResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -30,15 +35,30 @@ public class ReviewServiceImpl implements ReviewService, ReviewCommandUseCase {
     private final ReviewServiceMapper reviewServiceMapper;
     private final ReviewOutboxPort reviewOutboxPort;
     private final ReviewRepositoryCustom reviewRepositoryCustom;
+    private final VisitedReservationPort visitedReservationPort;
 
     @Override
     @Transactional
     public PostReviewResult createReview(PostReviewCommand command) {
+        // 예약 검증 로직
+        List<VisitedReservationResponseDto> visitedReservations =
+                visitedReservationPort.getVisitedReservations(new VisitedReservationRequestDto(command.reservationId()));
+
+        VisitedReservationResponseDto dto = visitedReservations.stream()
+                .filter(r -> r.reservationId().equals(command.reservationId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("방문 완료된 예약이 아닙니다."));
+
+        if (!dto.userId().equals(command.userId()) || !dto.restaurantId().equals(command.restaurantId())) {
+            throw new IllegalArgumentException("예약 정보와 사용자 정보가 일치하지 않습니다.");
+        }
+
         Review review = reviewServiceMapper.toEntity(command);
         Review saved = reviewRepository.save(review);
 
         ReviewCreatedEvent event = ReviewCreatedEvent.builder()
                 .reviewId(saved.getId())
+                .reservationId(saved.getReservationId())
                 .userId(saved.getUserId())
                 .restaurantId(saved.getRestaurantId())
                 .build();
