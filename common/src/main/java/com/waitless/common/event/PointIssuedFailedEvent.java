@@ -11,4 +11,5 @@ import java.util.UUID;
 public class PointIssuedFailedEvent extends Event {
     private UUID reviewId;
     private Long userId;
+    private UUID reservationId;
 }
