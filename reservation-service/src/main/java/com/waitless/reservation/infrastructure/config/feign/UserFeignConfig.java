@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RestaurantFeignConfig {
-    @Bean(name = "restaurantErrorDecoder")
+public class UserFeignConfig {
+    @Bean(name = "userErrorDecoder")
     public ErrorDecoder errorDecoder() {
-        return new RestaurantClientErrorDecoder();
+        return new UserClientErrorDecoder();
     }
 }
