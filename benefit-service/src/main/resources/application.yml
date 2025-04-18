@@ -18,6 +18,12 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: default
+      password: systempass
   kafka:
     bootstrap-servers: localhost:9092
     producer:
