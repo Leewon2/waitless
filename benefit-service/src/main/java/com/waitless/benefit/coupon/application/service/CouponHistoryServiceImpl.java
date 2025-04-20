@@ -47,43 +47,42 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 
 	// 쿠폰 받기
 	@Override
-	@Transactional
+	// @Transactional
 	public CouponHistoryResponseDto issuedCoupon(UUID couponId, Long userId) {
 		String lockKey = "LOCK:CH:" + couponId;
 		RLock lock = redissonClient.getLock(lockKey);
 		boolean isLocked = false;
 		try {
-			isLocked = lock.tryLock(10, 10, TimeUnit.SECONDS);
+			isLocked = lock.tryLock(5, 3, TimeUnit.SECONDS);
 			if (!isLocked) {
 				throw CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_TRY_AGAIN);
 			}
-			System.out.println("Thread 가 엑세스 함!");
 			// 쿠폰 발급 시작
 			// 쿠폰 조회와 쿠폰 수량 차감 동시에 진행
 			Coupon coupon = couponService.decreaseCouponAmount(couponId);
 			System.out.println("coupon amount = " + coupon.getAmount());
 			couponRepository.save(coupon);
-			// LocalDateTime today = LocalDateTime.now();
-			// // 쿠폰 발급 가능일자가 지나면 예외처리
-			// if (!today.isBefore(coupon.getIssuanceDate())) {
-			// 	throw CouponBusinessException.from(CouponErrorCode.COUPON_ISSUED_IMPOSSIBLE);
-			// }
-			// // 쿠폰 사용 가능 일자
-			// LocalDateTime expiredDate = today.plusDays(coupon.getValidPeriod());
-			// CouponHistory couponHistory = CouponHistory.builder()
-			// 	.title(coupon.getTitle())
-			// 	.couponId(couponId)
-			// 	.userId(userId)
-			// 	.isValid(true)
-			// 	.expiredAt(expiredDate)
-			// 	.build();
-			// CouponHistory saved = couponHistoryRepository.save(couponHistory);
-			// // Redis 캐싱
-			// cachingCoupnHistory(saved);
+			LocalDateTime today = LocalDateTime.now();
+			// 쿠폰 발급 가능일자가 지나면 예외처리
+			if (!today.isBefore(coupon.getIssuanceDate())) {
+				throw CouponBusinessException.from(CouponErrorCode.COUPON_ISSUED_IMPOSSIBLE);
+			}
+			// 쿠폰 사용 가능 일자
+			LocalDateTime expiredDate = today.plusDays(coupon.getValidPeriod());
+			CouponHistory couponHistory = CouponHistory.builder()
+				.title(coupon.getTitle())
+				.couponId(couponId)
+				.userId(userId)
+				.isValid(true)
+				.expiredAt(expiredDate)
+				.build();
+			CouponHistory saved = couponHistoryRepository.save(couponHistory);
+			// Redis 캐싱
+			cachingCoupnHistory(saved);
 
 			return couponHistoryServiceMapper.toCouponHistoryResponseDto(new CouponHistory());
 		} catch (InterruptedException e) {
-			// Thread.currentThread().interrupt();
+			Thread.currentThread().interrupt();
 			throw CouponBusinessException.from(CouponErrorCode.COUPON_ISSUED_IMPOSSIBLE);
 		} finally {
 			if (isLocked && lock.isHeldByCurrentThread()) {
@@ -130,7 +129,7 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 	// 발급된 쿠폰 사용
 	@Override
 	@Transactional
-	public void userIssuedCoupon(UUID id, Long userId) {
+	public void useIssuedCoupon(UUID id, Long userId) {
 		CouponHistory couponHistory = findCouponHistoryById(id);
 		if (!couponHistory.getUserId().equals(userId)) {
 			throw CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_UNAUTHORIZED);
