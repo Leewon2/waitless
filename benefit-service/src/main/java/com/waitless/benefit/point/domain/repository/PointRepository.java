@@ -7,6 +7,6 @@ import java.util.UUID;
 
 public interface PointRepository {
     Point save(Point point);
-    boolean existsByUserIdAndReviewId(Long userId, UUID reviewId);
+    boolean existsByUserIdAndReservationId(Long userId, UUID reservationId);
     Optional<Point> findByReviewIdAndUserId(UUID reviewId, Long userId);
 }

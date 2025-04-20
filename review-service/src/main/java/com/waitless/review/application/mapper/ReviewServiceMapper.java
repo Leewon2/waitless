@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 public interface ReviewServiceMapper {
     default Review toEntity(PostReviewCommand command) {
         return Review.of(
+                command.reservationId(),
                 command.userId(),
                 command.restaurantId(),
                 command.content(),

@@ -7,6 +7,7 @@ import java.util.UUID;
 public record PostPointCommand(
         Long userId,
         UUID reviewId,
+        UUID reservationId,
         Integer amount,
         PointType.Type pointType,
         String description

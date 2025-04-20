@@ -12,6 +12,7 @@ public interface PointServiceMapper {
         return Point.of(
                 command.userId(),
                 command.reviewId(),
+                command.reservationId(),
                 PointAmount.of(command.amount()),
                 PointType.of(command.pointType()),
                 command.description()

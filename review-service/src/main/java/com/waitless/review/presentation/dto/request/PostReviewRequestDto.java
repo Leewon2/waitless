@@ -5,6 +5,9 @@ import jakarta.validation.constraints.*;
 import java.util.UUID;
 
 public record PostReviewRequestDto(
+        @NotNull(message = "reservationId는 필수입니다.")
+        UUID reservationId,
+
         @NotNull(message = "userId는 필수입니다.")
         Long userId,
 

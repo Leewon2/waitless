@@ -28,11 +28,12 @@ public class PointServiceImpl implements PointCommandUseCase {
     @Override
     @Transactional
     public PostPointResult createPoint(PostPointCommand command) {
-        if(pointRepository.existsByUserIdAndReviewId(command.userId(), command.reviewId())) {
-            log.warn("중복 포인트 적립 시도: userId={}, reviewId={}", command.userId(), command.reviewId());
+        if(pointRepository.existsByUserIdAndReservationId(command.userId(), command.reservationId())) {
+            log.warn("중복 포인트 적립 시도: userId={}, reservationId={}", command.userId(), command.reservationId());
             PointIssuedFailedEvent event = PointIssuedFailedEvent.builder()
                     .reviewId(command.reviewId())
                     .userId(command.userId())
+                    .reservationId(command.reservationId())
                     .build();
             pointOutboxPort.savePointIssuedFailedEvent(event);
             throw new IllegalStateException("이미 적립된 리뷰 보상입니다.");
@@ -44,6 +45,7 @@ public class PointServiceImpl implements PointCommandUseCase {
                 .pointId(saved.getId())
                 .userId(saved.getUserId())
                 .reviewId(saved.getReviewId())
+                .reservationId(saved.getReservationId())
                 .amount(saved.getAmount().getPointValue())
                 .description(saved.getDescription())
                 .issuedAt(saved.getCreatedAt())
@@ -57,6 +59,6 @@ public class PointServiceImpl implements PointCommandUseCase {
     public void deletePointByReview(UUID reviewId, Long userId) {
         Point point = pointRepository.findByReviewIdAndUserId(reviewId, userId)
                 .orElseThrow(() -> new IllegalStateException("해당 리뷰에 대한 포인트가 없습니다."));
-        point.softDelete(); //
+        point.softDelete();
     }
 }

@@ -26,7 +26,8 @@ public class PointIssuedFailedEventHandler {
             @Payload PointIssuedFailedEvent event,
             @Header(KafkaHeaders.RECEIVED_KEY) String key
     ) {
-        log.warn("[Kafka] 포인트 발급 실패 이벤트 수신: {}", event);
+        log.warn("[Kafka] 포인트 발급 실패 이벤트 수신: reviewId={}, userId={}, reservationId={}",
+                event.getReviewId(), event.getUserId(), event.getReservationId());
         CancelReviewCommand command = new CancelReviewCommand(
                 event.getReviewId(),
                 event.getUserId()
