@@ -10,4 +10,6 @@ public interface SlackService {
     CompletableFuture<SlackMessage> createSlack(String receiverId, Integer mySequence);
 
     SlackDeleteResponseDto deleteMessage(UUID id);
+
+    void createReviewRequestSlack(String slackId, String message);
 }
