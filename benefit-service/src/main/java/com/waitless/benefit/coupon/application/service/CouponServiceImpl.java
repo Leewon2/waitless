@@ -82,7 +82,7 @@ public class CouponServiceImpl implements CouponService {
 	@Override
 	@Transactional
 	public Coupon decreaseCouponAmount(UUID id) {
-		Coupon coupon = couponRepository.findByIdForUpdate(id)
+		Coupon coupon = couponRepository.findById(id)
 			.orElseThrow(()-> CouponBusinessException.from(CouponErrorCode.COUPON_NOT_FOUND));
 		if (coupon.getAmount() <= 0) {
 			throw CouponBusinessException.from(CouponErrorCode.COUPON_AMOUNT_EXHAUSTED);

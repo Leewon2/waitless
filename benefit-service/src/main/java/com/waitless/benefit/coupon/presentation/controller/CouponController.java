@@ -125,7 +125,7 @@ public class CouponController {
 	// 발급된 쿠폰 사용
 	@PostMapping("/use/{id}")
 	public ResponseEntity<String> useIssuedCoupon(@PathVariable UUID id, @RequestHeader("X-User-Id") Long userId) {
-		couponHistoryService.userIssuedCoupon(id, userId);
+		couponHistoryService.useIssuedCoupon(id, userId);
 		return ResponseEntity.ok("쿠폰 사용 완료");
 	}
 

@@ -29,7 +29,7 @@ Content-Type: application/json
 DELETE http://localhost:19091/api/coupons/6b52df77-56e4-44f0-a71d-2ffdb2371a60
 
 ### 쿠폰 받기
-POST http://localhost:19091/api/coupons/issued/3d2ea000-f54b-4617-b142-199f449640bf
+POST http://localhost:19091/api/coupons/issued/e3955d45-7035-4623-8ce0-39a824da4eca
 
 ### 쿠폰발급내역 단건 조회
 GET http://localhost:19091/api/coupons/history/80243b89-fda4-4175-b2ef-724074cd39ca

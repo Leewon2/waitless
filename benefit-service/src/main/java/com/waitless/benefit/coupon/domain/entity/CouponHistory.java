@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Table(name = "p_coupon_history")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Where(clause = "is_deleted=false")
 @Builder
 public class CouponHistory extends BaseTimeEntity {
@@ -55,7 +55,7 @@ public class CouponHistory extends BaseTimeEntity {
 		this.expiredAt = expiredAt;
 	}
 
-	public void used(CouponHistory couponHistory) {
+	public void used() {
 		this.isValid = false;
 	}
 }
