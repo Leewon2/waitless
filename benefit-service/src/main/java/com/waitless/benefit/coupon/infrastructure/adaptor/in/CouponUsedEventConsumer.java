@@ -18,8 +18,8 @@ public class CouponUsedEventConsumer {
 
 	private final CouponHistoryService couponHistoryService;
 
-	@KafkaListener(topics = "coupon-used-events", groupId = "coupon-service")
-	public void handleCouponUsedEvent(@Payload CouponUsedEvent event) {
+	@KafkaListener(topics = "coupon-used-events", groupId = "coupon-service", containerFactory = "kafkaListenerContainerFactory")
+	public void handleCouponUsedEvent(CouponUsedEvent event) {
 		log.info("[Kafka] 쿠폰 사용 완료 : couponHistoryId={}, userId={}", event.getCouponHistoryId(), event.getUserId());
 		try {
 			couponHistoryService.useIssuedCoupon(event.getCouponHistoryId(), event.getUserId());

@@ -3,6 +3,7 @@ package com.waitless.benefit.coupon.application.service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -78,9 +79,9 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 				.build();
 			CouponHistory saved = couponHistoryRepository.save(couponHistory);
 			// Redis 캐싱
-			cachingCoupnHistory(saved);
+			cachingCouponHistory(saved);
 
-			return couponHistoryServiceMapper.toCouponHistoryResponseDto(new CouponHistory());
+			return couponHistoryServiceMapper.toCouponHistoryResponseDto(saved);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw CouponBusinessException.from(CouponErrorCode.COUPON_ISSUED_IMPOSSIBLE);
@@ -140,29 +141,30 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		if (!couponHistory.isValid()) {
 			throw CouponBusinessException.from(CouponErrorCode.COUPON_ALREADY_USED);
 		}
-		couponHistory.used(couponHistory);
+		couponHistory.used();
+		couponHistoryRepository.save(couponHistory);
+		// 캐시 업데이트
+		cachingCouponHistory(couponHistory);
 	}
 
 	// 쿠폰발급내역 단건 조회
 	private CouponHistory findCouponHistoryById(UUID id) {
 		Object cachedJson = redisTemplate.opsForValue().get("CH:" + id);
-		if (cachedJson != null) {
-			CouponHistoryCacheDto cached = objectMapper.convertValue(cachedJson, CouponHistoryCacheDto.class);
-			return couponHistoryServiceMapper.toCouponHistory(cached);
-		}
-		CouponHistory couponHistory = couponHistoryRepository.findById(id)
-			.orElseThrow(()-> CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_NOT_FOUND));
-		cachingCoupnHistory(couponHistory);
-
-		return couponHistory;
+		CouponHistoryCacheDto cached = objectMapper.convertValue(cachedJson, CouponHistoryCacheDto.class);
+		return Optional.ofNullable(couponHistoryServiceMapper.toCouponHistory(cached)).orElseGet(() -> {
+			CouponHistory couponHistory = couponHistoryRepository.findById(id)
+				.orElseThrow(() -> CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_NOT_FOUND));
+			cachingCouponHistory(couponHistory);
+			return couponHistory;
+		});
 	}
 
 	// Redis 캐싱
-	private void cachingCoupnHistory(CouponHistory couponHistory) {
+	private void cachingCouponHistory(CouponHistory couponHistory) {
 		CouponHistoryCacheDto saved = new CouponHistoryCacheDto(
-			couponHistory.getId(), couponHistory.getTitle(), couponHistory.getUserId(), couponHistory.getCouponId(), couponHistory.getExpiredAt()
+			couponHistory.getId(), couponHistory.getTitle(), couponHistory.getUserId(), couponHistory.getCouponId(), couponHistory.isValid(), couponHistory.getExpiredAt()
 		);
-		redisTemplate.opsForValue().set("CH:" + couponHistory.getId(), saved, Duration.ofHours(1));
+		redisTemplate.opsForValue().set("CH:" + couponHistory.getId(), saved, Duration.ofDays(1));
 	}
 
 }
