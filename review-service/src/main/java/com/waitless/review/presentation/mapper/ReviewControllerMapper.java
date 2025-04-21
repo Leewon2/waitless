@@ -2,6 +2,7 @@ package com.waitless.review.presentation.mapper;
 
 import com.waitless.review.application.dto.command.DeleteReviewCommand;
 import com.waitless.review.application.dto.command.PostReviewCommand;
+import com.waitless.review.application.dto.command.ReviewStatisticsCommand;
 import com.waitless.review.domain.vo.ReviewSearchCondition;
 import com.waitless.review.presentation.dto.request.*;
 import org.mapstruct.Mapper;
@@ -18,5 +19,8 @@ public interface ReviewControllerMapper {
     }
     default ReviewSearchCondition toCondition(SearchReviewsRequestDto requestDto) {
         return new ReviewSearchCondition(null, requestDto.userId(), requestDto.restaurantId(), requestDto.rating());
+    }
+    default ReviewStatisticsCommand toCommand(ReviewStatisticsRequestDto requestDto) {
+        return new ReviewStatisticsCommand(requestDto.restaurantId());
     }
 }
