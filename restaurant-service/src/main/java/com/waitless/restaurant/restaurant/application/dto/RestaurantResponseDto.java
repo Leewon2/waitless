@@ -12,7 +12,8 @@ public record RestaurantResponseDto(UUID id,
                                     int maxTableCount,
                                     Double longitude,
                                     LocalTime openingTime,
-                                    LocalTime closingTime
+                                    LocalTime closingTime,
+                                    boolean isOpened
 ) {
 
 }

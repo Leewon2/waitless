@@ -38,7 +38,7 @@ public class Restaurant extends BaseTimeEntity {
     @Column(nullable = false)
     private Long ownerId;
 
-    @Column(length = 20,nullable = false)
+    @Column(length = 20, nullable = false)
     private String phone;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,6 +53,8 @@ public class Restaurant extends BaseTimeEntity {
     @Embedded
     private OperatingHours operatingHours;
 
+    private Boolean isOpened;
+
 
     public static Restaurant of(String name, Long ownerId, String phone, Category category,
         int maxTableCount,
@@ -66,6 +68,7 @@ public class Restaurant extends BaseTimeEntity {
         restaurant.location = location;
         restaurant.operatingHours = operatingHours;
         restaurant.category = category;
+        restaurant.isOpened = false;
 
         return restaurant;
     }
