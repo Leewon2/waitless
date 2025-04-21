@@ -36,39 +36,53 @@ public class MenuRepositoryImpl implements MenuRepository {
 
     public Page<Menu> searchMenu(MenuSearchDomainDto menuSearchDomainDto, Pageable pageable) {
         QMenu menu = QMenu.menu;
-        BooleanBuilder builder = new BooleanBuilder();
+        BooleanBuilder builder = getBooleanBuilder(menuSearchDomainDto, menu);
 
-        Optional.ofNullable(menuSearchDomainDto.minPrice())
-                .ifPresent(min -> builder.and(menu.price.goe(min)));
+        OrderSpecifier<?> sort = getOrderSpecifier(menuSearchDomainDto, menu);
 
-        Optional.ofNullable(menuSearchDomainDto.maxPrice())
-                .ifPresent(max -> builder.and(menu.price.loe(max)));
+        List<Menu> content = getMenus(pageable, menu, builder, sort);
 
-        Optional.ofNullable(menuSearchDomainDto.category())
-                .ifPresent(category -> builder.and(menu.menuCategory.eq(category)));
+        Long total = getTotal(menu, builder);
 
-        OrderSpecifier<?> sort;
-        if (Optional.ofNullable(menuSearchDomainDto.sortBy()).orElse("createdAt").equals("price")) {
-            sort = menu.price.desc();
-        } else {
-            sort = menu.createdAt.desc();
-        }
+        return new PageImpl<>(content, pageable, total);
+    }
 
-        List<Menu> content = queryFactory
+    private List<Menu> getMenus(Pageable pageable, QMenu menu, BooleanBuilder builder, OrderSpecifier<?> sort) {
+        return queryFactory
                 .selectFrom(menu)
                 .where(builder)
                 .orderBy(sort)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+    }
 
-        Long total = queryFactory
+    private Long getTotal(QMenu menu, BooleanBuilder builder) {
+        return Optional.ofNullable(queryFactory
                 .select(menu.count())
                 .from(menu)
                 .where(builder)
-                .fetchOne();
-        if (total == null) total = 0L;
+                .fetchOne()).orElse(0L);
+    }
 
-        return new PageImpl<>(content, pageable, total);
+    private static BooleanBuilder getBooleanBuilder(MenuSearchDomainDto menuSearchDomainDto, QMenu menu) {
+        BooleanBuilder builder = new BooleanBuilder();
+        Optional.ofNullable(menuSearchDomainDto.minPrice())
+                .ifPresent(min -> builder.and(menu.price.goe(min)));
+        Optional.ofNullable(menuSearchDomainDto.maxPrice())
+                .ifPresent(max -> builder.and(menu.price.loe(max)));
+        Optional.ofNullable(menuSearchDomainDto.category())
+                .ifPresent(category -> builder.and(menu.menuCategory.eq(category)));
+        return builder;
+    }
+
+    private static OrderSpecifier<?> getOrderSpecifier(MenuSearchDomainDto menuSearchDomainDto, QMenu menu) {
+        OrderSpecifier<?> sort;
+        if (Optional.ofNullable(menuSearchDomainDto.sortBy()).orElse("createdAt").equals("price")) {
+            sort = menu.price.desc();
+        } else {
+            sort = menu.createdAt.desc();
+        }
+        return sort;
     }
 }

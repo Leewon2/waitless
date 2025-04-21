@@ -13,7 +13,7 @@ public class RestaurantClientErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
         if (response.status() >= 400 && response.status() <= 499) {
-            return BusinessException.from(ReservationErrorCode.RESTAURANT_NOT_FOUND);
+            return BusinessException.from(ReservationErrorCode.RESTAURANT_BAD_REQUEST);
         } else if (response.status() >= 500) {
             return BusinessException.from(ReservationErrorCode.RESTAURANT_SERVER_ERROR);
         }

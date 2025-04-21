@@ -1,5 +1,7 @@
 package com.waitless.reservation.application.service.redis;
 
+import com.waitless.common.exception.BusinessException;
+import com.waitless.reservation.exception.exception.ReservationErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -13,13 +15,26 @@ public class RedisReservationQueueService {
 
     private final StringRedisTemplate redisTemplate;
 
+    private static final String QUEUE_PREFIX = "reservation:queue:";
+
     public void registerToWaitingQueue(UUID reservationId, LocalDate reservationDate, UUID restaurantId, Long reservationNumber) {
-        String zsetKey = "reservation:queue:" + restaurantId + ":" + reservationDate;
+        String zsetKey = QUEUE_PREFIX + restaurantId;
         redisTemplate.opsForZSet().add(zsetKey, String.valueOf(reservationId), reservationNumber);
     }
 
     public void removeFromWaitingQueue(UUID reservationId, LocalDate reservationDate, UUID restaurantId) {
-        String zsetKey = "reservation:queue:" + restaurantId + ":" + reservationDate;
+        String zsetKey = QUEUE_PREFIX + restaurantId;
         redisTemplate.opsForZSet().remove(zsetKey, String.valueOf(reservationId));
+    }
+
+    public Long findCurrentNumberFromWaitingQueue(UUID reservationId, UUID restaurantId) {
+        String zsetKey = QUEUE_PREFIX + restaurantId;
+        Long rank = redisTemplate.opsForZSet().rank(zsetKey, reservationId.toString());
+
+        if(rank == null){
+            throw BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND);
+        }
+
+        return rank + 1;
     }
 }

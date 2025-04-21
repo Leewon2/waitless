@@ -1,5 +1,6 @@
 package com.waitless.message.application.service;
 
+import com.waitless.common.exception.BusinessException;
 import com.waitless.message.application.dto.SlackDeleteResponseDto;
 import com.waitless.message.application.dto.SlackSaveDto;
 import com.waitless.message.application.mapper.SlackServiceMapper;
@@ -7,6 +8,7 @@ import com.waitless.message.domain.entity.FailedSlackMessage;
 import com.waitless.message.domain.entity.SlackMessage;
 import com.waitless.message.domain.repository.SlackFailRepository;
 import com.waitless.message.domain.repository.SlackRepository;
+import com.waitless.message.exception.MessageErrorCode;
 import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -18,7 +20,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -54,20 +55,31 @@ public class SlackServiceImpl implements SlackService {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 String fullMessage = makeMessage(receiverId, mySequence);
-                Map<String, String> payload = Map.of("text", fullMessage);
-
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                HttpEntity<Map<String, String>> request = new HttpEntity<>(payload, headers);
+                HttpEntity<Map<String, String>> request = makeRequest(fullMessage);
 
                 String webhookUrl = slackSelect.getWebhookUrl();
-                ResponseEntity<String> response = restTemplate.postForEntity(webhookUrl, request, String.class);
+                restTemplate.postForEntity(webhookUrl, request, String.class);
 
                 return slackRepository.save(slackServiceMapper.toSlackMessage(new SlackSaveDto(receiverId, fullMessage)));
             } catch (Exception e) {
                 throw new CompletionException(e);
             }
         }, executor);
+    }
+
+    @Transactional
+    @Override
+    public SlackDeleteResponseDto deleteMessage(UUID id) {
+        SlackMessage slackMessage = slackRepository.findById(id).orElseThrow(() -> BusinessException.from(MessageErrorCode.MESSAGE_NOT_FOUND));
+        slackMessage.delete();
+        return new SlackDeleteResponseDto(slackMessage.getId(), slackMessage.getReceiverId(), slackMessage.getMessage(), slackMessage.isDeleted());
+    }
+
+    @Override
+    public void createReviewRequestSlack(String slackId, String message) {
+        HttpEntity<Map<String, String>> request = makeRequest(message);
+        String webhookUrl = slackSelect.getWebhookUrl();
+        restTemplate.postForEntity(webhookUrl, request, String.class);
     }
 
     private CompletableFuture<SlackMessage> fallbackSendSlack(String receiverId, Integer mySequence, Throwable t) {
@@ -79,12 +91,12 @@ public class SlackServiceImpl implements SlackService {
         return CompletableFuture.completedFuture(null);
     }
 
-    @Transactional
-    @Override
-    public SlackDeleteResponseDto deleteMessage(UUID id) {
-        SlackMessage slackMessage = slackRepository.findById(id).orElseThrow(() -> new NullPointerException("슬랙 메세지 없음"));
-        slackMessage.delete();
-        return new SlackDeleteResponseDto(slackMessage.getId(), slackMessage.getReceiverId(), slackMessage.getMessage(), slackMessage.isDeleted());
+    private HttpEntity<Map<String, String>> makeRequest(String message){
+        Map<String, String> payload = Map.of("text", message);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<>(payload, headers);
     }
 
     private String makeMessage(String receiverId, Integer mySequence) {

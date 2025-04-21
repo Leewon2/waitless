@@ -3,11 +3,14 @@ package com.waitless.reservation.presentation.controller.external;
 import com.waitless.common.exception.response.MultiResponse;
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.reservation.application.dto.ReservationCreateResponse;
-import com.waitless.reservation.presentation.dto.ReservationFindResponse;
+import com.waitless.reservation.application.dto.ReservationCurrentResponse;
 import com.waitless.reservation.application.dto.ReservationSearchResponse;
+import com.waitless.reservation.application.scheduler.restarant.TicketingMenuFetchScheduler;
 import com.waitless.reservation.application.service.command.ReservationCommandService;
 import com.waitless.reservation.application.service.query.ReservationQueryService;
-import com.waitless.reservation.presentation.dto.*;
+import com.waitless.reservation.presentation.dto.ReservationCreateRequest;
+import com.waitless.reservation.presentation.dto.ReservationFindResponse;
+import com.waitless.reservation.presentation.dto.ReservationSearchRequest;
 import com.waitless.reservation.presentation.mapper.ReservationCommandMapper;
 import com.waitless.reservation.presentation.mapper.ReservationQueryMapper;
 import jakarta.validation.Valid;
@@ -27,7 +30,7 @@ public class ReservationExternalController {
     private final ReservationCommandMapper commandMapper;
     private final ReservationQueryMapper queryMapper;
     private final ReservationQueryService queryService;
-
+    private final TicketingMenuFetchScheduler ticketingMenuFetchScheduler;
     @PostMapping
     public ResponseEntity createReservation(@RequestBody @Valid ReservationCreateRequest reservationCreateRequest) {
         ReservationCreateResponse response = commandService.createReservation(commandMapper.toCommand(reservationCreateRequest));
@@ -58,4 +61,15 @@ public class ReservationExternalController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{reservationId}/queue-position")
+    public ResponseEntity current(@PathVariable("reservationId") UUID reservationId) {
+        ReservationCurrentResponse response = queryService.currentNumber(reservationId);
+        return ResponseEntity.ok(SingleResponse.success(response));
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity aa() {
+        ticketingMenuFetchScheduler.fetchMenuStocks();
+        return ResponseEntity.ok(SingleResponse.success("ok"));
+    }
 }

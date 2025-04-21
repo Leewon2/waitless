@@ -1,12 +1,9 @@
 package com.waitless.restaurant.menu.infrastructure.adaptor.in.messaging;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.waitless.common.dto.StockDto;
+import com.waitless.common.event.StockDecreasedEvent;
 import com.waitless.restaurant.menu.application.service.MenuService;
-import java.util.Collections;
-import java.util.List;
+import com.waitless.restaurant.menu.infrastructure.adaptor.out.messaging.StockDecreaseEventPublisher;
+import com.waitless.restaurant.restaurant.application.exception.RestaurantBusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,21 +14,22 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class StockDecreaseEventHandler {
 
-    private final ObjectMapper objectMapper;
     private final MenuService menuService;
+    private final StockDecreaseEventPublisher stockDecreaseEventPublisher;
 
-    private static final String TOPIC_NAME = "restaurant.stock.decrease";
+    private static final String TOPIC_NAME = "restaurant-stock-decrease";
     private static final String GROUP_ID = "restaurant-service";
 
     @KafkaListener(topics = TOPIC_NAME, groupId = GROUP_ID)
-    public void handleStockDecreaseEvent(String message) throws JsonProcessingException {
-        log.info("[Kafka] handleStockDecreaseEvent 수신 {}" , message);
+    public void handleStockDecreaseEvent(StockDecreasedEvent event) {
+        log.info("[Kafka] handleStockDecreaseEvent 수신 {}", event);
 
-        //json -> List<StockDto> 로 변환
-        List<StockDto> stockList = objectMapper.readValue(message,
-            new TypeReference<List<StockDto>>(){});
-
-        menuService.decreaseMenuAmount(stockList);
+        try {
+            menuService.decreaseMenuAmount(event.getStockDtoList());
+        } catch (RestaurantBusinessException e) {
+            log.info("[kafka] 이벤트 발행 실패 {}", e.getMessage());
+            stockDecreaseEventPublisher.publishStockDecreaseFailed(event);
+        }
     }
 
 }

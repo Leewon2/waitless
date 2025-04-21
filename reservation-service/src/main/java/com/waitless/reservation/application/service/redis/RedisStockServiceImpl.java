@@ -1,5 +1,7 @@
 package com.waitless.reservation.application.service.redis;
 
+import com.waitless.common.dto.RestaurantStockResponseDto;
+import com.waitless.common.dto.StockDto;
 import com.waitless.common.exception.BusinessException;
 import com.waitless.reservation.application.dto.CancelMenuDto;
 import com.waitless.reservation.application.dto.LuaResultType;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.waitless.reservation.application.dto.ReservationCreateCommand.MenuCommandDto;
@@ -119,6 +122,40 @@ public class RedisStockServiceImpl implements RedisStockService {
         }
 
         throw new RuntimeException("Lua Script ERROR");
+    }
+
+    @Override
+    public void saveStock(List<RestaurantStockResponseDto> restaurantStockList) {
+        for (RestaurantStockResponseDto restaurant : restaurantStockList) {
+            UUID restaurantId = restaurant.restaurantId();
+
+            redisTemplate.opsForValue().set(RESERVATION_TEAM_LIMIT_PREFIX + restaurantId, String.valueOf(restaurant.maxTableCount()));
+            redisTemplate.opsForValue().set(RESERVATION_TEAM_COUNT_PREFIX + restaurantId, "0");
+
+            redisTemplate.opsForValue().set(RESERVATION_NUMBER_PREFIX + restaurantId, "0");
+
+            for (StockDto stock : restaurant.stockList()) {
+                String stockKey = "stock:" + restaurantId + ":" + stock.menuId();
+                redisTemplate.opsForValue().set(stockKey, String.valueOf(stock.amount()));
+            }
+        }
+    }
+
+    @Override
+    public void closedRestaurant(UUID restaurantId) {
+        redisTemplate.delete(RESERVATION_NUMBER_PREFIX + restaurantId);
+        redisTemplate.delete(RESERVATION_TEAM_COUNT_PREFIX + restaurantId);
+        redisTemplate.delete(RESERVATION_TEAM_LIMIT_PREFIX + restaurantId);
+
+        Set<String> stockKeys = redisTemplate.keys("stock:" + restaurantId + ":*");
+        if (stockKeys != null && !stockKeys.isEmpty()) {
+            redisTemplate.delete(stockKeys);
+        }
+
+        Set<String> queueKeys = redisTemplate.keys("reservation:queue:" + restaurantId);
+        if (queueKeys != null && !queueKeys.isEmpty()) {
+            redisTemplate.delete(queueKeys);
+        }
     }
 
     /**
