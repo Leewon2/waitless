@@ -4,6 +4,7 @@ import com.waitless.common.exception.BusinessException;
 import com.waitless.reservation.application.dto.CancelMenuDto;
 import com.waitless.reservation.application.dto.ReservationCreateCommand;
 import com.waitless.reservation.application.dto.ReservationCreateResponse;
+import com.waitless.reservation.application.event.dto.ReservationCompleteEvent;
 import com.waitless.reservation.application.event.dto.ReservationVisitedEvent;
 import com.waitless.reservation.application.mapper.ReservationServiceMapper;
 import com.waitless.reservation.application.service.redis.RedisReservationQueueService;
@@ -60,11 +61,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         reservationRepository.save(reservation);
         redisReservationQueueService.registerToWaitingQueue(reservation.getId(), reservation.getReservationDate(), reservation.getRestaurantId(), reservationNumber);
 
-
-
-        /**
-         * todo: 카프카 메시지 발행
-         */
+        eventPublisher.publishEvent(new ReservationCompleteEvent(reservationCreateCommand.userId(),reservation.getReservationNumber()));
 
         log.debug("예약 생성 :: Redis 재고 차감 및 DB 저장 완료: {}", storeId);
 
