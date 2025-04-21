@@ -18,18 +18,18 @@ public class RedisReservationQueueService {
     private static final String QUEUE_PREFIX = "reservation:queue:";
 
     public void registerToWaitingQueue(UUID reservationId, LocalDate reservationDate, UUID restaurantId, Long reservationNumber) {
-        String zsetKey = QUEUE_PREFIX + restaurantId + ":" + reservationDate;
+        String zsetKey = QUEUE_PREFIX + restaurantId;
         redisTemplate.opsForZSet().add(zsetKey, String.valueOf(reservationId), reservationNumber);
     }
 
     public void removeFromWaitingQueue(UUID reservationId, LocalDate reservationDate, UUID restaurantId) {
-        String zsetKey = QUEUE_PREFIX + restaurantId + ":" + reservationDate;
+        String zsetKey = QUEUE_PREFIX + restaurantId;
         redisTemplate.opsForZSet().remove(zsetKey, String.valueOf(reservationId));
     }
 
     public Long findCurrentNumberFromWaitingQueue(UUID reservationId, UUID restaurantId) {
-        String key = QUEUE_PREFIX + restaurantId + ":" + LocalDate.now();
-        Long rank = redisTemplate.opsForZSet().rank(key, reservationId.toString());
+        String zsetKey = QUEUE_PREFIX + restaurantId;
+        Long rank = redisTemplate.opsForZSet().rank(zsetKey, reservationId.toString());
 
         if(rank == null){
             throw BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND);
