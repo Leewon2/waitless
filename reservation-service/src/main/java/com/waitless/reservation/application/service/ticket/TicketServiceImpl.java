@@ -16,7 +16,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketCreateServiceResponse createTicket(TicketCreateServiceRequest request) {
-//        restaurantClient.existRestaurant(request.restaurantId());
+        restaurantClient.existRestaurant(request.restaurantId());
         ticketRepository.save(TicketRestaurant.create(request.restaurantId(), request.openTime()));
         return new TicketCreateServiceResponse(request.restaurantId(), request.openTime());
     }
