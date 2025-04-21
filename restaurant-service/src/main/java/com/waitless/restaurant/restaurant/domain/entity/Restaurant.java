@@ -1,6 +1,8 @@
 package com.waitless.restaurant.restaurant.domain.entity;
 
 import com.waitless.common.domain.BaseTimeEntity;
+import com.waitless.restaurant.restaurant.application.exception.RestaurantBusinessException;
+import com.waitless.restaurant.restaurant.application.exception.RestaurantErrorCode;
 import com.waitless.restaurant.restaurant.domain.vo.Location;
 import com.waitless.restaurant.restaurant.domain.vo.OperatingHours;
 import io.micrometer.common.util.StringUtils;
@@ -76,6 +78,13 @@ public class Restaurant extends BaseTimeEntity {
     public void update(String phone, LocalTime operatingHours , LocalTime closingHours) {
         if(StringUtils.isNotBlank(phone)) this.phone = phone;
         this.operatingHours.update(operatingHours, closingHours);
+    }
+
+    public void close() {
+        if (!this.isOpened) {
+            throw RestaurantBusinessException.from(RestaurantErrorCode.RESTAURANT_ALREADY_CLOSED);
+        }
+        this.isOpened = false;
     }
 
 }

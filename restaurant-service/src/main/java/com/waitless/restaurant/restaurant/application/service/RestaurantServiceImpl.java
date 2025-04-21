@@ -16,6 +16,7 @@ import com.waitless.restaurant.restaurant.domain.repository.RestaurantQueryRepos
 import com.waitless.restaurant.restaurant.domain.repository.RestaurantRepository;
 import com.waitless.restaurant.restaurant.domain.vo.Location;
 import com.waitless.restaurant.restaurant.domain.vo.OperatingHours;
+import com.waitless.restaurant.restaurant.infrastructure.adaptor.in.client.ReservationInternalClient;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantServiceMapper restaurantServiceMapper;
     private final CategoryService categoryService;
     private final MenuService menuService;
+    private final ReservationInternalClient reservationInternalClient;
 
     @Transactional
     public RestaurantResponseDto createRestaurant(CreateRestaurantDto createRestaurantDto) {
@@ -103,10 +105,20 @@ public class RestaurantServiceImpl implements RestaurantService {
             restaurantServiceMapper.toStockResponseDto(restaurant, menuService.getMenus(restaurant.getId()))).toList();
     }
 
+    @Transactional
+    public RestaurantResponseDto closeRestaurant(UUID id) {
+        Restaurant restaurant = findById(id);
+        restaurant.close();
+
+        reservationInternalClient.close(id);
+        return restaurantServiceMapper.toResponseDto(restaurant);
+    }
+
     @Transactional(readOnly = true)
     public RestaurantResponseDto getRestaurant(UUID id) {
         return restaurantServiceMapper.toResponseDto(findById(id));
     }
+
 
     @Transactional(readOnly = true)
     public Restaurant findById(UUID id) {

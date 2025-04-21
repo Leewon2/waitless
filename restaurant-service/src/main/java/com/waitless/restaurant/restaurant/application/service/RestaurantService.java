@@ -27,5 +27,8 @@ public interface RestaurantService {
 
     RestaurantResponseDto getRestaurant(UUID id);
 
+    RestaurantResponseDto closeRestaurant(UUID id);
+
     Restaurant findById(UUID id);
+
 }

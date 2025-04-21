@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 public enum RestaurantErrorCode implements ErrorCode {
 
     RESTAURANT_NOT_FOUND("RESTAURANT_1", "해당 식당을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    RESTAURANT_ALREADY_CLOSED("RESTAURANT_2", "이미 영업이 종료된 식당입니다.", HttpStatus.BAD_REQUEST),
 
     MENU_NOT_FOUND("MENU_1","해당 메뉴를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     MENU_DECREASE_FAILED("MENU_2", "메뉴 재고를 감소할 수 없습니다.", HttpStatus.BAD_REQUEST),
