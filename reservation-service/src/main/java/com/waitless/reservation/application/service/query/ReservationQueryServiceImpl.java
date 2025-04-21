@@ -1,8 +1,10 @@
 package com.waitless.reservation.application.service.query;
 
 import com.waitless.common.exception.BusinessException;
+import com.waitless.reservation.application.dto.ReservationCurrentResponse;
 import com.waitless.reservation.application.dto.ReservationSearchQuery;
 import com.waitless.reservation.application.mapper.ReservationServiceMapper;
+import com.waitless.reservation.application.service.redis.RedisReservationQueueService;
 import com.waitless.reservation.domain.entity.Reservation;
 import com.waitless.reservation.domain.repository.ReservationRepository;
 import com.waitless.reservation.exception.exception.ReservationErrorCode;
@@ -22,6 +24,7 @@ public class ReservationQueryServiceImpl implements ReservationQueryService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationServiceMapper reservationServiceMapper;
+    private final RedisReservationQueueService queueService;
 
     @Override
 //    @Cacheable(value = "cache:reservationFindOne", key = "#reservationId")
@@ -35,5 +38,12 @@ public class ReservationQueryServiceImpl implements ReservationQueryService {
         Page<Reservation> Reservations = reservationRepository.findByCustomCondition(reservationSearchQuery);
         return Reservations.map(m -> new ReservationSearchResponse(m.getId(), m.getRestaurantName(),
                 m.getRestaurantId(), m.getReservationNumber(), m.getPeopleCount(), m.getUserId()));
+    }
+
+    @Override
+    public ReservationCurrentResponse currentNumber(UUID reservationId) {
+        Reservation findReservation = reservationRepository.findById(reservationId).orElseThrow(() -> BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND));
+        findReservation.validateWaitingStatus();
+        return ReservationCurrentResponse.of(findReservation, queueService.findCurrentNumberFromWaitingQueue(reservationId, findReservation.getRestaurantId()));
     }
 }

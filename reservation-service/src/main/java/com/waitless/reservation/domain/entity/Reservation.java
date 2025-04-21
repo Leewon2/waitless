@@ -108,7 +108,7 @@ public class Reservation extends BaseTimeEntity {
         this.status = ReservationStatus.COMPLETED;
     }
 
-    private void validateWaitingStatus() {
+    public void validateWaitingStatus() {
         if (this.status != ReservationStatus.WAITING) {
             throw BusinessException.from(ReservationErrorCode.RESERVATION_STATUS_ERROR);
         }
