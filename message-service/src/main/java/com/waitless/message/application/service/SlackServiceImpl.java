@@ -67,15 +67,6 @@ public class SlackServiceImpl implements SlackService {
         }, executor);
     }
 
-    private CompletableFuture<SlackMessage> fallbackSendSlack(String receiverId, Integer mySequence, Throwable t) {
-        String fullMessage = makeMessage(receiverId, mySequence);
-        if (checkDuplicate(receiverId + ":" + mySequence)) {
-            return CompletableFuture.completedFuture(null);
-        }
-        slackFailRepository.save(new FailedSlackMessage(receiverId, fullMessage, mySequence, 0, false));
-        return CompletableFuture.completedFuture(null);
-    }
-
     @Transactional
     @Override
     public SlackDeleteResponseDto deleteMessage(UUID id) {
@@ -91,6 +82,15 @@ public class SlackServiceImpl implements SlackService {
         restTemplate.postForEntity(webhookUrl, request, String.class);
     }
 
+    private CompletableFuture<SlackMessage> fallbackSendSlack(String receiverId, Integer mySequence, Throwable t) {
+        String fullMessage = makeMessage(receiverId, mySequence);
+        if (checkDuplicate(receiverId + ":" + mySequence)) {
+            return CompletableFuture.completedFuture(null);
+        }
+        slackFailRepository.save(new FailedSlackMessage(receiverId, fullMessage, mySequence, 0, false));
+        return CompletableFuture.completedFuture(null);
+    }
+
     private HttpEntity<Map<String, String>> makeRequest(String message){
         Map<String, String> payload = Map.of("text", message);
 
@@ -98,7 +98,6 @@ public class SlackServiceImpl implements SlackService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(payload, headers);
     }
-
 
     private String makeMessage(String receiverId, Integer mySequence) {
         return String.format("[예약 성공 알림] 예약자: %s 님의 대기 순번은 %d 입니다.%n", receiverId, mySequence);
