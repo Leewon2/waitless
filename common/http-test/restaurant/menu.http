@@ -1,0 +1,64 @@
+@baseUrl = http://localhost:19091
+
+### 회원가입
+POST {{baseUrl}}/api/users/signup
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "user1",
+  "name": "user1",
+  "phone": "010-1234-1234",
+  "role" : "ADMIN",
+  "slackId": "user1@gmail.com"
+}
+
+### 로그인
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "user1"
+}
+> {%
+    client.global.set("access_token", response.body.accessToken)
+%}
+
+
+
+###메뉴 생성
+POST {{baseUrl}}/api/menus
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "restaurantId": "21f64e0f-8f96-4707-b13d-8c2d869b6309",
+  "category": "KOREAN",
+  "price": 9500,
+  "name": "제육볶음 정식2",
+  "amount": 15
+}
+> {%
+    client.global.set("menuId", response.body.menuId)
+%}
+
+###메뉴 단일 조회
+GET {{baseUrl}}/api/menus/{{menuId}}
+Content-Type: application/json
+Authorization: {{access_token}}
+
+###메뉴 삭제
+DELETE {{baseUrl}}/api/menus/{{menuId}}
+Content-Type: application/json
+Authorization: {{access_token}}
+
+###메뉴 수정
+PUT {{baseUrl}}/api/menus/{{menuId}}
+Content-Type: application/json
+Authorization: {{access_token}}
+
+###메뉴 검색
+GET {{baseUrl}}/api/menus/search?minPrice=1000&category=KOREAN&sortBy=price
+Content-Type: application/json
+Authorization: {{access_token}}

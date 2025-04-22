@@ -1,0 +1,21 @@
+### 로그인
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "user1"
+}
+
+### New Access Token
+POST {{baseUrl}}/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDIiLCJyb2xlIjoiUkVGUkVTSCIsImlhdCI6MTc0NDMzNjc0NywiZXhwIjoxNzQ0OTQxNTQ3fQ.MZfcVYl-gWvFutX0cenNEIMXENiqKvIOEVRDjI8ElrU"
+}
+
+### 로그아웃
+POST {{baseUrl}}/api/auth/logout
+Content-Type: application/json
+Authorization: {{access_token}}

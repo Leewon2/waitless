@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:19091
+@access_token = variable value
+
+###슬랙 생성
+POST {{baseUrl}}/api/slacks?receiverId=이원희123&mySequence=20
+Content-Type: application/json
+Authorization: {{access_token}}
+
+
+### 슬랙 삭제
+DELETE {{baseUrl}}/api/slacks/b38381f4-79ef-4b7a-82de-74319c36efe1
+Content-Type: application/json
+Authorization: {{access_token}}
