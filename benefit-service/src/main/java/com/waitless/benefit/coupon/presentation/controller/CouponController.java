@@ -52,12 +52,14 @@ public class CouponController {
 
 	// 쿠폰 단건 조회
 	@GetMapping("/{id}")
+	@RoleCheck(roles = {Role.ALL})
 	public ResponseEntity<SingleResponse<CouponResponseDto>> readCoupon(@PathVariable UUID id) {
 		return ResponseEntity.ok(SingleResponse.success(couponService.findCoupon(id)));
 	}
 
 	// 쿠폰 전체 조회
 	@GetMapping
+	@RoleCheck(roles = {Role.ALL})
 	public ResponseEntity<?> readCoupons(
 		@RequestParam(required = false) String title,
 		@RequestParam(defaultValue = "1", required = false) int page,
@@ -73,6 +75,7 @@ public class CouponController {
 
 	// 쿠폰 수정
 	@PatchMapping("/{id}")
+	@RoleCheck(roles = {Role.ADMIN})
 	public ResponseEntity<SingleResponse<CouponResponseDto>> updateCoupon(@PathVariable UUID id, @RequestBody Map<String, Object> updates) {
 		CouponResponseDto couponResponseDto = couponService.modifyCoupon(id, updates);
 		return ResponseEntity.ok(SingleResponse.success(couponResponseDto));
@@ -80,6 +83,7 @@ public class CouponController {
 
 	// 쿠폰 삭제
 	@DeleteMapping("/{id}")
+	@RoleCheck(roles = {Role.ADMIN})
 	public ResponseEntity<Void> deleteCoupon(@PathVariable UUID id) {
 		couponService.removeCoupon(id);
 		return ResponseEntity.noContent().build();
@@ -89,6 +93,7 @@ public class CouponController {
 
 	// 쿠폰 받기
 	@PostMapping("/issued/{couponId}")
+	@RoleCheck(roles = {Role.USER})
 	public ResponseEntity<SingleResponse<CouponHistoryResponseDto>> issuedCoupon(
 		@PathVariable UUID couponId, @RequestHeader("X-User-Id") Long userId) {
 		CouponHistoryResponseDto couponHistoryResponseDto = couponHistoryService.issuedCoupon(couponId, userId);
@@ -97,6 +102,7 @@ public class CouponController {
 
 	// 쿠폰발급내역 단건 조회
 	@GetMapping("/history/{id}")
+	@RoleCheck(roles = {Role.ADMIN, Role.USER})
 	public ResponseEntity<SingleResponse<CouponHistoryResponseDto>> readCouponHistory(@PathVariable UUID id) {
 		CouponHistoryResponseDto couponHistoryResponseDto = couponHistoryService.findCouponHistory(id);
 		return ResponseEntity.ok(SingleResponse.success(couponHistoryResponseDto));
@@ -104,15 +110,18 @@ public class CouponController {
 
 	// 쿠폰발급내역 목록 조회
 	@GetMapping("/history")
+	@RoleCheck(roles = {Role.ADMIN, Role.USER})
 	public ResponseEntity<?> readCouponHistories(
 		@RequestParam(required = false) String title,
 		@RequestParam(defaultValue = "1", required = false) int page,
 		@RequestParam(defaultValue = "10", required = false) int size,
 		@RequestParam(defaultValue = "DESC", required = false) Sort.Direction sortDirection,
 		@RequestParam(defaultValue = "updatedAt", required = false) String sortBy,
-		@RequestHeader("X-User-Id") String userId
+		@RequestHeader("X-User-Id") Long userId,
+		@RequestHeader("X-User-Role") String roleHeader
 	) {
-		ReadCouponHistoriesRequestDto readCouponHistoriesRequestDto = new ReadCouponHistoriesRequestDto(title, page, size, sortDirection, sortBy, Long.parseLong(userId));
+		Role role = Role.valueOf(roleHeader.toUpperCase());
+		ReadCouponHistoriesRequestDto readCouponHistoriesRequestDto = new ReadCouponHistoriesRequestDto(title, page, size, sortDirection, sortBy, userId, role);
 		Pageable pageable = PageRequest.of(page - 1, size);
 		Page<CouponHistoryResponseDto> response = couponHistoryService.findAndSearchCouponHistories(couponControllerMapper.toReadCouponHistoriesDto(readCouponHistoriesRequestDto), pageable);
 		return ResponseEntity.ok(MultiResponse.success(response));
@@ -120,6 +129,7 @@ public class CouponController {
 
 	// 쿠폰발급내역 삭제
 	@DeleteMapping("/history/{id}")
+	@RoleCheck(roles = {Role.ADMIN, Role.USER})
 	public ResponseEntity<Void> deleteCouponHistory(@PathVariable UUID id, @RequestHeader("X-User-Id") Long userId) {
 		couponHistoryService.removeCouponHistory(id, userId);
 		return ResponseEntity.noContent().build();
@@ -127,6 +137,7 @@ public class CouponController {
 
 	// 발급된 쿠폰 사용
 	@PostMapping("/use/{id}")
+	@RoleCheck(roles = {Role.USER})
 	public ResponseEntity<String> useIssuedCoupon(@PathVariable UUID id, @RequestHeader("X-User-Id") Long userId) {
 		couponHistoryService.useIssuedCoupon(id, userId);
 		return ResponseEntity.ok("쿠폰 사용 완료");

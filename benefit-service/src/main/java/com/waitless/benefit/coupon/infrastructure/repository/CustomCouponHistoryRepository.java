@@ -7,9 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.waitless.benefit.coupon.domain.entity.CouponHistory;
+import com.waitless.common.domain.Role;
 
 public interface CustomCouponHistoryRepository {
-	Page<CouponHistory> findAndSearchCouponHistories(String title, Sort.Direction sortDirection, String sortBy, Long userId, Pageable pageable);
+	Page<CouponHistory> findAndSearchCouponHistories(String title, Sort.Direction sortDirection, String sortBy, Long userId, Role role, Pageable pageable);
 
 	List<CouponHistory> findInvalidIssuedCoupons();
 }

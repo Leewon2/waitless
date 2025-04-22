@@ -22,6 +22,10 @@ public class RoleCheckAspect {
 	@Before("@annotation(roleCheck)")
 	public void roleCheck(RoleCheck roleCheck) {
 		Set<Role> roles = Set.of(roleCheck.roles());
+		// 어노테이션에 Role.ALL이 포함되어 있다면 무조건 통과
+		if(roles.contains(Role.ALL)) {
+			return;
+		}
 		Role role = getUserRole();
 		if(!roles.contains(role)) {
 			throw BusinessException.from(CommonErrorCode.UNAUTHORIZED);
@@ -38,11 +42,6 @@ public class RoleCheckAspect {
 		if (roleHeader == null || roleHeader.isEmpty()) {
 			throw BusinessException.from(CommonErrorCode.UNAUTHORIZED);
 		}
-		try {
-			return Role.valueOf(roleHeader);
-		} catch (IllegalArgumentException e) {
-			throw BusinessException.from(CommonErrorCode.UNAUTHORIZED);
-		}
-
+		return Role.valueOf(roleHeader);
 	}
 }

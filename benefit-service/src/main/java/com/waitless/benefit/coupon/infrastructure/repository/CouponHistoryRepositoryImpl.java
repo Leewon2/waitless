@@ -1,6 +1,5 @@
 package com.waitless.benefit.coupon.infrastructure.repository;
 
-import static com.waitless.benefit.coupon.domain.entity.QCoupon.*;
 import static com.waitless.benefit.coupon.domain.entity.QCouponHistory.*;
 
 import java.time.LocalDateTime;
@@ -19,12 +18,11 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.entity.CouponHistory;
 import com.waitless.benefit.coupon.domain.repository.CouponHistoryRepository;
+import com.waitless.common.domain.Role;
 
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
 
 @Repository
 public class CouponHistoryRepositoryImpl implements CouponHistoryRepository, CustomCouponHistoryRepository {
@@ -49,10 +47,12 @@ public class CouponHistoryRepositoryImpl implements CouponHistoryRepository, Cus
 
 	@Override
 	public Page<CouponHistory> findAndSearchCouponHistories(
-		String title, Sort.Direction sortDirection, String sortBy, Long userId, Pageable pageable) {
+		String title, Sort.Direction sortDirection, String sortBy, Long userId, Role role, Pageable pageable) {
 		OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sortDirection, sortBy);
 		BooleanBuilder builder = new BooleanBuilder();
-		builder.and(couponHistory.userId.eq(userId));
+		if (role != Role.ADMIN) {
+			builder.and(couponHistory.userId.eq(userId));
+		}
 		if (title != null && !title.isBlank()) {
 			builder.and(couponHistory.title.containsIgnoreCase(title));
 		}
