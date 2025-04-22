@@ -1,0 +1,82 @@
+### 환경 변수 설정
+@baseUrl = http://localhost:19000
+@contentType = application/json
+
+### 회원가입
+POST {{baseUrl}}/api/users/signup
+Content-Type: application/json
+
+{
+  "email": "restaurant1@gmail.com",
+  "password": "restaurant1",
+  "name": "user1",
+  "phone": "010-1234-1111",
+  "role" : "OWNER",
+  "slackId": "restaurant1@gmail.com"
+}
+
+###식당 생성
+POST {{baseUrl}}/api/restaurants
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+{
+  "name": "맛있는 식당",
+  "ownerId": 2,
+  "categoryId": 1,
+  "phone": "010-1234-7777",
+  "maxTableCount": 10,
+  "latitude": 37.5666,
+  "longitude": 126.978,
+  "openingTime": "10:00:00",
+  "closingTime": "22:00:00"
+}
+> {%
+    client.global.set("restaurantId", response.body.id)
+%}
+
+###식당 단일 조회
+GET {{base_url}}/api/restaurants/{{restaurantId}}
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "phone": "010-1234-8888",
+  "openingTime": "12:00:00"
+}
+
+###식당 조회
+GET {{base_url}}/api/restaurants?categoryId=2
+Content-Type: application/json
+Authorization: {{access_token}}
+
+###식당 수정
+PATCH {{base_url}}/api/restaurants/{{restaurantId}}
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "phone": "010-1234-8888",
+  "openingTime": "12:00:00"
+}
+
+###식당 삭제
+
+###식당 영업 종료
+PATCH {{base_url}}/api/restaurants/13db000f-6cc5-44ac-bfc5-0557568120d3/close
+Content-Type: application/json
+Authorization: {{access_token}}
+
+###식당 즐겨찾기 추가
+POST {{base_url}}/api/restaurants/favorite
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "restaurantId": "13db000f-6cc5-44ac-bfc5-0557568120d3"
+}
+
+###식당 즐겨찾기 조회
+GET {{base_url}}/api/restaurants/favorite
+Content-Type: application/json
+Authorization: {{access_token}}
