@@ -1,0 +1,27 @@
+### [포인트 자동 생성 시나리오]
+# 리뷰 생성 후 자동으로 포인트 적립이 발생해야 한다.
+# Kafka Event: ReviewCreatedEvent → benefit-service가 소비 → 포인트 생성
+# Outbox Event: review_outbox 테이블에서 review-created 이벤트가 발행되었어야 함
+# 기대 효과:
+#   - DB 테이블 p_point에 해당 userId/reservationId/reviewId로 포인트 row가 생성됨
+#   - 리뷰에 따라 적립된 포인트 (100p)
+#   - review_outbox 테이블 상태: type='review-created', status='SENT'
+
+# 테스트 방법:
+#   1. review.http에서 리뷰 생성 요청 수행
+#   2. DB에서 review_outbox 테이블 확인
+#   3. DB에서 p_point 테이블 확인
+
+### [포인트 자동 삭제 시나리오]
+# 리뷰 삭제 시 자동으로 포인트 삭제가 발생해야 한다.
+# Kafka Event: ReviewDeletedEvent → benefit-service가 소비 → 포인트 삭제
+# Outbox Event: review_outbox 테이블에서 review-deleted 이벤트가 발행되었어야 함
+# 기대 효과:
+#   - p_point 테이블에서 해당 reviewId의 포인트 레코드가 제거됨 (Soft Delete 또는 완전 삭제)
+#   - review_outbox 테이블 상태: type='review-deleted', status='SENT'
+
+# 테스트 방법:
+#   1. review.http에서 DELETE 요청 수행
+#   2. DB에서 review_outbox 테이블 상태 확인
+#   3. DB에서 p_point에서 해당 reviewId가 존재하는지 확인
+
