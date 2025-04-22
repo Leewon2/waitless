@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: restaurant-service
+    name: message-service
   datasource:
     url: jdbc:mariadb://localhost:3306/hangry-database
     username: root
@@ -29,6 +29,22 @@ spring:
       port: 6379
       username: default
       password: systempass
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: >
+          stock-decrease:com.waitless.common.event.StockDecreasedEvent
+    consumer:
+      group-id: ${spring.application.name}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.waitless
+        spring.json.type.mapping: >
+          stock-decrease:com.waitless.common.event.StockDecreasedEvent
 
 management:
   endpoints:
@@ -43,9 +59,9 @@ management:
 slack:
   webhook:
     urls:
-      - "https://hooks.slack.com/services/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"
-      - "https://hooks.slack.com/services/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"
-      - "https://hooks.slack.com/services/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"
+      - "https://hooks.slack.com/services/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"
+      - "https://hooks.slack.com/services/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"
+      - "https://hooks.slack.com/services/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"
 
 resilience4j:
   retry:
@@ -87,3 +103,8 @@ resilience4j:
 logging:
   level:
     io.github.resilience4j: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
