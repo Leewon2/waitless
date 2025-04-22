@@ -12,8 +12,4 @@ import com.waitless.benefit.coupon.domain.entity.Coupon;
 import jakarta.persistence.LockModeType;
 
 public interface JpaCouponRepository extends JpaRepository<Coupon, UUID> {
-
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	@Query("SELECT c FROM Coupon c WHERE c.id = :id")
-	Optional<Coupon> findByIdForUpdate(UUID id);
 }
