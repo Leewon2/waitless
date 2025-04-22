@@ -1,7 +1,9 @@
 package com.waitless.review.infrastructure.adaptor.out.persistence;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.waitless.review.domain.repository.ReviewStatisticsProjection;
 import com.waitless.review.domain.vo.ReviewSearchCondition;
 import com.waitless.review.domain.entity.QReview;
 import com.waitless.review.domain.entity.Review;
@@ -65,6 +67,33 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
                         )
                         .fetchOne()
         );
+    }
+
+    @Override
+    public Optional<ReviewStatisticsProjection> findStatisticsByRestaurantId(UUID restaurantId) {
+        Tuple result = queryFactory
+                .select(
+                        review.id.countDistinct(),
+                        review.rating.ratingValue.avg()
+                )
+                .from(review)
+                .where(
+                        review.restaurantId.eq(restaurantId),
+                        notDeleted()
+                )
+                .fetchOne();
+        if (result == null) return Optional.empty();
+        return Optional.of(new ReviewStatisticsProjection() {
+            @Override
+            public long getReviewCount() {
+                return result.get(review.id.countDistinct());
+            }
+
+            @Override
+            public double getAverageRating() {
+                return result.get(review.rating.ratingValue.avg());
+            }
+        });
     }
 
     private BooleanExpression eqUserId(Long userId) {
