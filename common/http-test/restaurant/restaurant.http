@@ -1,19 +1,43 @@
 ### 환경 변수 설정
-@baseUrl = http://localhost:19000
+@baseUrl = http://localhost:19091
 @contentType = application/json
 
 ### 회원가입
 POST {{baseUrl}}/api/users/signup
-Content-Type: application/json
+Content-Type: {{contentType}}
 
 {
   "email": "restaurant1@gmail.com",
   "password": "restaurant1",
-  "name": "user1",
+  "name": "restaurant1",
   "phone": "010-1234-1111",
   "role" : "OWNER",
   "slackId": "restaurant1@gmail.com"
 }
+
+###로그인
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "restaurant1@gmail.com",
+  "password": "restaurant1"
+}
+> {%
+  client.global.set("access_token", response.body.accessToken)
+%}
+
+###카테고리 생성
+POST {{baseUrl}}/api/categories
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+카테고리
+
+###카테고리 조회
+GET {{baseUrl}}/api/categories
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
 
 ###식당 생성
 POST {{baseUrl}}/api/restaurants
@@ -21,7 +45,7 @@ Content-Type: {{contentType}}
 Authorization: {{access_token}}
 
 {
-  "name": "맛있는 식당",
+  "name": "행그리 식당",
   "ownerId": 2,
   "categoryId": 1,
   "phone": "010-1234-7777",
@@ -30,29 +54,23 @@ Authorization: {{access_token}}
   "longitude": 126.978,
   "openingTime": "10:00:00",
   "closingTime": "22:00:00"
-}
-> {%
-    client.global.set("restaurantId", response.body.id)
+}> {%
+    client.global.set("restaurantId", response.body.data.id)
 %}
 
 ###식당 단일 조회
-GET {{base_url}}/api/restaurants/{{restaurantId}}
-Content-Type: application/json
+GET {{baseUrl}}/api/restaurants/{{restaurantId}}
+Content-Type: {{contentType}}
 Authorization: {{access_token}}
 
-{
-  "phone": "010-1234-8888",
-  "openingTime": "12:00:00"
-}
-
 ###식당 조회
-GET {{base_url}}/api/restaurants?categoryId=2
-Content-Type: application/json
+GET {{baseUrl}}/api/restaurants?categoryId=2
+Content-Type: {{contentType}}
 Authorization: {{access_token}}
 
 ###식당 수정
-PATCH {{base_url}}/api/restaurants/{{restaurantId}}
-Content-Type: application/json
+PATCH {{baseUrl}}/api/restaurants/{{restaurantId}}
+Content-Type: {{contentType}}
 Authorization: {{access_token}}
 
 {
@@ -61,22 +79,25 @@ Authorization: {{access_token}}
 }
 
 ###식당 삭제
+DELETE {{baseUrl}}/api/restaurants/{{restaurantId}}
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
 
 ###식당 영업 종료
-PATCH {{base_url}}/api/restaurants/13db000f-6cc5-44ac-bfc5-0557568120d3/close
-Content-Type: application/json
+PATCH {{baseUrl}}/api/restaurants/{{restaurantId}}/closed
+Content-Type: {{contentType}}
 Authorization: {{access_token}}
 
 ###식당 즐겨찾기 추가
-POST {{base_url}}/api/restaurants/favorite
-Content-Type: application/json
+POST {{baseUrl}}/api/restaurants/favorite
+Content-Type: {{contentType}}
 Authorization: {{access_token}}
 
 {
-  "restaurantId": "13db000f-6cc5-44ac-bfc5-0557568120d3"
+  "restaurantId": "{{restaurantId}}"
 }
 
 ###식당 즐겨찾기 조회
-GET {{base_url}}/api/restaurants/favorite
-Content-Type: application/json
+GET {{baseUrl}}/api/restaurants/favorite
+Content-Type: {{contentType}}
 Authorization: {{access_token}}

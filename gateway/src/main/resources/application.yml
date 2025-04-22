@@ -26,7 +26,7 @@ spring:
         - id: restaurant-service
           uri: lb://restaurant-service
           predicates:
-            - Path=/api/restaurants/**, /api/menus/**, /restaurant-service/**
+            - Path=/api/restaurants/**, /api/categories/** , /api/menus/**, /restaurant-service/**
           filters:
             - RewritePath=/restaurant-service/(?<segment>.*), /$\{segment}
         # 예약
