@@ -126,6 +126,7 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 			throw CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_UNAUTHORIZED);
 		}
 		couponHistory.delete();
+		couponHistoryRepository.save(couponHistory);
 	}
 
 	// 발급된 쿠폰 사용
