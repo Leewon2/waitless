@@ -79,7 +79,7 @@ public class RestaurantExternalController {
     public ResponseEntity<?> closeRestaurant(@PathVariable UUID id) {
         RestaurantResponseDto responseDto = restaurantService.closeRestaurant(id);
 
-        return ResponseEntity.ok(SingleResponse.success(null));
+        return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
 
 }
