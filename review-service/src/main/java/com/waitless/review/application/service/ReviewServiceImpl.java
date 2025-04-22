@@ -40,7 +40,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewCommandUseCase {
     private final ReviewServiceMapper reviewServiceMapper;
     private final ReviewOutboxPort reviewOutboxPort;
     private final ReviewRepositoryCustom reviewRepositoryCustom;
-    private final VisitedReservationPort visitedReservationPort;
+    // private final VisitedReservationPort visitedReservationPort;
     private final ReviewStatisticsCachePort reviewStatisticsCachePort;
 
     private static final long TTL_SECONDS = 300;
@@ -50,6 +50,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewCommandUseCase {
     @Transactional
     public PostReviewResult createReview(PostReviewCommand command) {
         // 예약 검증 로직
+        /*
         List<VisitedReservationResponseDto> visitedReservations =
                 visitedReservationPort.getVisitedReservations(new VisitedReservationRequestDto(command.reservationId()));
 
@@ -61,7 +62,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewCommandUseCase {
         if (!dto.userId().equals(command.userId()) || !dto.restaurantId().equals(command.restaurantId())) {
             throw new IllegalArgumentException("예약 정보와 사용자 정보가 일치하지 않습니다.");
         }
-
+        */
         Review review = reviewServiceMapper.toEntity(command);
         Review saved = reviewRepository.save(review);
 
