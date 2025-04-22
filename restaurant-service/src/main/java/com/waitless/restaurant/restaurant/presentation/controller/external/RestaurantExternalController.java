@@ -1,7 +1,6 @@
 package com.waitless.restaurant.restaurant.presentation.controller.external;
 
 
-import com.waitless.common.dto.RestaurantStockResponseDto;
 import com.waitless.common.exception.response.MultiResponse;
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.restaurant.restaurant.application.dto.RestaurantResponseDto;
@@ -12,14 +11,13 @@ import com.waitless.restaurant.restaurant.presentation.dto.SearchRestaurantReque
 import com.waitless.restaurant.restaurant.presentation.dto.UpdateRestaurantRequestDto;
 import com.waitless.restaurant.restaurant.presentation.mapper.RestaurantControllerMapper;
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,5 +75,11 @@ public class RestaurantExternalController {
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
 
+    @PatchMapping("/{id}/closed")
+    public ResponseEntity<?> closeRestaurant(@PathVariable UUID id) {
+        RestaurantResponseDto responseDto = restaurantService.closeRestaurant(id);
+
+        return ResponseEntity.ok(SingleResponse.success(responseDto));
+    }
 
 }

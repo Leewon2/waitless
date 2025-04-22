@@ -28,8 +28,8 @@ public class ReservationInternalController {
         return ResponseEntity.ok(SingleResponse.success(ticket));
     }
 
-    @PatchMapping("/{restaurantId}/closed")
-    public ResponseEntity visit(@PathVariable UUID restaurantId) {
+    @PostMapping("/{restaurantId}/closed")
+    public ResponseEntity closed(@PathVariable UUID restaurantId) {
         redisStockService.closedRestaurant(restaurantId);
         return ResponseEntity.ok().build();
     }
