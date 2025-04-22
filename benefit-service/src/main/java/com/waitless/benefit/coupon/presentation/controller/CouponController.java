@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.waitless.benefit.coupon.application.dto.CouponHistoryResponseDto;
 import com.waitless.benefit.coupon.application.dto.CouponResponseDto;
-import com.waitless.benefit.coupon.presentation.dto.ReadCouponHistoriesRequestDto;
 import com.waitless.benefit.coupon.application.service.CouponHistoryService;
 import com.waitless.benefit.coupon.application.service.CouponService;
 import com.waitless.benefit.coupon.presentation.dto.CreateCouponRequestDto;
+import com.waitless.benefit.coupon.presentation.dto.ReadCouponHistoriesRequestDto;
 import com.waitless.benefit.coupon.presentation.dto.ReadCouponsRequestDto;
 import com.waitless.benefit.coupon.presentation.mapper.CouponControllerMapper;
+import com.waitless.common.aop.RoleCheck;
+import com.waitless.common.domain.Role;
 import com.waitless.common.exception.response.MultiResponse;
 import com.waitless.common.exception.response.SingleResponse;
 
@@ -43,6 +45,7 @@ public class CouponController {
 
 	// 쿠폰 생성
 	@PostMapping
+	@RoleCheck(roles = {Role.ADMIN})
 	public ResponseEntity<SingleResponse<CouponResponseDto>> createCoupon(@RequestBody CreateCouponRequestDto createCouponRequestDto) {
 		return ResponseEntity.ok(SingleResponse.success(couponService.generateCoupon(couponControllerMapper.toCreateCouponDto(createCouponRequestDto))));
 	}
