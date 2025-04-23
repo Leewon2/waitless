@@ -1,12 +1,83 @@
-###예약 생성
+### 환경 변수 설정
+@baseUrl = http://localhost:19091
+@contentType = application/json
 
-###예약 조회
+### 회원가입
+POST {{baseUrl}}/api/users/signup
+Content-Type: {{contentType}}
 
-###예약 검색
+{
+  "email": "restaurant1@gmail.com",
+  "password": "restaurant1",
+  "name": "restaurant1",
+  "phone": "010-1234-1111",
+  "role" : "OWNER",
+  "slackId": "restaurant1@gmail.com"
+}
 
-###예약 취소
+###로그인
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "restaurant1@gmail.com",
+  "password": "restaurant1"
+}
+> {%
+    client.global.set("access_token", response.body.accessToken)
+%}
+
+###티켓팅 식당 생성
+POST {{baseUrl}}/api/reservation/app/ticket
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+{
+  "restaurantId": {{restaurantId}},
+  "openTime": "20:00:00"
+}
+
+###예약하기
+POST {{baseUrl}}/api/reservation
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+{
+  "restaurantId": {{restaurantId}},
+	"restaurantName": "연돈",
+	"peopleCount": 4,
+	"reservationDate": "2025-04-18",
+  "menus": [
+    {
+      "menuId": "{{menuId}}",
+      "menuName": "치츠돈까스",
+      "quantity": 1,
+      "price": 8000
+    }
+  ]
+}
+
+###예약 단건 조회
+GET {{baseUrl}}/api/reservation/{{reservationId}}
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+###예약 복수 조회
+GET {{baseUrl}}/api/reservation?direction=asc
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+###본인 순번 확인하기
+GET {{baseUrl}}/api/reservation/{{reservationId}}/queue-position
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
 
 ###방문 완료
+PATCH {{baseUrl}}/api/reservation/{{reservationId}}/visit
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
 
-###현재 순위
-
+###예약 취소
+PATCH {{baseUrl}}/api/reservation/{{reservationId}}/cancel
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
