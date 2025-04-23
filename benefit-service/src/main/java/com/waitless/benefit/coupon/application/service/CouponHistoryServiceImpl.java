@@ -107,6 +107,7 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 			readCouponHistoriesDto.sortDirection(),
 			readCouponHistoriesDto.sortBy(),
 			readCouponHistoriesDto.userId(),
+			readCouponHistoriesDto.role(),
 			pageable
 		);
 		List<CouponHistoryResponseDto> dtoList = couponHistoryList
