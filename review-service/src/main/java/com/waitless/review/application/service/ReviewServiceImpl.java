@@ -15,6 +15,7 @@ import com.waitless.review.application.port.in.ReviewCommandUseCase;
 import com.waitless.review.application.port.out.ReviewOutboxPort;
 import com.waitless.review.application.port.out.ReviewStatisticsCachePort;
 import com.waitless.review.application.port.out.VisitedReservationPort;
+import com.waitless.review.application.validator.VisitedReservationValidator;
 import com.waitless.review.domain.entity.Review;
 import com.waitless.review.domain.repository.ReviewRepository;
 import com.waitless.review.domain.repository.ReviewRepositoryCustom;
@@ -40,7 +41,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewCommandUseCase {
     private final ReviewServiceMapper reviewServiceMapper;
     private final ReviewOutboxPort reviewOutboxPort;
     private final ReviewRepositoryCustom reviewRepositoryCustom;
-    // private final VisitedReservationPort visitedReservationPort;
+    private final VisitedReservationValidator visitedReservationValidator;
     private final ReviewStatisticsCachePort reviewStatisticsCachePort;
 
     private static final long TTL_SECONDS = 300;
@@ -49,20 +50,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewCommandUseCase {
     @Override
     @Transactional
     public PostReviewResult createReview(PostReviewCommand command) {
-        // 예약 검증 로직
-        /*
-        List<VisitedReservationResponseDto> visitedReservations =
-                visitedReservationPort.getVisitedReservations(new VisitedReservationRequestDto(command.reservationId()));
-
-        VisitedReservationResponseDto dto = visitedReservations.stream()
-                .filter(r -> r.reservationId().equals(command.reservationId()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("방문 완료된 예약이 아닙니다."));
-
-        if (!dto.userId().equals(command.userId()) || !dto.restaurantId().equals(command.restaurantId())) {
-            throw new IllegalArgumentException("예약 정보와 사용자 정보가 일치하지 않습니다.");
-        }
-        */
+        visitedReservationValidator.validate(command);
         Review review = reviewServiceMapper.toEntity(command);
         Review saved = reviewRepository.save(review);
 
