@@ -19,9 +19,7 @@ public record ReservationCreateRequest(
         String restaurantName,
 
         Integer peopleCount,
-        LocalDate reservationDate,
-        Long userId
-) {
+        LocalDate reservationDate) {
     public record MenuDto(
             @NotNull
             UUID menuId,
