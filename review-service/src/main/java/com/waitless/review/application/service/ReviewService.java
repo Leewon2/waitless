@@ -8,7 +8,9 @@ import com.waitless.review.application.dto.result.*;
 import com.waitless.review.domain.vo.ReviewSearchCondition;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ReviewService {
     PostReviewResult createReview(PostReviewCommand command);
@@ -16,5 +18,5 @@ public interface ReviewService {
     GetReviewResult findOne(ReviewSearchCondition condition); // 단건 조회
     PageCommand<GetReviewListResult> findList(ReviewSearchCondition condition, Pageable pageable); // 리스트 조회
     PageCommand<SearchReviewsResult> findSearch(ReviewSearchCondition condition, Pageable pageable); // 조건 조회
-    Optional<ReviewStatisticsResult> getStatistics(ReviewStatisticsCommand command);
+    Map<UUID, ReviewStatisticsResult> getStatisticsBatch(ReviewStatisticsCommand command);
 }

@@ -3,8 +3,6 @@ package com.waitless.review.application.service;
 import com.waitless.common.command.CancelReviewCommand;
 import com.waitless.common.event.ReviewCreatedEvent;
 import com.waitless.common.event.ReviewDeletedEvent;
-import com.waitless.review.application.dto.client.VisitedReservationRequestDto;
-import com.waitless.review.application.dto.client.VisitedReservationResponseDto;
 import com.waitless.review.application.dto.command.DeleteReviewCommand;
 import com.waitless.review.application.dto.command.PageCommand;
 import com.waitless.review.application.dto.command.PostReviewCommand;
@@ -14,14 +12,12 @@ import com.waitless.review.application.mapper.ReviewServiceMapper;
 import com.waitless.review.application.port.in.ReviewCommandUseCase;
 import com.waitless.review.application.port.out.ReviewOutboxPort;
 import com.waitless.review.application.port.out.ReviewStatisticsCachePort;
-import com.waitless.review.application.port.out.VisitedReservationPort;
+import com.waitless.review.application.service.cache.ReviewBatchCache;
 import com.waitless.review.application.validator.VisitedReservationValidator;
 import com.waitless.review.domain.entity.Review;
 import com.waitless.review.domain.repository.ReviewRepository;
 import com.waitless.review.domain.repository.ReviewRepositoryCustom;
-import com.waitless.review.domain.repository.ReviewStatisticsProjection;
 import com.waitless.review.domain.vo.ReviewSearchCondition;
-import com.waitless.review.domain.vo.ReviewStatisticsCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,8 +25,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -43,14 +39,12 @@ public class ReviewServiceImpl implements ReviewService, ReviewCommandUseCase {
     private final ReviewRepositoryCustom reviewRepositoryCustom;
     private final VisitedReservationValidator visitedReservationValidator;
     private final ReviewStatisticsCachePort reviewStatisticsCachePort;
-
-    private static final long TTL_SECONDS = 300;
-    private static final String LOG_PREFIX = "[ReviewStatisticsCache]";
+    private final ReviewBatchCache reviewBatchCache;
 
     @Override
     @Transactional
     public PostReviewResult createReview(PostReviewCommand command) {
-        visitedReservationValidator.validate(command);
+//        visitedReservationValidator.validate(command);
         Review review = reviewServiceMapper.toEntity(command);
         Review saved = reviewRepository.save(review);
 
@@ -101,32 +95,8 @@ public class ReviewServiceImpl implements ReviewService, ReviewCommandUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ReviewStatisticsResult> getStatistics(ReviewStatisticsCommand command) {
-        String restaurantId = command.restaurantId().toString();
-
-        // 1. 캐시 조회
-        ReviewStatisticsCache cached = reviewStatisticsCachePort.find(restaurantId);
-        if (cached != null) {
-            log.debug("{} HIT → restaurantId={}, count={}, avg={}", LOG_PREFIX, restaurantId, cached.getReviewCount(), cached.getAverageRating());
-            return Optional.of(ReviewStatisticsResult.from(cached.getReviewCount(), cached.getAverageRating()));
-        }
-        // 2. DB 조회
-        Optional<ReviewStatisticsProjection> projectionOpt = reviewRepositoryCustom.findStatisticsByRestaurantId(command.restaurantId());
-        if (projectionOpt.isEmpty()) {
-            log.warn("{} MISS → 통계 없음: restaurantId={}", LOG_PREFIX, restaurantId);
-            return Optional.empty();
-        }
-        ReviewStatisticsProjection projection = projectionOpt.get();
-        long count = projection.getReviewCount();
-        double avg = projection.getAverageRating();
-        // 3. 캐시에 저장
-        ReviewStatisticsCache data = ReviewStatisticsCache.builder()
-                .reviewCount(count)
-                .averageRating(avg)
-                .build();
-        reviewStatisticsCachePort.save(restaurantId, data, TTL_SECONDS);
-        log.debug("{} MISS → DB 조회 후 캐시 저장: restaurantId={}, count={}, avg={}", LOG_PREFIX, restaurantId, count, avg);
-        return Optional.of(ReviewStatisticsResult.from(count, avg));
+    public Map<UUID, ReviewStatisticsResult> getStatisticsBatch(ReviewStatisticsCommand command) {
+        return reviewBatchCache.getBatch(command.restaurantIds());
     }
 
     @Override
