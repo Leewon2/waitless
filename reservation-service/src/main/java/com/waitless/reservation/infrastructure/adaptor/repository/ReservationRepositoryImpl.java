@@ -1,6 +1,7 @@
 package com.waitless.reservation.infrastructure.adaptor.repository;
 
 import com.waitless.reservation.application.dto.ReservationSearchQuery;
+import com.waitless.reservation.application.dto.ReservationServiceResponse;
 import com.waitless.reservation.domain.entity.Reservation;
 import com.waitless.reservation.domain.repository.ReservationQueryRepository;
 import com.waitless.reservation.domain.repository.ReservationRepository;
@@ -36,6 +37,11 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     @Override
     public Page<Reservation> findByCustomCondition(ReservationSearchQuery reservationSearchQuery) {
         return reservationQueryRepository.findByCustomCondition(reservationSearchQuery);
+    }
+
+    @Override
+    public Optional<ReservationServiceResponse> findReviewById(UUID reservationId) {
+        return reservationJpaRepository.findReviewById(reservationId);
     }
 
 }
