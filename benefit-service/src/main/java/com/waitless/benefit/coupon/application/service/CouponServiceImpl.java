@@ -18,7 +18,7 @@ import com.waitless.benefit.coupon.application.exception.CouponErrorCode;
 import com.waitless.benefit.coupon.application.mapper.CouponServiceMapper;
 import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.repository.CouponRepository;
-import com.waitless.benefit.coupon.infrastructure.repository.CustomCouponRepository;
+import com.waitless.benefit.coupon.domain.repository.CustomCouponRepository;
 
 import lombok.RequiredArgsConstructor;
 

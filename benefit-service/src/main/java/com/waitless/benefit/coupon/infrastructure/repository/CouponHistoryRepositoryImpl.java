@@ -20,6 +20,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.waitless.benefit.coupon.domain.entity.CouponHistory;
 import com.waitless.benefit.coupon.domain.repository.CouponHistoryRepository;
+import com.waitless.benefit.coupon.domain.repository.CustomCouponHistoryRepository;
 import com.waitless.common.domain.Role;
 
 import jakarta.persistence.EntityManager;

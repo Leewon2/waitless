@@ -1,4 +1,4 @@
-package com.waitless.benefit.coupon.infrastructure.repository;
+package com.waitless.benefit.coupon.domain.repository;
 
 import java.util.List;
 

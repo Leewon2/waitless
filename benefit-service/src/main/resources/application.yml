@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -22,7 +22,7 @@ spring:
     redis:
       host: localhost
       port: 6379
-      username: default
+#      username: default
       password: systempass
   kafka:
     bootstrap-servers: localhost:9092
