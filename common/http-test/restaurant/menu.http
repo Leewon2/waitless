@@ -33,14 +33,14 @@ Content-Type: application/json
 Authorization: {{access_token}}
 
 {
-  "restaurantId": "21f64e0f-8f96-4707-b13d-8c2d869b6309",
+  "restaurantId": "{{restaurantId}}",
   "category": "KOREAN",
   "price": 9500,
   "name": "제육볶음 정식2",
   "amount": 15
 }
 > {%
-    client.global.set("menuId", response.body.menuId)
+    client.global.set("menuId", response.body.data.menuId)
 %}
 
 ###메뉴 단일 조회
@@ -54,9 +54,16 @@ Content-Type: application/json
 Authorization: {{access_token}}
 
 ###메뉴 수정
-PUT {{baseUrl}}/api/menus/{{menuId}}
+PATCH {{baseUrl}}/api/menus/{{menuId}}
 Content-Type: application/json
 Authorization: {{access_token}}
+
+{
+  "category": "KOREAN",
+  "price": 500,
+  "name": null,
+  "amount": 1500
+}
 
 ###메뉴 검색
 GET {{baseUrl}}/api/menus/search?minPrice=1000&category=KOREAN&sortBy=price

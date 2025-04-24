@@ -2,6 +2,7 @@ package com.waitless.reservation.infrastructure.adaptor.client;
 
 import com.waitless.common.dto.RestaurantStockResponseDto;
 import com.waitless.reservation.infrastructure.adaptor.client.dto.RestaurantResponseDto;
+import com.waitless.reservation.infrastructure.config.feign.FeignCommonConfig;
 import com.waitless.reservation.infrastructure.config.feign.RestaurantFeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,7 @@ import java.util.UUID;
 @FeignClient(
         name = "restaurant-service",
         url = "${gateway.url}",
-        configuration = RestaurantFeignConfig.class
+        configuration = {FeignCommonConfig.class, RestaurantFeignConfig.class}
 )
 public interface RestaurantClient {
 

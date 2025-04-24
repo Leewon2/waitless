@@ -9,4 +9,7 @@ import java.util.UUID;
 
 public interface TicketJpaRepository extends JpaRepository<TicketRestaurant, UUID> {
     List<TicketRestaurant> findByOpenTime(LocalTime openTime);
+
+    List<TicketRestaurant> findByRestaurantId(UUID restaurantId);
+
 }
