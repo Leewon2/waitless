@@ -9,9 +9,7 @@ public record ReservationCreateCommand(
         List<MenuCommandDto> menus,
         String restaurantName,
         Integer peopleCount,
-        LocalDate reservationDate,
-        Long userId
-) {
+        LocalDate reservationDate) {
     public record MenuCommandDto(
             UUID menuId,
             String menuName,

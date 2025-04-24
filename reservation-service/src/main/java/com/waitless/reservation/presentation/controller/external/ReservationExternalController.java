@@ -67,9 +67,9 @@ public class ReservationExternalController {
         return ResponseEntity.ok(SingleResponse.success(response));
     }
 
-    @GetMapping("/test")
-    public ResponseEntity aa() {
-        ticketingMenuFetchScheduler.fetchMenuStocks();
-        return ResponseEntity.ok(SingleResponse.success("ok"));
+    @GetMapping("/{reservationId}/force-schedule")
+    public ResponseEntity schedule(@PathVariable("reservationId") UUID reservationId) {
+        ticketingMenuFetchScheduler.scheduleTest(reservationId);
+        return ResponseEntity.ok().build();
     }
 }

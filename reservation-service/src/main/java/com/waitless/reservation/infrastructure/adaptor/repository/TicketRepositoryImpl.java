@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,5 +23,10 @@ public class TicketRepositoryImpl implements TicketRepository {
     @Override
     public List<TicketRestaurant> findByOpenTime(LocalTime openTime) {
         return jpaRepository.findByOpenTime(openTime);
+    }
+
+    @Override
+    public List<TicketRestaurant> findByRestaurantId(UUID restaurantId) {
+        return jpaRepository.findByRestaurantId(restaurantId);
     }
 }

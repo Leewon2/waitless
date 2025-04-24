@@ -4,7 +4,6 @@ import com.waitless.reservation.domain.entity.ReservationStatus;
 
 public record ReservationSearchRequest(
         ReservationStatus status,
-        Long userId,
         Integer page,
         Integer size,
         String sortBy,
@@ -12,7 +11,6 @@ public record ReservationSearchRequest(
 ) {
     public ReservationSearchRequest {
         status = defaultStatus(status);
-        userId = defaultUserId(userId);
         page = defaultPage(page);
         size = defaultSize(size);
         sortBy = defaultSortBy(sortBy);
@@ -21,10 +19,6 @@ public record ReservationSearchRequest(
 
     private static ReservationStatus defaultStatus(ReservationStatus status) {
         return status != null ? status : ReservationStatus.WAITING;
-    }
-
-    private static Long defaultUserId(Long userId) {
-        return userId != null ? userId : 1L; // 추후 변경 예정
     }
 
     private static int defaultPage(Integer page) {

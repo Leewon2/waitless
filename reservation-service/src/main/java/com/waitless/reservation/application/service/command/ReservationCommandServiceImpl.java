@@ -1,11 +1,14 @@
 package com.waitless.reservation.application.service.command;
 
+import com.waitless.common.dto.StockDto;
+import com.waitless.common.event.StockDecreasedEvent;
 import com.waitless.common.exception.BusinessException;
 import com.waitless.reservation.application.dto.CancelMenuDto;
 import com.waitless.reservation.application.dto.ReservationCreateCommand;
 import com.waitless.reservation.application.dto.ReservationCreateResponse;
 import com.waitless.reservation.application.event.dto.ReservationCompleteEvent;
 import com.waitless.reservation.application.event.dto.ReservationVisitedEvent;
+import com.waitless.reservation.application.interceptor.UserContext;
 import com.waitless.reservation.application.mapper.ReservationServiceMapper;
 import com.waitless.reservation.application.service.redis.RedisReservationQueueService;
 import com.waitless.reservation.application.service.redis.RedisStockService;
@@ -38,9 +41,10 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
     private final RestaurantClient restaurantClient;
     private final ApplicationEventPublisher eventPublisher;
 
-
     @Override
     public ReservationCreateResponse createReservation(ReservationCreateCommand reservationCreateCommand) {
+        Long userId = UserContext.getUserContext().getUserId();
+
         UUID storeId = reservationCreateCommand.restaurantId();
         Long reservationNumber = redisStockService.decrementStock(storeId, reservationCreateCommand.menus());
 
@@ -55,14 +59,19 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
                 reservationNumber,
                 reservationCreateCommand.reservationDate(),
                 ReservationStatus.WAITING,
-                menus, reservationCreateCommand.userId()
+                menus,userId
         );
 
         reservationRepository.save(reservation);
         redisReservationQueueService.registerToWaitingQueue(reservation.getId(), reservation.getReservationDate(), reservation.getRestaurantId(), reservationNumber);
 
-        eventPublisher.publishEvent(new ReservationCompleteEvent(reservationCreateCommand.userId(),reservation.getReservationNumber()));
+        eventPublisher.publishEvent(new ReservationCompleteEvent(userId,reservation.getReservationNumber()));
 
+        List<StockDto> stockDtos = reservationCreateCommand.menus().stream()
+                .map(m -> new StockDto(m.menuId(), m.quantity(), m.price()))
+                .toList();
+
+        eventPublisher.publishEvent(new StockDecreasedEvent(stockDtos));
         log.debug("예약 생성 :: Redis 재고 차감 및 DB 저장 완료: {}", storeId);
 
         return reservationServiceMapper.toReservationCreateResponse(reservation);
@@ -88,7 +97,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
     @Override
     public void visitReservation(UUID reservationId) {
-        Long userId = 1L; // TODO: 쓰레드로컬에서 추출 예정 -> 가게주인의 UserId
+        Long userId = UserContext.getUserContext().getUserId();
         Reservation findReservation = getReservationOrThrow(reservationId);
 
         RestaurantResponseDto restaurantResponseDto =

@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.waitless.reservation.application.dto.ReservationSearchQuery;
+import com.waitless.reservation.application.interceptor.UserContext;
 import com.waitless.reservation.domain.entity.QReservation;
 import com.waitless.reservation.domain.entity.Reservation;
 import com.waitless.reservation.domain.repository.ReservationQueryRepository;
@@ -39,14 +40,15 @@ public class ReservationQueryRepositoryImpl implements ReservationQueryRepositor
     }
 
     private BooleanBuilder buildCondition(ReservationSearchQuery query) {
+        Long userId = UserContext.getUserContext().getUserId();
         QReservation reservation = QReservation.reservation;
         BooleanBuilder builder = new BooleanBuilder();
 
         if (query.status() != null) {
             builder.and(reservation.status.eq(query.status()));
         }
-        if (query.userId() != null) {
-            builder.and(reservation.userId.eq(query.userId()));
+        if (userId != null) {
+            builder.and(reservation.userId.eq(userId));
         }
 
         return builder;
