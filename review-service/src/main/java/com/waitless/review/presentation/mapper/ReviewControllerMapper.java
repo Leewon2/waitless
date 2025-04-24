@@ -20,7 +20,7 @@ public interface ReviewControllerMapper {
     default ReviewSearchCondition toCondition(SearchReviewsRequestDto requestDto) {
         return new ReviewSearchCondition(null, requestDto.userId(), requestDto.restaurantId(), requestDto.rating());
     }
-    default ReviewStatisticsCommand toCommand(ReviewStatisticsRequestDto requestDto) {
-        return new ReviewStatisticsCommand(requestDto.restaurantId());
+    default ReviewStatisticsCommand toCommand(ReviewStatisticsBatchRequestDto requestDto) {
+        return new ReviewStatisticsCommand(requestDto.restaurantIds());
     }
 }
