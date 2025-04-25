@@ -3,6 +3,7 @@ package com.waitless.reservation.application.service.query;
 import com.waitless.common.exception.BusinessException;
 import com.waitless.reservation.application.dto.ReservationCurrentResponse;
 import com.waitless.reservation.application.dto.ReservationSearchQuery;
+import com.waitless.reservation.application.dto.ReservationServiceResponse;
 import com.waitless.reservation.application.mapper.ReservationServiceMapper;
 import com.waitless.reservation.application.service.redis.RedisReservationQueueService;
 import com.waitless.reservation.domain.entity.Reservation;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,5 +48,13 @@ public class ReservationQueryServiceImpl implements ReservationQueryService {
         Reservation findReservation = reservationRepository.findById(reservationId).orElseThrow(() -> BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND));
         findReservation.validateWaitingStatus();
         return ReservationCurrentResponse.of(findReservation, queueService.findCurrentNumberFromWaitingQueue(reservationId, findReservation.getRestaurantId()));
+    }
+
+    @Override
+    public List<ReservationServiceResponse> findOneForReview(UUID reservationId) {
+        return List.of(
+                reservationRepository.findReviewById(reservationId)
+                        .orElseThrow(() -> BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND))
+        );
     }
 }
