@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:19097
+@baseUrl = http://localhost:19091
 
 ### 회원가입
 POST {{baseUrl}}/api/users/signup
@@ -26,7 +26,7 @@ Content-Type: application/json
 %}
 
 ###슬랙 생성
-POST {{baseUrl}}/api/slacks?receiverId=as&mySequence=20
+POST {{baseUrl}}/api/slacks?receiverId=asasd&mySequence=20
 Content-Type: application/json
 Authorization: {{access_token}}
 
