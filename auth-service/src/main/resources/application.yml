@@ -7,7 +7,7 @@ spring:
     import: optional:file:.env[.properties]
   data:
     redis:
-      host: localhost
+      host: redis
       port: 6379
 #      username: default
       password: systempass
@@ -24,5 +24,5 @@ jwt:
 eureka:
   client:
     service-Url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://eureka-server:19090/eureka
 

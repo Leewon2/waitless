@@ -88,7 +88,7 @@ spring:
 eureka:
   client:
     service-Url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://eureka-server:19090/eureka
 
 jwt:
   secret: ${JWT_SECRET_KEY}
