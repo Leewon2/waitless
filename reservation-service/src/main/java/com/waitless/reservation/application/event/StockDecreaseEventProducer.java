@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class StockEventProducer {
+public class StockDecreaseEventProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private static final String TOPIC = "restaurant-stock-decrease";
 
-    public void sendStockRequest(StockDecreasedEvent event) {
-        kafkaTemplate.send(TOPIC, event);
+    public void publish(StockDecreasedEvent event) {
+        kafkaTemplate.send(TOPIC,"stock-key",  event);
     }
 }
