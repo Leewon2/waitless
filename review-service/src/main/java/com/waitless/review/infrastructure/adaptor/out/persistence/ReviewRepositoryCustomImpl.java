@@ -16,9 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @Primary
@@ -70,30 +68,41 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
     }
 
     @Override
-    public Optional<ReviewStatisticsProjection> findStatisticsByRestaurantId(UUID restaurantId) {
-        Tuple result = queryFactory
+    public Map<UUID, ReviewStatisticsProjection> findStatisticsByRestaurantIds(List<UUID> restaurantIds) {
+        if (restaurantIds == null || restaurantIds.isEmpty())
+            return Map.of();
+
+        List<Tuple> results = queryFactory
                 .select(
-                        review.id.countDistinct(),
-                        review.rating.ratingValue.avg()
+                        review.restaurantId, // group key
+                        review.id.countDistinct(), // 리뷰 수
+                        review.rating.ratingValue.avg() // 평균평점
                 )
                 .from(review)
                 .where(
-                        review.restaurantId.eq(restaurantId),
+                        review.restaurantId.in(restaurantIds), // 동적 IN 조건
                         notDeleted()
                 )
-                .fetchOne();
-        if (result == null) return Optional.empty();
-        return Optional.of(new ReviewStatisticsProjection() {
-            @Override
-            public long getReviewCount() {
-                return result.get(review.id.countDistinct());
-            }
+                .groupBy(review.restaurantId) // 집계 단위
+                .fetch();
 
-            @Override
-            public double getAverageRating() {
-                return result.get(review.rating.ratingValue.avg());
-            }
-        });
+        Map<UUID, ReviewStatisticsProjection> resultMap = new HashMap<>();
+        for (Tuple tuple : results) {
+            UUID restaurantId = tuple.get(review.restaurantId);
+            long count = tuple.get(review.id.countDistinct());
+            double avg = tuple.get(review.rating.ratingValue.avg());
+            resultMap.put(restaurantId, new ReviewStatisticsProjection() {
+                @Override
+                public long getReviewCount() {
+                    return count;
+                }
+                @Override
+                public double getAverageRating() {
+                    return avg;
+                }
+            });
+        }
+        return resultMap;
     }
 
     private BooleanExpression eqUserId(Long userId) {
