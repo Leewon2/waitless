@@ -51,7 +51,7 @@ jobs:
 
       - name: Docker 이미지 Build, Push
         run: |
-          SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service gateway-service"
+          SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service gateway"
           for SERVICE in $SERVICES
           do
             docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }} -f ${SERVICE}/Dockerfile .
