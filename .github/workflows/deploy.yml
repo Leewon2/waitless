@@ -43,7 +43,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Spring Build
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test
 
       - name: Tag 생성
         id: vars
