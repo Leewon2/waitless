@@ -62,7 +62,7 @@ jobs:
           SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service gateway"
           for SERVICE in $SERVICES
           do
-            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }} -f ${SERVICE}/Dockerfile .
+            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }} -f ${SERVICE}/Dockerfile ${SERVICE}
             docker push ${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }}
           done
 
