@@ -46,7 +46,12 @@ jobs:
         run: ./gradlew clean build -x test
 
       - name: 빌드 파일명 통일
-        run: mv build/libs/*-SNAPSHOT.jar build/libs/app.jar
+        run: |
+          SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service gateway"
+          for SERVICE in $SERVICES
+          do
+            mv $SERVICE/build/libs/*-SNAPSHOT.jar $SERVICE/build/libs/app.jar
+          done
 
       - name: Tag 생성
         id: vars
