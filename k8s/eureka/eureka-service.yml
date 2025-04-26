@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: eureka-server
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: eureka-server
   ports:
