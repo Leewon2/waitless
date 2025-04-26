@@ -45,6 +45,9 @@ jobs:
       - name: Spring Build
         run: ./gradlew clean build -x test
 
+      - name: 빌드 파일명 통일
+        run: mv build/libs/*-SNAPSHOT.jar build/libs/app.jar
+
       - name: Tag 생성
         id: vars
         run: echo "tag=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
