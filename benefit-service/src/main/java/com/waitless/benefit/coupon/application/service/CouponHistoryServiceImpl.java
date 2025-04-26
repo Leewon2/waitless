@@ -62,7 +62,6 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		}
 	}
 
-	// 쿠폰 발급 메서드
 	private CouponHistoryResponseDto issueCouponWithLock(UUID couponId, Long userId) {
 		LocalDateTime now = LocalDateTime.now();
 		Coupon coupon = couponService.decreaseCouponAmount(couponId);
@@ -81,11 +80,11 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		return couponHistoryServiceMapper.toCouponHistoryResponseDto(saved);
 	}
 
-	// 쿠폰발급내역 단건 조회 (API)
+	// 쿠폰발급내역 단건 조회
 	@Override
 	public CouponHistoryResponseDto findCouponHistory(UUID id) {
-		CouponHistory couponHistory = findCouponHistoryById(id);
-		return couponHistoryServiceMapper.toCouponHistoryResponseDto(couponHistory);
+		CouponHistoryCacheDto cached = redisCacheService.getCouponHistory(id);
+		return couponHistoryServiceMapper.toCouponHistoryResponseDto(cached);
 	}
 
 	// 쿠폰발급내역 목록 조회 + 검색
@@ -138,10 +137,11 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		redisCacheService.cacheCouponHistory(couponHistory);
 	}
 
-	// 쿠폰발급내역 단건 조회
+	// 쿠폰발급내역 단건 조회(DB)
 	private CouponHistory findCouponHistoryById(UUID id) {
-		CouponHistoryCacheDto cached = redisCacheService.getCouponHistory(id);
-		return couponHistoryServiceMapper.toCouponHistory(cached);
+		CouponHistory couponHistory = couponHistoryRepository.findById(id)
+			.orElseThrow(() -> CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_NOT_FOUND));
+		return couponHistory;
 	}
 
 }

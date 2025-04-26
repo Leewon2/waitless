@@ -16,10 +16,6 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -62,25 +58,49 @@ public class RedisConfig {
 		);
 	}
 
-	@Bean
-	public ObjectMapper objectMapper() {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		return mapper;
-	}
+	// @Bean
+	// public ObjectMapper objectMapper() {
+	// 	ObjectMapper mapper = new ObjectMapper()
+	// 		.findAndRegisterModules()
+	// 		.enable(SerializationFeature.INDENT_OUTPUT)
+	// 		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+	// 		.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+	// 		.registerModules(new JavaTimeModule());
+	//
+	// 	// 타입 정보를 포함하도록 기본 설정 적용
+	// 	mapper.activateDefaultTyping(
+	// 		LaissezFaireSubTypeValidator.instance,
+	// 		ObjectMapper.DefaultTyping.NON_FINAL,
+	// 		JsonTypeInfo.As.PROPERTY
+	// 	);
+	//
+	// 	return mapper;
+	// }
 
 	@Bean
-	public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
-		GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+	public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+		// ObjectMapper mapper = new ObjectMapper()
+		// 	.registerModule(new JavaTimeModule())
+		// 	.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+		// 	.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		//
+		// mapper.activateDefaultTyping(
+		// 	BasicPolymorphicTypeValidator.builder()
+		// 		.allowIfSubType(Object.class) // 허용할 클래스 직접 필터링 가능
+		// 		.build(),
+		// 	ObjectMapper.DefaultTyping.NON_FINAL,
+		// 	JsonTypeInfo.As.PROPERTY // => "@class" 포함
+		// );
+
+		GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
 
 		RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
 			.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
 			.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer))
 			.entryTtl(Duration.ofDays(1))
 			.disableCachingNullValues();
-
 		return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory).cacheDefaults(config).build();
+
 	}
 
 }
