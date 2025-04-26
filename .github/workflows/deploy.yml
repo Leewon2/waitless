@@ -43,7 +43,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Spring Build
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean bootJar -x test
 
       - name: 빌드 파일명 통일
         run: |
