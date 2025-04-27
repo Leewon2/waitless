@@ -81,7 +81,7 @@ jobs:
 
       - name: deployment service 적용
         run: |
-          SERVICES="auth benefit database eureka gateway message reservation restaurant review user"
+          SERVICES="auth benefit mariadb eureka gateway message reservation restaurant review user"
           for SERVICE in $SERVICES
           do
             kubectl apply -f k8s/${SERVICE}/${SERVICE}-deployment.yml
