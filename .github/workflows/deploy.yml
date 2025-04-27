@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 #    env:
 #      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
 #      JWT_ACCESS_EXPIRATION: ${{ secrets.JWT_ACCESS_EXPIRATION }}
@@ -59,7 +59,7 @@ jobs:
 
       - name: Docker 이미지 Build, Push
         run: |
-          SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service"
+          SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service gateway server"
           for SERVICE in $SERVICES
           do
             docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }} -f ${SERVICE}/Dockerfile ${SERVICE}
@@ -76,12 +76,18 @@ jobs:
           SERVICES="auth benefit mariadb eureka gateway message reservation restaurant review user"
           for SERVICE in $SERVICES
           do
-            kubectl apply -f k8s/${SERVICE}/${SERVICE}-deployment.yml
+            if [ -f k8s/${SERVICE}/${SERVICE}-deployment.yml ]; then
+              kubectl apply -f k8s/${SERVICE}/${SERVICE}-deployment.yml
+            fi
+          
+            if [ -f k8s/${SERVICE}/${SERVICE}-service.yml ] && [ "${SERVICE}" != "eureka" ] && [ "${SERVICE}" != "gateway" ]; then
+              kubectl apply -f k8s/${SERVICE}/${SERVICE}-service.yml
+            fi
           done
 
       - name: Kubernetes에 배포
         run: |
-          SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service"
+          SERVICES="auth user reservation restaurant review benefit message gateway eureka mariadb"
           for SERVICE in $SERVICES
           do
             kubectl set image deployment/${SERVICE} ${SERVICE}-container=${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }}
