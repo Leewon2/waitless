@@ -71,6 +71,14 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
 
+      - name: deployment 적용
+        run: |
+          SERVICES="auth benefit mariadb eureka gateway message reservation restaurant review user"
+          for SERVICE in $SERVICES
+          do
+            kubectl apply -f k8s/${SERVICE}/${SERVICE}-deployment.yml
+          done
+
       - name: Kubernetes에 배포
         run: |
           SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service"
@@ -79,10 +87,3 @@ jobs:
             kubectl set image deployment/${SERVICE} ${SERVICE}-container=${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }}
           done
 
-      - name: deployment 적용
-        run: |
-          SERVICES="auth benefit mariadb eureka gateway message reservation restaurant review user"
-          for SERVICE in $SERVICES
-          do
-            kubectl apply -f k8s/${SERVICE}/${SERVICE}-deployment.yml
-          done
