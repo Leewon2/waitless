@@ -12,13 +12,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-      JWT_ACCESS_EXPIRATION: ${{ secrets.JWT_ACCESS_EXPIRATION }}
-      JWT_REFRESH_EXPIRATION: ${{ secrets.JWT_REFRESH_EXPIRATION }}
-      SPRING_DATASOURCE_URL: ${{ secrets.DB_URL }}
-      SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
-      SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#    env:
+#      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+#      JWT_ACCESS_EXPIRATION: ${{ secrets.JWT_ACCESS_EXPIRATION }}
+#      JWT_REFRESH_EXPIRATION: ${{ secrets.JWT_REFRESH_EXPIRATION }}
+#      SPRING_DATASOURCE_URL: ${{ secrets.DB_URL }}
+#      SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
+#      SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     steps:
       - name: Checkout
