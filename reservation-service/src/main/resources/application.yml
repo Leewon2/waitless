@@ -20,9 +20,9 @@ spring:
           stock-decrease:com.waitless.common.event.StockDecreasedEvent
 
   datasource:
-    url: jdbc:mariadb://mariadb:3306/hangry-database?allowPublicKeyRetrieval=true&useSSL=false
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
