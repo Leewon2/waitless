@@ -23,9 +23,9 @@ spec:
             - name: SPRING_APPLICATION_NAME
               value: "user-service"
 
-            - name: DB_URL
+            - name: SPRING_DATASOURCE_URL
               value: "jdbc:mariadb://mariadb:3306/hangry-database"
-            - name: DB_USERNAME
+            - name: SPRING_DATASOURCE_USERNAME
               value: "root"
-            - name: DB_PASSWORD
+            - name: SPRING_DATASOURCE_PASSWORD
               value: "root"
