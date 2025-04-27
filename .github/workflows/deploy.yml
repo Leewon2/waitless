@@ -57,6 +57,7 @@ jobs:
         id: vars
         run: echo "tag=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
 
+
       - name: Docker 이미지 Build, Push
         run: |
           SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service gateway server"
