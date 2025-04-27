@@ -59,11 +59,11 @@ jobs:
 
       - name: Docker 이미지 Build, Push
         run: |
-          PROJECTS="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service gateway server"
-          for PROJECT in $PROJECTS
+          SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service"
+          for SERVICE in $SERVICES
           do
-            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${PROJECT}:${{ env.tag }} -f ${PROJECT}/Dockerfile ${PROJECT}
-            docker push ${{ secrets.DOCKERHUB_USERNAME }}/${PROJECT}:${{ env.tag }}
+            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }} -f ${SERVICE}/Dockerfile ${SERVICE}
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }}
           done
 
       - name: Kubeconfig Setup
@@ -73,20 +73,8 @@ jobs:
 
       - name: Kubernetes에 배포
         run: |
-          declare -A SERVICE_MAP=(
-            ["auth-service"]="auth-service"
-            ["user-service"]="user-service"
-            ["reservation-service"]="reservation-service"
-            ["restaurant-service"]="restaurant-service"
-            ["review-service"]="review-service"
-            ["benefit-service"]="benefit-service"
-            ["message-service"]="message-service"
-            ["gateway"]="gateway-service"
-            ["server"]="eureka-server"
-          )
-          
-          for PROJECT in "${!SERVICE_MAP[@]}"
+          SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service"
+          for SERVICE in $SERVICES
           do
-            SERVICE_NAME=${SERVICE_MAP[$PROJECT]}
-            kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}-container=${{ secrets.DOCKERHUB_USERNAME }}/${PROJECT}:${{ env.tag }}
+            kubectl set image deployment/${SERVICE} ${SERVICE}-container=${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }}
           done

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: gateway-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: gateway-service
@@ -21,7 +21,7 @@ spec:
             - containerPort: 19091
           env:
             - name: DB_URL
-              value: "jdbc:mariadb://localhost:3306/hangry-database"
+              value: "jdbc:mariadb://mariadb:3306/hangry-database"
             - name: DB_USERNAME
               value: "root"
             - name: DB_PASSWORD

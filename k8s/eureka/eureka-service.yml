@@ -7,7 +7,7 @@ spec:
   selector:
     app: eureka-server
   ports:
-    - protocol: TCP
-      port: 19090
+    - port: 80
       targetPort: 19090
+      nodePort: 30618
 
