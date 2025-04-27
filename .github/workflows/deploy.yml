@@ -78,3 +78,12 @@ jobs:
           do
             kubectl set image deployment/${SERVICE} ${SERVICE}-container=${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }}
           done
+
+      - name: deployment service 적용
+        run: |
+          SERVICES="auth benefit database eureka gateway message reservation restaurant review user"
+          for SERVICE in $SERVICES
+          do
+            kubectl apply -f k8s/${SERVICE}/${SERVICE}-deployment.yml
+            kubectl apply -f k8s/${SERVICE}/${SERVICE}-service.yml
+          done
