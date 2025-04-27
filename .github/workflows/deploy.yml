@@ -20,6 +20,7 @@ jobs:
 #      SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
 #      SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
