@@ -82,7 +82,7 @@ jobs:
               kubectl apply -f k8s/${SERVICE}/${SERVICE}-deployment.yml
             fi
           
-            if [ -f k8s/${SERVICE}/${SERVICE}-service.yml ] && [ "${SERVICE}" != "eureka" ] && [ "${SERVICE}" != "gateway" ]; then
+            if [ -f k8s/${SERVICE}/${SERVICE}-service.yml ] && [ "${SERVICE}" != "gateway" ]; then
               kubectl apply -f k8s/${SERVICE}/${SERVICE}-service.yml
             fi
           done

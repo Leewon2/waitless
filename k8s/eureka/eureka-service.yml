@@ -3,11 +3,12 @@ kind: Service
 metadata:
   name: eureka-server
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: eureka-server
   ports:
-    - port: 80
+    - protocol: TCP
+      port: 19090
       targetPort: 19090
-      nodePort: 30618
+
 
