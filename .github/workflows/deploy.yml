@@ -92,8 +92,8 @@ jobs:
           SERVICES="auth-service benefit-service eureka-server gateway-service message-service reservation-service restaurant-service review-service user-service"
           for SERVICE in $SERVICES
           do
-          kubectl set image deployment/${SERVICE} \
-          ${SERVICE}-container=${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }}
+            kubectl set image deployment/${SERVICE} \
+              ${SERVICE}-container=${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }}
           done
 
 
