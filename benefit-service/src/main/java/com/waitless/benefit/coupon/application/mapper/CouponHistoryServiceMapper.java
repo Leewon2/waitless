@@ -14,4 +14,6 @@ public interface CouponHistoryServiceMapper {
 	CouponHistoryResponseDto toCouponHistoryResponseDto(CouponHistory couponHistory);
 
 	CouponHistory toCouponHistory(CouponHistoryCacheDto couponHistoryCacheDto);
+
+	CouponHistoryResponseDto toCouponHistoryResponseDto(CouponHistoryCacheDto couponHistoryCacheDto);
 }
