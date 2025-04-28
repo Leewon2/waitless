@@ -22,3 +22,5 @@ spec:
               value: hangry-database
           ports:
             - containerPort: 3306
+          args:
+            - --bind-address=0.0.0.0
