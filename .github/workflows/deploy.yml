@@ -83,7 +83,7 @@ jobs:
 
       - name: deployment 적용
         run: |
-          SERVICES="auth benefit mariadb eureka gateway message reservation restaurant review user kafka"
+          SERVICES="auth benefit mariadb eureka gateway message reservation restaurant review user"
           for SERVICE in $SERVICES
           do
             if [ -f k8s/${SERVICE}/${SERVICE}-deployment.yml ]; then
