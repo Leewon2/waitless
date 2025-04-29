@@ -79,3 +79,10 @@ logging:
     com.waitless.benefit.point: debug
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql: trace
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
