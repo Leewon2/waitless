@@ -1,7 +1,6 @@
 package com.waitless.benefit.coupon.infrastructure.adaptor.in;
 
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import com.waitless.benefit.coupon.application.exception.CouponBusinessException;

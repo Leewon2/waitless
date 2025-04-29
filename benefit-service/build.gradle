@@ -54,12 +54,9 @@ dependencies {
 
 	// Redisson
 	implementation 'org.redisson:redisson-spring-boot-starter:3.17.6'
-	// jackson-datatype-jsr310 모듈 등록
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-	// Jackson Databind 의존성 (JSON 직렬화 및 역직렬화)
-	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names'
 
 	// QueryDSL
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'

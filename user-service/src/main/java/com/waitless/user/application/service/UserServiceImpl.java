@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.waitless.common.domain.Role;
 import com.waitless.user.application.dto.ReadUsersDto;
 import com.waitless.user.application.dto.SignupDto;
 import com.waitless.user.application.dto.SignupResponseDto;
@@ -53,8 +54,13 @@ public class UserServiceImpl implements UserService {
 
 	// 유저 단건 조회
 	@Override
-	public UserResponseDto findUser(Long id) {
+	public UserResponseDto findUser(Long id, Role role) {
 		User user = findUserById(id);
+		if (role == Role.USER) {	// 로그인유저가 USER일 경우, 본인 정보만 확인 가능
+			if (id != user.getId()) {
+				throw UserBusinessException.from(UserErrorCode.USER_UNAUTHORIZED);
+			}
+		}
 		return userServiceMapper.toUserResponseDto(user);
 	}
 
@@ -72,8 +78,11 @@ public class UserServiceImpl implements UserService {
 	// 유저 수정
 	@Override
 	@Transactional
-	public UserResponseDto modifyUser(Long id, Map<String, Object> updates) {
+	public UserResponseDto modifyUser(Long id, Map<String, Object> updates, Role role) {
 		User user = findUserById(id);
+		if (!validateUser(id, user.getId(), role)) {
+			throw UserBusinessException.from(UserErrorCode.USER_UNAUTHORIZED);
+		}
 		updates.forEach((key, value) -> user.modifyUserInfo(key, value));
 		return userServiceMapper.toUserResponseDto(user);
 	}
@@ -81,8 +90,11 @@ public class UserServiceImpl implements UserService {
 	// 유저 삭제
 	@Override
 	@Transactional
-	public void removeUser(Long id) {
+	public void removeUser(Long id, Role role) {
 		User user = findUserById(id);
+		if (!validateUser(id, user.getId(), role)) {
+			throw UserBusinessException.from(UserErrorCode.USER_UNAUTHORIZED);
+		}
 		user.delete();
 	}
 
@@ -90,6 +102,15 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findById(id)
 			.orElseThrow(()-> UserBusinessException.from(UserErrorCode.USER_NOT_FOUND));
 		return user;
+	}
+
+	private Boolean validateUser(Long id, Long userId, Role role) {
+		if (role != Role.ADMIN) {	// 로그인유저가 ADMIN이 아닐 경우, 본인 정보만 수정/삭제 가능
+			if (id != userId) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

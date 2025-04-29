@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.waitless.benefit.coupon.application.service.CouponScheduler;
 import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.entity.CouponHistory;
-import com.waitless.benefit.coupon.infrastructure.repository.CustomCouponHistoryRepository;
-import com.waitless.benefit.coupon.infrastructure.repository.CustomCouponRepository;
+import com.waitless.benefit.coupon.domain.repository.CustomCouponHistoryRepository;
+import com.waitless.benefit.coupon.domain.repository.CustomCouponRepository;
 
 import lombok.RequiredArgsConstructor;
 
