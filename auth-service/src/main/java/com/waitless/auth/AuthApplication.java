@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication
 @EnableDiscoveryClient
-// @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableFeignClients
+@SpringBootApplication
+	// (scanBasePackages = {"com.waitless.common","com.waitless.auth"})
 public class AuthApplication {
 
 	public static void main(String[] args) {

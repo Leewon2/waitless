@@ -22,10 +22,6 @@ public class RoleCheckAspect {
 	@Before("@annotation(roleCheck)")
 	public void roleCheck(RoleCheck roleCheck) {
 		Set<Role> roles = Set.of(roleCheck.roles());
-		// 어노테이션에 Role.ALL이 포함되어 있다면 무조건 통과
-		if(roles.contains(Role.ALL)) {
-			return;
-		}
 		Role role = getUserRole();
 		if(!roles.contains(role)) {
 			throw BusinessException.from(CommonErrorCode.UNAUTHORIZED);

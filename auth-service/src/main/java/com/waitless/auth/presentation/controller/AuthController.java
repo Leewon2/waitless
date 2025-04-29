@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.waitless.auth.application.exception.AuthErrorCode;
 import com.waitless.auth.application.service.AuthService;
 import com.waitless.auth.presentation.dto.RefreshTokenRequestDto;
+import com.waitless.common.aop.RoleCheck;
+import com.waitless.common.domain.Role;
 import com.waitless.common.exception.response.SingleResponse;
 
 import lombok.RequiredArgsConstructor;
