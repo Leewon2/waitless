@@ -10,9 +10,18 @@ public class SlackMessageService implements MessageService {
     private static final String REVIEW_URL_TEMPLATE =
             "https://www.xxx.com/api/reservation?userId=%s";
 
+    private static final String CANCEL_MESSAGE_TEMPLATE =
+            "%s 예약이 취소되었습니다.\n취소하신 적이 없으면 고객센터로 연락주세요.";
+
+
     @Override
     public String buildVisitCompleteMessage(String slackId, String restaurantName, Long userId) {
         String reviewLink = String.format(REVIEW_URL_TEMPLATE, userId);
         return String.format(REVIEW_MESSAGE_TEMPLATE, restaurantName, reviewLink);
+    }
+
+    @Override
+    public String buildCancelMessage(String restaurantName) {
+        return String.format(CANCEL_MESSAGE_TEMPLATE, restaurantName);
     }
 }
