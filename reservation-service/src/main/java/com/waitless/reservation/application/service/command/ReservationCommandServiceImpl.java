@@ -98,7 +98,6 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
         findReservation.cancel(); // 예약 상태 CANCELLED 변경
         eventPublisher.publishEvent(new ReservationCancelRequestEvent(userId, findReservation.getRestaurantName()));
-
     }
 
     @Override
@@ -121,6 +120,20 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
         findReservation.visit(); // 상태값 방문완료 변경
         eventPublisher.publishEvent(new ReservationVisitedEvent(findReservation.getId(), findReservation.getRestaurantName(), userId));
+    }
+
+    @Override
+    public void delayReservation(UUID reservationId, Long count) {
+        Reservation findReservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND));
+
+        if (findReservation.getDelayCount() <= 0) {
+            throw BusinessException.from(ReservationErrorCode.RESERVATION_DELAY_FAIL);
+        }
+
+        redisReservationQueueService.delayReservation(reservationId, count, findReservation.getRestaurantId());
+
+        findReservation.minusDelayCount();
     }
 
     private Reservation getReservationOrThrow(UUID reservationId) {
