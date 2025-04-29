@@ -1,5 +1,7 @@
 package com.waitless.restaurant.menu.presentation.controller;
 
+import com.waitless.common.aop.RoleCheck;
+import com.waitless.common.domain.Role;
 import com.waitless.common.exception.response.MultiResponse;
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.restaurant.menu.application.dto.CreatedMenuResponseDto;
@@ -27,6 +29,7 @@ public class MenuController {
 
     // TODO : 예외처리, 권한설정
     @PostMapping
+    @RoleCheck(roles = {Role.ADMIN, Role.OWNER})
     public ResponseEntity<SingleResponse<CreatedMenuResponseDto>> createMenu(@RequestBody CreateMenuRequestDto createMenuRequestDto){
         return ResponseEntity.ok(SingleResponse.success(
                 menuService.createMenu(
@@ -34,16 +37,19 @@ public class MenuController {
     }
 
     @GetMapping("/{id}")
+    @RoleCheck(roles = {Role.ADMIN, Role.OWNER, Role.USER})
     public ResponseEntity<?> getMenu(@PathVariable UUID id){
         return ResponseEntity.ok(SingleResponse.success(menuService.getMenu(id)));
     }
 
     @DeleteMapping("/{id}")
+    @RoleCheck(roles = {Role.ADMIN, Role.OWNER})
     public ResponseEntity<?> deleteMenu(@PathVariable UUID id){
         return ResponseEntity.ok(SingleResponse.success(menuService.deleteMenu(id)));
     }
 
     @PatchMapping("/{id}")
+    @RoleCheck(roles = {Role.ADMIN, Role.OWNER})
     public ResponseEntity<?> updateMenu(@PathVariable UUID id, @RequestBody(required = false)UpdateMenuRequestDto updateMenuRequestDto){
         return ResponseEntity.ok(SingleResponse.success(
                 menuService.updateMenu(
@@ -51,6 +57,7 @@ public class MenuController {
     }
 
     @GetMapping("search")
+    @RoleCheck(roles = {Role.ADMIN, Role.OWNER, Role.USER})
     public ResponseEntity<?> search(@RequestParam(required = false) Integer minPrice,
                                     @RequestParam(required = false) Integer maxPrice,
                                     @RequestParam(required = false) String category,

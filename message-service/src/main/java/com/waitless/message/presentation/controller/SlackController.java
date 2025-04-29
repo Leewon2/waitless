@@ -1,5 +1,7 @@
 package com.waitless.message.presentation.controller;
 
+import com.waitless.common.aop.RoleCheck;
+import com.waitless.common.domain.Role;
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.message.application.service.SlackService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ public class SlackController {
 
 
     @DeleteMapping("/{id}")
+    @RoleCheck(roles = {Role.ADMIN})
     public ResponseEntity<?> deleteSlackMessage(@PathVariable UUID id){
         return ResponseEntity.ok(SingleResponse.success(slackService.deleteMessage(id)));
     }
