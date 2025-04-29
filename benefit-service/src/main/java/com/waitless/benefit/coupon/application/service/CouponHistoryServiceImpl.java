@@ -42,7 +42,7 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 	private final CouponHistoryServiceMapper couponHistoryServiceMapper;
 	private final CouponService couponService;
 	private final CouponRepository couponRepository;
-	private final RedisTemplate<String, Object> redisTemplate;
+	private final RedisTemplate<String, Object> couponRedisTemplate;
 	private final RedissonClient redissonClient;
 	private final ObjectMapper objectMapper;
 
@@ -151,7 +151,7 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 
 	// 쿠폰발급내역 단건 조회
 	private CouponHistory findCouponHistoryById(UUID id) {
-		Object cachedJson = redisTemplate.opsForValue().get("CH:" + id);
+		Object cachedJson = couponRedisTemplate.opsForValue().get("CH:" + id);
 		CouponHistoryCacheDto cached = objectMapper.convertValue(cachedJson, CouponHistoryCacheDto.class);
 		return Optional.ofNullable(couponHistoryServiceMapper.toCouponHistory(cached)).orElseGet(() -> {
 			CouponHistory couponHistory = couponHistoryRepository.findById(id)
@@ -166,7 +166,7 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		CouponHistoryCacheDto saved = new CouponHistoryCacheDto(
 			couponHistory.getId(), couponHistory.getTitle(), couponHistory.getUserId(), couponHistory.getCouponId(), couponHistory.isValid(), couponHistory.getExpiredAt()
 		);
-		redisTemplate.opsForValue().set("CH:" + couponHistory.getId(), saved, Duration.ofDays(1));
+		couponRedisTemplate.opsForValue().set("CH:" + couponHistory.getId(), saved, Duration.ofDays(1));
 	}
 
 }

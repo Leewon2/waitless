@@ -53,12 +53,6 @@ app:
       point-issued-events: point-issued-events
       point-issued-failed-events: point-issued-failed-events
 
-#point:
-#  max-bonus: 1000
-#  daily-attendance-point: 100
-#  reward-point-on-review: 100
-#  cache-ttl-seconds: 300
-
 eureka:
   client:
     service-url:
