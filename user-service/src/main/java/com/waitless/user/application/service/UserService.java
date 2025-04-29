@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import com.waitless.common.domain.Role;
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.user.application.dto.ReadUsersDto;
 import com.waitless.user.application.dto.SignupDto;
@@ -22,11 +23,11 @@ public interface UserService {
 
 	ValidateUserResponseDto validateUser(ValidateUserDto validateUserDto);
 
-	UserResponseDto findUser(Long id);
+	UserResponseDto findUser(Long id, Role role);
 
 	Page<UserResponseDto> findAndSearchUsers(ReadUsersDto readUsersDto, Pageable pageable);
 
-	UserResponseDto modifyUser(Long id, Map<String, Object> updates);
+	UserResponseDto modifyUser(Long id, Map<String, Object> updates, Role role);
 
-	void removeUser(Long id);
+	void removeUser(Long id, Role role);
 }

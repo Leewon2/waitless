@@ -23,11 +23,11 @@ public class ReviewInternalController {
     private final ReviewService reviewService;
     private final ReviewControllerMapper reviewControllerMapper;
     @PostMapping
-    public ResponseEntity<SingleResponse<List<ReviewStatisticsBatchResponseDto>>> getStatisticsBatch(
+    public List<ReviewStatisticsBatchResponseDto> getStatisticsBatch(
             @RequestBody ReviewStatisticsBatchRequestDto requestDto
     ) {
         ReviewStatisticsCommand command = reviewControllerMapper.toCommand(requestDto);
         Map<UUID, ReviewStatisticsResult> resultMap = reviewService.getStatisticsBatch(command);
-        return ResponseEntity.ok(SingleResponse.success(ReviewStatisticsBatchResponseDto.fromMap(resultMap)));
+        return ReviewStatisticsBatchResponseDto.fromMap(resultMap);
     }
 }

@@ -1,9 +1,7 @@
 package com.waitless.benefit.coupon.application.service;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -12,11 +10,9 @@ import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.waitless.benefit.coupon.application.dto.CouponHistoryCacheDto;
 import com.waitless.benefit.coupon.application.dto.CouponHistoryResponseDto;
 import com.waitless.benefit.coupon.application.dto.ReadCouponHistoriesDto;
@@ -26,8 +22,7 @@ import com.waitless.benefit.coupon.application.mapper.CouponHistoryServiceMapper
 import com.waitless.benefit.coupon.domain.entity.Coupon;
 import com.waitless.benefit.coupon.domain.entity.CouponHistory;
 import com.waitless.benefit.coupon.domain.repository.CouponHistoryRepository;
-import com.waitless.benefit.coupon.domain.repository.CouponRepository;
-import com.waitless.benefit.coupon.infrastructure.repository.CustomCouponHistoryRepository;
+import com.waitless.benefit.coupon.domain.repository.CustomCouponHistoryRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,14 +36,11 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 	private final CustomCouponHistoryRepository customCouponHistoryRepository;
 	private final CouponHistoryServiceMapper couponHistoryServiceMapper;
 	private final CouponService couponService;
-	private final CouponRepository couponRepository;
-	private final RedisTemplate<String, Object> redisTemplate;
 	private final RedissonClient redissonClient;
-	private final ObjectMapper objectMapper;
+	private final RedisCacheService redisCacheService;
 
 	// 쿠폰 받기
 	@Override
-	// @Transactional
 	public CouponHistoryResponseDto issuedCoupon(UUID couponId, Long userId) {
 		String lockKey = "LOCK:CH:" + couponId;
 		RLock lock = redissonClient.getLock(lockKey);
@@ -58,32 +50,10 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 			if (!isLocked) {
 				throw CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_TRY_AGAIN);
 			}
-			// 쿠폰 발급 시작
-			// 쿠폰 조회와 쿠폰 수량 차감 동시에 진행
-			Coupon coupon = couponService.decreaseCouponAmount(couponId);
-			System.out.println("coupon amount = " + coupon.getAmount());
-			couponRepository.save(coupon);
-			LocalDateTime today = LocalDateTime.now();
-			// 쿠폰 발급 가능일자가 지나면 예외처리
-			if (!today.isBefore(coupon.getIssuanceDate())) {
-				throw CouponBusinessException.from(CouponErrorCode.COUPON_ISSUED_IMPOSSIBLE);
-			}
-			// 쿠폰 사용 가능 일자
-			LocalDateTime expiredDate = today.plusDays(coupon.getValidPeriod());
-			CouponHistory couponHistory = CouponHistory.builder()
-				.title(coupon.getTitle())
-				.couponId(couponId)
-				.userId(userId)
-				.isValid(true)
-				.expiredAt(expiredDate)
-				.build();
-			CouponHistory saved = couponHistoryRepository.save(couponHistory);
-			// Redis 캐싱
-			cachingCouponHistory(saved);
-
-			return couponHistoryServiceMapper.toCouponHistoryResponseDto(saved);
+			return issueCouponWithLock(couponId, userId);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
+			log.error("쿠폰 발급 중 예외 발생 : couponId={}, userId={}", couponId, userId, e);
 			throw CouponBusinessException.from(CouponErrorCode.COUPON_ISSUED_IMPOSSIBLE);
 		} finally {
 			if (isLocked && lock.isHeldByCurrentThread()) {
@@ -92,11 +62,29 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		}
 	}
 
-	// 쿠폰발급내역 단건 조회 (API)
+	private CouponHistoryResponseDto issueCouponWithLock(UUID couponId, Long userId) {
+		LocalDateTime now = LocalDateTime.now();
+		Coupon coupon = couponService.decreaseCouponAmount(couponId);
+		if (!now.isBefore(coupon.getIssuanceDate())) {
+			throw CouponBusinessException.from(CouponErrorCode.COUPON_ISSUED_IMPOSSIBLE);
+		}
+		CouponHistory couponHistory = CouponHistory.builder()
+			.title(coupon.getTitle())
+			.couponId(coupon.getId())
+			.userId(userId)
+			.isValid(true)
+			.expiredAt(now.plusDays(coupon.getValidPeriod()))
+			.build();
+		CouponHistory saved = couponHistoryRepository.save(couponHistory);
+		redisCacheService.cacheCouponHistory(saved);
+		return couponHistoryServiceMapper.toCouponHistoryResponseDto(saved);
+	}
+
+	// 쿠폰발급내역 단건 조회
 	@Override
 	public CouponHistoryResponseDto findCouponHistory(UUID id) {
-		CouponHistory couponHistory = findCouponHistoryById(id);
-		return couponHistoryServiceMapper.toCouponHistoryResponseDto(couponHistory);
+		CouponHistoryCacheDto cached = redisCacheService.getCouponHistory(id);
+		return couponHistoryServiceMapper.toCouponHistoryResponseDto(cached);
 	}
 
 	// 쿠폰발급내역 목록 조회 + 검색
@@ -146,27 +134,14 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		couponHistory.used();
 		couponHistoryRepository.save(couponHistory);
 		// 캐시 업데이트
-		cachingCouponHistory(couponHistory);
+		redisCacheService.cacheCouponHistory(couponHistory);
 	}
 
-	// 쿠폰발급내역 단건 조회
+	// 쿠폰발급내역 단건 조회(DB)
 	private CouponHistory findCouponHistoryById(UUID id) {
-		Object cachedJson = redisTemplate.opsForValue().get("CH:" + id);
-		CouponHistoryCacheDto cached = objectMapper.convertValue(cachedJson, CouponHistoryCacheDto.class);
-		return Optional.ofNullable(couponHistoryServiceMapper.toCouponHistory(cached)).orElseGet(() -> {
-			CouponHistory couponHistory = couponHistoryRepository.findById(id)
-				.orElseThrow(() -> CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_NOT_FOUND));
-			cachingCouponHistory(couponHistory);
-			return couponHistory;
-		});
-	}
-
-	// Redis 캐싱
-	private void cachingCouponHistory(CouponHistory couponHistory) {
-		CouponHistoryCacheDto saved = new CouponHistoryCacheDto(
-			couponHistory.getId(), couponHistory.getTitle(), couponHistory.getUserId(), couponHistory.getCouponId(), couponHistory.isValid(), couponHistory.getExpiredAt()
-		);
-		redisTemplate.opsForValue().set("CH:" + couponHistory.getId(), saved, Duration.ofDays(1));
+		CouponHistory couponHistory = couponHistoryRepository.findById(id)
+			.orElseThrow(() -> CouponBusinessException.from(CouponErrorCode.COUPONHISTORY_NOT_FOUND));
+		return couponHistory;
 	}
 
 }

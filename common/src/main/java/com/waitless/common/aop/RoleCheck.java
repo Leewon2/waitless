@@ -10,6 +10,6 @@ import com.waitless.common.domain.Role;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface RoleCheck {
-	Role[] roles() default { Role.ADMIN, Role.OWNER, Role.USER, Role.ALL };
+	Role[] roles() default { Role.ADMIN, Role.OWNER, Role.USER };
 }
 
