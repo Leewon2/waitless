@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @EnableCaching
 @RequiredArgsConstructor
-public class RedisConfig {
+public class CouponRedisConfig {
 	// @Bean
 	// public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
 	// 	RedisTemplate<String, Object> template = new RedisTemplate<>();
