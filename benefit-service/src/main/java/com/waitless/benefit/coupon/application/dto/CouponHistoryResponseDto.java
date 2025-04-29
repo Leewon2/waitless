@@ -4,5 +4,5 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record CouponHistoryResponseDto(
-	UUID id, String title, Long userId, UUID couponId, LocalDateTime expiredAt) {
+	UUID id, String title, int discountRate, Long userId, UUID couponId, LocalDateTime expiredAt) {
 }

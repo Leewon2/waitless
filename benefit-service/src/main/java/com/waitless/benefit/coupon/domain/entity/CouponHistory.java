@@ -35,6 +35,9 @@ public class CouponHistory extends BaseTimeEntity {
 	private String title;
 
 	@Column(nullable = false)
+	private int discountRate;
+
+	@Column(nullable = false)
 	private Long userId;
 
 	@Column(nullable = false)
@@ -46,9 +49,10 @@ public class CouponHistory extends BaseTimeEntity {
 	@Column(nullable = false)
 	private LocalDateTime expiredAt;
 
-	public CouponHistory(UUID id, String title, Long userId, UUID couponId, boolean isValid, LocalDateTime expiredAt) {
+	public CouponHistory(UUID id, String title, int discountRate, Long userId, UUID couponId, boolean isValid, LocalDateTime expiredAt) {
 		this.id = id;
 		this.title = title;
+		this.discountRate = discountRate;
 		this.userId = userId;
 		this.couponId = couponId;
 		this.isValid = isValid;

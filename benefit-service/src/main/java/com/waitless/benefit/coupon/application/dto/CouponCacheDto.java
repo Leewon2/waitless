@@ -8,6 +8,7 @@ import com.waitless.benefit.coupon.domain.entity.Coupon;
 public record CouponCacheDto(
 	UUID id,
 	String title,
+	int discountRate,
 	int amount,
 	String issuanceDate,
 	int validPeriod
@@ -16,6 +17,7 @@ public record CouponCacheDto(
 		return new CouponCacheDto(
 			coupon.getId(),
 			coupon.getTitle(),
+			coupon.getDiscountRate(),
 			coupon.getAmount(),
 			coupon.getIssuanceDate().toString(), // String으로 변환
 			coupon.getValidPeriod()

@@ -34,6 +34,9 @@ public class Coupon extends BaseTimeEntity {
 	private String title;
 
 	@Column(nullable = false)
+	private int discountRate;
+
+	@Column(nullable = false)
 	private int amount;
 
 	@Column(nullable = false)
@@ -42,9 +45,10 @@ public class Coupon extends BaseTimeEntity {
 	@Column(nullable = false)
 	private int validPeriod;
 
-	public Coupon(UUID id, String title, int amount, LocalDateTime issuanceDate, int validPeriod) {
+	public Coupon(UUID id, String title, int discountRate, int amount, LocalDateTime issuanceDate, int validPeriod) {
 		this.id = id;
 		this.title = title;
+		this.discountRate = discountRate;
 		this.amount = amount;
 		this.issuanceDate = issuanceDate;
 		this.validPeriod = validPeriod;
@@ -53,6 +57,7 @@ public class Coupon extends BaseTimeEntity {
 	public void modifyCouponInfo(String key, Object value) {
 		switch (key) {
 			case "title" -> this.title = (String) value;
+			case "discountRate" -> this.discountRate = (Integer) value;
 			case "amount" -> this.amount = (int) value;
 			case "issuanceDate" -> this.issuanceDate = (LocalDateTime) value;
 			case "validPeriod" -> this.validPeriod = (int) value;

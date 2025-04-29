@@ -2,5 +2,5 @@ package com.waitless.benefit.coupon.presentation.dto;
 
 import java.time.LocalDateTime;
 
-public record CreateCouponRequestDto(String title, int amount, LocalDateTime issuanceDate, int validPeriod) {
+public record CreateCouponRequestDto(String title, int discountRate, int amount, LocalDateTime issuanceDate, int validPeriod) {
 }

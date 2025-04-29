@@ -70,6 +70,7 @@ public class CouponHistoryServiceImpl implements CouponHistoryService{
 		}
 		CouponHistory couponHistory = CouponHistory.builder()
 			.title(coupon.getTitle())
+			.discountRate(coupon.getDiscountRate())
 			.couponId(coupon.getId())
 			.userId(userId)
 			.isValid(true)

@@ -39,6 +39,7 @@ public class CouponServiceImpl implements CouponService {
 		Coupon coupon = couponRepository.save(
 			Coupon.builder()
 				.title(createCouponDto.title())
+				.discountRate(createCouponDto.discountRate())
 				.amount(createCouponDto.amount())
 				.issuanceDate(createCouponDto.issuanceDate())
 				.validPeriod(createCouponDto.validPeriod())

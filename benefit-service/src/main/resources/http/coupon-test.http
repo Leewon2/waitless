@@ -36,6 +36,7 @@ Authorization: {{access_token}}
 {
   "title" : "12% 할인 쿠폰",
   "amount" : 100,
+  "discountRate" : 20,
   "issuanceDate": "2025-04-30T18:00:00",
   "validPeriod": 14
 }
