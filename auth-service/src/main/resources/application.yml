@@ -25,6 +25,12 @@ eureka:
   client:
     service-url:
       defaultZone: http://eureka-server:19090/eureka
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
 
 springdoc:
   api-docs:
