@@ -31,6 +31,7 @@ public class RedisReservationQueueService {
     public void removeFromWaitingQueue(UUID reservationId, LocalDate reservationDate, UUID restaurantId) {
         String zsetKey = QUEUE_PREFIX + restaurantId;
         redisTemplate.opsForZSet().remove(zsetKey, String.valueOf(reservationId));
+        message(restaurantId);
     }
 
     public Long findCurrentNumberFromWaitingQueue(UUID reservationId, UUID restaurantId) {
@@ -62,6 +63,37 @@ public class RedisReservationQueueService {
         } catch (Exception e) {
             log.error("순번 미루기 LuaScript 오류", e);
             throw BusinessException.from(CommonErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void message(UUID restaurantId) {
+        String zsetKey = QUEUE_PREFIX + restaurantId;
+        String alertKey = "reservation:alerted:" + restaurantId;
+
+        // 현재 대기열 1번 사용자 가져오기
+        var top1 = redisTemplate.opsForZSet().range(zsetKey, 0, 0);
+        if (top1 == null || top1.isEmpty()) {
+            log.info("[Queue] 식당 {}: 대기열 비어있음", restaurantId);
+            return;
+        }
+
+        String currentTopReservationId = top1.iterator().next();
+
+        redisTemplate.opsForValue().set(alertKey, currentTopReservationId);
+
+        String lastReservationId = redisTemplate.opsForValue().get(alertKey);
+
+        if (currentTopReservationId.equals(lastReservationId)) {
+            log.info("[Queue] 식당 {}: 사용자 {}는 이미 알림 보냄", restaurantId, currentTopReservationId);
+            return;
+        }
+
+        try {
+
+            redisTemplate.opsForValue().set(alertKey, currentTopReservationId);
+            log.info("[Queue] 식당 {}: 예약ID {}에게 입장 메시지 전송 완료", restaurantId, currentTopReservationId);
+        } catch (Exception e) {
+            log.error("[Queue] 식당 {}: 예약ID {}에게 메시지 전송 실패", restaurantId, currentTopReservationId, e);
         }
     }
 }

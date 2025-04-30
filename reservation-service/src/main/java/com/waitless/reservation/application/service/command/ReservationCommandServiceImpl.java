@@ -42,11 +42,10 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
     private final RedisReservationQueueService redisReservationQueueService;
     private final RestaurantClient restaurantClient;
     private final ApplicationEventPublisher eventPublisher;
-    private final KafkaSlackEventProducer kafkaSlackEventProducer;
 
     @Override
     public ReservationCreateResponse createReservation(ReservationCreateCommand reservationCreateCommand) {
-        Long userId = UserContext.getUserContext().getUserId();
+        Long userId = getCurrentUserId();
 
         UUID storeId = reservationCreateCommand.restaurantId();
         Long reservationNumber = redisStockService.decrementStock(storeId, reservationCreateCommand.menus());
@@ -82,7 +81,8 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
     @Override
     public void cancelReservation(UUID reservationId) {
-        Long userId = UserContext.getUserContext().getUserId();
+        Long userId = getCurrentUserId();
+
         Reservation findReservation = getReservationOrThrow(reservationId);
 
         List<CancelMenuDto> list = findReservation.getMenus().stream()
@@ -102,7 +102,8 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
     @Override
     public void visitReservation(UUID reservationId) {
-        Long userId = UserContext.getUserContext().getUserId();
+        Long userId = getCurrentUserId();
+
         Reservation findReservation = getReservationOrThrow(reservationId);
 
         RestaurantResponseDto restaurantResponseDto =
@@ -127,17 +128,24 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         Reservation findReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
+        if(!findReservation.getUserId().equals(getCurrentUserId())){
+            throw BusinessException.from(ReservationErrorCode.RESERVATION_UNAUTHORIZED);
+        }
+
         if (findReservation.getDelayCount() <= 0) {
             throw BusinessException.from(ReservationErrorCode.RESERVATION_DELAY_FAIL);
         }
 
         redisReservationQueueService.delayReservation(reservationId, count, findReservation.getRestaurantId());
-
         findReservation.minusDelayCount();
     }
 
     private Reservation getReservationOrThrow(UUID reservationId) {
         return reservationRepository.findFetchById(reservationId)
                 .orElseThrow(() -> BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND));
+    }
+
+    private Long getCurrentUserId() {
+        return UserContext.getUserContext().getUserId();
     }
 }
