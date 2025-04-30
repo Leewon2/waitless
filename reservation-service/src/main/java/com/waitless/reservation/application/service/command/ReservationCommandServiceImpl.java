@@ -6,8 +6,10 @@ import com.waitless.common.exception.BusinessException;
 import com.waitless.reservation.application.dto.CancelMenuDto;
 import com.waitless.reservation.application.dto.ReservationCreateCommand;
 import com.waitless.reservation.application.dto.ReservationCreateResponse;
+import com.waitless.reservation.application.event.KafkaSlackEventProducer;
 import com.waitless.reservation.application.event.dto.ReservationCompleteEvent;
 import com.waitless.reservation.application.event.dto.ReservationVisitedEvent;
+import com.waitless.reservation.application.event.dto.ReservationCancelRequestEvent;
 import com.waitless.reservation.application.interceptor.UserContext;
 import com.waitless.reservation.application.mapper.ReservationServiceMapper;
 import com.waitless.reservation.application.service.redis.RedisReservationQueueService;
@@ -40,6 +42,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
     private final RedisReservationQueueService redisReservationQueueService;
     private final RestaurantClient restaurantClient;
     private final ApplicationEventPublisher eventPublisher;
+    private final KafkaSlackEventProducer kafkaSlackEventProducer;
 
     @Override
     public ReservationCreateResponse createReservation(ReservationCreateCommand reservationCreateCommand) {
@@ -71,7 +74,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
                 .map(m -> new StockDto(m.menuId(), m.quantity(), m.price()))
                 .toList();
 
-        eventPublisher.publishEvent(new StockDecreasedEvent(stockDtos));
+        eventPublisher.publishEvent(new StockDecreasedEvent(reservation.getId(), stockDtos));
         log.debug("예약 생성 :: Redis 재고 차감 및 DB 저장 완료: {}", storeId);
 
         return reservationServiceMapper.toReservationCreateResponse(reservation);
@@ -79,6 +82,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
     @Override
     public void cancelReservation(UUID reservationId) {
+        Long userId = UserContext.getUserContext().getUserId();
         Reservation findReservation = getReservationOrThrow(reservationId);
 
         List<CancelMenuDto> list = findReservation.getMenus().stream()
@@ -93,6 +97,8 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         );
 
         findReservation.cancel(); // 예약 상태 CANCELLED 변경
+        eventPublisher.publishEvent(new ReservationCancelRequestEvent(userId, findReservation.getRestaurantName()));
+
     }
 
     @Override

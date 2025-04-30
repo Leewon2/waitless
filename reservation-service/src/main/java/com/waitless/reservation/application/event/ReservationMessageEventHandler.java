@@ -1,11 +1,9 @@
 package com.waitless.reservation.application.event;
 
+import com.waitless.common.dto.ReservationCancelEvent;
 import com.waitless.common.exception.BusinessException;
 import com.waitless.common.exception.response.SingleResponse;
-import com.waitless.reservation.application.event.dto.CompletedReservationEvent;
-import com.waitless.reservation.application.event.dto.ReservationCompleteEvent;
-import com.waitless.reservation.application.event.dto.ReservationVisitedEvent;
-import com.waitless.reservation.application.event.dto.ReviewRequestEvent;
+import com.waitless.reservation.application.event.dto.*;
 import com.waitless.reservation.application.service.message.MessageService;
 import com.waitless.reservation.exception.exception.ReservationErrorCode;
 import com.waitless.reservation.infrastructure.adaptor.client.UserClient;
@@ -23,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class ReservationVisitedEventHandler {
+public class ReservationMessageEventHandler {
 
     private final UserClient userClient;
     private final MessageService messageService;
@@ -50,7 +48,19 @@ public class ReservationVisitedEventHandler {
             String slackId = getSlackId(event.userId());
             kafkaCompletedReservationEventProducer.sendCompletedReservation(new CompletedReservationEvent(slackId,event.sequence().intValue()));
         } catch (Exception e) {
-            log.error("슬랙 메시지 전송 실패 :: 순번 = {}, userId = {}", event.sequence(), event.userId(), e);        }
+            log.error("예약 완료 슬랙 메시지 전송 실패 :: 순번 = {}, userId = {}", event.sequence(), event.userId(), e);        }
+    }
+
+    @Async("messageExecutor")
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleCancelReservation(ReservationCancelRequestEvent event) {
+        try {
+            String slackId = getSlackId(event.userId());
+            String message = messageService.buildCancelMessage(event.restaurantName());
+            kafkaSlackEventProducer.sendCancelRequest(new ReservationCancelEvent(slackId, message));
+        } catch (Exception e) {
+            log.error("취소 슬랙 메시지 전송 실패 :: userid = {}", event.userId(), e);
+        }
     }
 
     private String getSlackId(Long userId) {
