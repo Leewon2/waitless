@@ -25,6 +25,12 @@ public class CustomFilter extends OncePerRequestFilter {
 
         log.info("doFilter");
 
+        String path = servletRequest.getRequestURI();
+        if (path.contains("/v3/api-docs") || path.contains("/swagger-ui") || path.contains("/swagger-resources") || path.contains("/actuator")) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+
         String userIdHeader = servletRequest.getHeader("X-User-Id");
         String userRoleHeader = servletRequest.getHeader("X-User-Role");
 
