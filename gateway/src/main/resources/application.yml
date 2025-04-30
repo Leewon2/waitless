@@ -94,6 +94,9 @@ jwt:
   secret: ${JWT_SECRET_KEY}
 
 springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
   swagger-ui:
     urls:
       - name: user-service
