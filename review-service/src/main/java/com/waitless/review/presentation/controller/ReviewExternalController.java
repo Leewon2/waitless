@@ -1,5 +1,9 @@
 package com.waitless.review.presentation.controller;
 
+import com.waitless.common.aop.RoleCheck;
+import com.waitless.common.domain.Role;
+import com.waitless.common.domain.UserInfo;
+import com.waitless.common.domain.UserInfoDto;
 import com.waitless.common.exception.response.SingleResponse;
 import com.waitless.review.application.dto.command.DeleteReviewCommand;
 import com.waitless.review.application.dto.command.PostReviewCommand;
@@ -24,27 +28,33 @@ public class ReviewExternalController {
     private final ReviewService reviewService;
     private final ReviewControllerMapper reviewControllerMapper;
 
+    @RoleCheck(roles = {Role.USER, Role.ADMIN})
     @PostMapping
     public ResponseEntity<SingleResponse<PostReviewResponseDto>> createReview(
-            @Valid @RequestBody PostReviewRequestDto requestDto) {
-        PostReviewCommand command = reviewControllerMapper.toCommand(requestDto);
+            @Valid @RequestBody PostReviewRequestDto requestDto,
+            @UserInfo UserInfoDto userInfoDto
+    ) {
+        PostReviewCommand command = reviewControllerMapper.toCommand(requestDto, userInfoDto);
         PostReviewResponseDto responseDto = PostReviewResponseDto.from(
                 reviewService.createReview(command)
         );
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
 
+    @RoleCheck(roles = {Role.USER, Role.ADMIN})
     @DeleteMapping
     public ResponseEntity<SingleResponse<DeleteReviewResponseDto>> deleteReview(
-            @RequestBody DeleteReviewRequestDto requestDto
+            @RequestBody DeleteReviewRequestDto requestDto,
+            @UserInfo UserInfoDto userInfoDto
     ) {
-        DeleteReviewCommand command = reviewControllerMapper.toCommand(requestDto);
+        DeleteReviewCommand command = reviewControllerMapper.toCommand(requestDto, userInfoDto);
         DeleteReviewResponseDto responseDto = DeleteReviewResponseDto.from(
                 reviewService.deleteReview(command)
         );
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
 
+    @RoleCheck(roles = {Role.USER, Role.ADMIN, Role.OWNER})
     @GetMapping("/{reviewId}")
     public ResponseEntity<SingleResponse<GetReviewResponseDto>> getReview(
             @PathVariable("reviewId") UUID reviewId
@@ -57,6 +67,7 @@ public class ReviewExternalController {
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
 
+    @RoleCheck(roles = {Role.USER, Role.ADMIN, Role.OWNER})
     @GetMapping("/list")
     public ResponseEntity<SingleResponse<GetReviewListResponseDto>> getReviewList(
             @ModelAttribute GetReviewListRequestDto requestDto,
@@ -69,6 +80,7 @@ public class ReviewExternalController {
         return ResponseEntity.ok(SingleResponse.success(responseDto));
     }
 
+    @RoleCheck(roles = {Role.USER, Role.ADMIN, Role.OWNER})
     @GetMapping("/search")
     public ResponseEntity<SingleResponse<SearchReviewsResponseDto>> searchReviews(
             @ModelAttribute SearchReviewsRequestDto requestDto,

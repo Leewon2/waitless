@@ -52,14 +52,12 @@ public class CouponController {
 
 	// 쿠폰 단건 조회
 	@GetMapping("/{id}")
-	@RoleCheck(roles = {Role.ALL})
 	public ResponseEntity<SingleResponse<CouponResponseDto>> readCoupon(@PathVariable UUID id) {
 		return ResponseEntity.ok(SingleResponse.success(couponService.findCoupon(id)));
 	}
 
 	// 쿠폰 전체 조회
 	@GetMapping
-	@RoleCheck(roles = {Role.ALL})
 	public ResponseEntity<?> readCoupons(
 		@RequestParam(required = false) String title,
 		@RequestParam(defaultValue = "1", required = false) int page,

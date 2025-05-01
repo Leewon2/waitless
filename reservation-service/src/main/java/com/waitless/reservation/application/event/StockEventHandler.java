@@ -13,13 +13,13 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Slf4j
 public class StockEventHandler {
 
-    private final StockEventProducer stockEventProducer;
+    private final StockDecreaseEventProducer stockDecreaseEventProducer;
 
     @Async("messageExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReservationVisited(StockDecreasedEvent event) {
         try {
-            stockEventProducer.sendStockRequest(event);
+            stockDecreaseEventProducer.publish(event);
         } catch (Exception e) {
             log.error("Error sending stock request", e);
         }

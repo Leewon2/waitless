@@ -47,6 +47,9 @@ dependencies {
 	// Jackson Databind 의존성 (JSON 직렬화 및 역직렬화)
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'

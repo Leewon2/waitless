@@ -20,7 +20,8 @@ public enum ReservationErrorCode implements ErrorCode {
     USER_SERVER_ERROR("RES_011", "유저 서버에 문제가 발생하였습니다"),
     RESERVATION_STATUS_ERROR("RES_012", "예약 상태가 웨이팅중이 아닙니다."),
     RESERVATION_UNAUTHORIZED("RES_013", "검증 도중 문제가 발생하였습니다."),
-    RESERVATION_TICKETING_RESTAURANT_NOT_FOUND("REST_014", "티켓팅 식당이 존재하지 않습니다");
+    RESERVATION_TICKETING_RESTAURANT_NOT_FOUND("REST_014", "티켓팅 식당이 존재하지 않습니다"),
+    RESERVATION_DELAY_FAIL("RES_015", "순번 미루기 횟수가 남아있지 않습니다");
     private final String code;
     private final String message;
 

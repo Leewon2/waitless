@@ -17,12 +17,12 @@ Content-Type: application/json
 }
 
 ### 로그인
-POST {{baseUrl}}/api/auth/login
+POST {{baseUrl}}/api/auth/signin
 Content-Type: application/json
 
 {
-  "email": "user2@gmail.com",
-  "password": "user2"
+  "email": "user1@gmail.com",
+  "password": "user1"
 }
 > {%
     client.global.set("access_token", response.body.accessToken)
@@ -36,7 +36,7 @@ Authorization: {{access_token}}
 {
   "title" : "20% 할인 쿠폰",
   "amount" : 10,
-  "issuanceDate": "2025-04-30T18:00:00",
+  "issuanceDate": "2025-05-10T18:00:00",
   "validPeriod": 14
 }
 > {%

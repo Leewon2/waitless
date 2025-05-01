@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.waitless.auth.application.dto.LoginResponseDto;
 import com.waitless.auth.application.exception.AuthErrorCode;
 import com.waitless.auth.application.service.AuthService;
+import com.waitless.auth.presentation.dto.LoginRequestDto;
 import com.waitless.auth.presentation.dto.RefreshTokenRequestDto;
 import com.waitless.common.exception.response.SingleResponse;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,6 +25,17 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
 	private final AuthService authService;
+
+	@PostMapping("/signin")
+	public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+		LoginResponseDto loginResponseDto = authService.login(loginRequestDto.email(), loginRequestDto.password());
+
+		response.setHeader("Authorization", loginResponseDto.accessToken());
+		response.setHeader("Refresh-Token", loginResponseDto.refreshToken());
+		response.setContentType("application/json");
+
+		return ResponseEntity.ok(loginResponseDto);
+	}
 
 	// 저장된 Refresh Token으로 새로운 Access Token 발급
 	@PostMapping("/refresh")

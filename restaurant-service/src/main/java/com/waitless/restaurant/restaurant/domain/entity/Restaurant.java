@@ -57,6 +57,8 @@ public class Restaurant extends BaseTimeEntity {
 
     private Boolean isOpened;
 
+    private Double averageRating;
+
 
     public static Restaurant of(String name, Long ownerId, String phone, Category category,
         int maxTableCount,
@@ -71,6 +73,7 @@ public class Restaurant extends BaseTimeEntity {
         restaurant.operatingHours = operatingHours;
         restaurant.category = category;
         restaurant.isOpened = false;
+        restaurant.averageRating = 0.0;
 
         return restaurant;
     }

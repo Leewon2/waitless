@@ -18,5 +18,5 @@ public interface ReviewService {
     GetReviewResult findOne(ReviewSearchCondition condition); // 단건 조회
     PageCommand<GetReviewListResult> findList(ReviewSearchCondition condition, Pageable pageable); // 리스트 조회
     PageCommand<SearchReviewsResult> findSearch(ReviewSearchCondition condition, Pageable pageable); // 조건 조회
-    Map<UUID, ReviewStatisticsResult> getStatisticsBatch(ReviewStatisticsCommand command);
+    Map<UUID, ReviewStatisticsResult> getStatisticsBatch(ReviewStatisticsCommand command); // 배치형 통계 조회
 }

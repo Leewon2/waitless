@@ -113,4 +113,8 @@ public class Reservation extends BaseTimeEntity {
             throw BusinessException.from(ReservationErrorCode.RESERVATION_STATUS_ERROR);
         }
     }
+
+    public void minusDelayCount() {
+        this.delayCount--;
+    }
 }

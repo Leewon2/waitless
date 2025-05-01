@@ -5,8 +5,13 @@ import com.waitless.common.event.PointIssuedEvent;
 import com.waitless.common.event.PointIssuedFailedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.internals.RecordHeader;
+import org.slf4j.MDC;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
@@ -19,14 +24,24 @@ public class PointEventPublisherImpl implements PointEventPublisher {
 
     @Override
     public void publishPointIssued(PointIssuedEvent event) {
-        kafkaTemplate.send(TOPIC_ISSUED, "point-issued", event);
-        log.info("[Kafka] PointIssuedEvent 발행 완료: {}", event);
+        String traceId = MDC.get("traceId");
+        ProducerRecord<String, Object> record = new ProducerRecord<>(TOPIC_ISSUED, "point-issued", event);
+        if (traceId != null) {
+            record.headers().add(new RecordHeader("traceId", traceId.getBytes(StandardCharsets.UTF_8)));
+        }
+        kafkaTemplate.send(record);
+        log.info("[Kafka] PointIssuedEvent 발행 완료: {}, traceId={}", event, traceId);
     }
 
     @Override
     public void publishPointIssuedFailed(PointIssuedFailedEvent event) {
-        kafkaTemplate.send(TOPIC_FAILED, "point-issued-failed", event);
-        log.info("[Kafka] PointIssuedFailedEvent 발행 완료: {}", event);
+        String traceId = MDC.get("traceId");
+        ProducerRecord<String, Object> record = new ProducerRecord<>(TOPIC_FAILED, "point-issued-failed", event);
+        if (traceId != null) {
+            record.headers().add(new RecordHeader("traceId", traceId.getBytes(StandardCharsets.UTF_8)));
+        }
+        kafkaTemplate.send(record);
+        log.info("[Kafka] PointIssuedFailedEvent 발행 완료: {}, traceId={}", event, traceId);
     }
 
 }

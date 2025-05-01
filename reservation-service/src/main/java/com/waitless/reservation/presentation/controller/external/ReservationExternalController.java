@@ -72,4 +72,10 @@ public class ReservationExternalController {
         ticketingMenuFetchScheduler.scheduleTest(reservationId);
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("/{reservationId}/delay")
+    public ResponseEntity delay(@PathVariable UUID reservationId, @RequestParam Long count) {
+        commandService.delayReservation(reservationId, count);
+        return ResponseEntity.ok().build();
+    }
 }

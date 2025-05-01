@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
 @EnableAsync
@@ -14,9 +15,10 @@ public class AsyncConfig {
     @Bean(name = "messageExecutor")
     public Executor asyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4); // 기본 쓰레드 수
-        executor.setMaxPoolSize(10); // 최대 쓰레드 수
-        executor.setQueueCapacity(100); // 큐 수용량
+        executor.setCorePoolSize(16);
+        executor.setMaxPoolSize(100);
+        executor.setQueueCapacity(1000);
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy()); // 최소한 메인 스레드로라도 처리
         executor.setThreadNamePrefix("messageExecutor-");
         executor.initialize();
         return executor;

@@ -57,6 +57,13 @@ spring:
             - Path=/api/slacks/**, /message-service/**
           filters:
             - RewritePath=/message-service/(?<segment>.*), /$\{segment}
+        # 결제
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**, /payment-service/**
+          filters:
+            - RewritePath=/payment-service/(?<segment>.*), /$\{segment}
       globalcors:
         corsConfigurations:
           "[**]":
@@ -69,6 +76,7 @@ spring:
               - "http://localhost:19095"  # 리뷰
               - "http://localhost:19096"  # 혜택
               - "http://localhost:19097"  # 메시지
+              - "http://localhost:19099"  # 결제
             allowedMethods:
               - GET
               - POST

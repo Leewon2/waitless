@@ -1,5 +1,5 @@
 ### 로그인
-POST http://localhost:19091/api/auth/login
+POST http://localhost:19091/api/auth/signin
 Content-Type: application/json
 
 {
@@ -12,10 +12,10 @@ POST http://localhost:19091/api/auth/refresh
 Content-Type: application/json
 
 {
-  "refreshToken": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDIiLCJyb2xlIjoiUkVGUkVTSCIsImlhdCI6MTc0NDMzNjc0NywiZXhwIjoxNzQ0OTQxNTQ3fQ.MZfcVYl-gWvFutX0cenNEIMXENiqKvIOEVRDjI8ElrU"
+  "refreshToken": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Iiwicm9sZSI6IlJFRlJFU0giLCJpYXQiOjE3NDYwNzcwOTQsImV4cCI6MTc0NjY4MTg5NH0.yhbQh2EAuR5V95WNvdhRhjlryaysIlbl97ZjvBfqyAw"
 }
 
 ### 로그아웃
 POST http://localhost:19091/api/auth/logout
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzQ0Mzc5ODk3LCJleHAiOjE3NDQzODM0OTd9.WvR9QMD9cJNxmdkwsfVd3inH-_4SUOGvlIpbPXAv7_Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NDYwNzcwOTQsImV4cCI6MTc0NjA4MDY5NH0.xE9wtKnA8180GusQTJAp4uWaEGXh_YTkHluwl06OlJE
