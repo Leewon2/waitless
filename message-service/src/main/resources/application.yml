@@ -23,12 +23,12 @@ spring:
         naming:
           physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
 
-  data:
-    redis:
-      host: redis-master
-      port: 6379
-      username: default
-      password: systempass
+
+  redis:
+    host: redis-master
+    port: 6379
+    username: default
+    password: systempass
   kafka:
     bootstrap-servers: kafka:9092
     producer:
