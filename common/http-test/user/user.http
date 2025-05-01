@@ -19,7 +19,7 @@ Content-Type: application/json
 %}
 
 ### 로그인
-POST {{baseUrl}}/api/auth/login
+POST {{baseUrl}}/api/auth/signin
 Content-Type: application/json
 
 {
