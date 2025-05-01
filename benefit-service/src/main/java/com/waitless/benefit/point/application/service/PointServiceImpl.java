@@ -40,7 +40,7 @@ public class PointServiceImpl implements PointCommandUseCase {
                     .reservationId(command.reservationId())
                     .build();
             pointOutboxPort.savePointIssuedFailedEvent(event);
-            throw new IllegalStateException("이미 적립된 리뷰 보상입니다.");
+            return null;
         }
         Point point = pointServiceMapper.toEntity(command);
         Point saved = pointRepository.save(point);
