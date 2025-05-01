@@ -6,10 +6,9 @@ import com.waitless.common.exception.BusinessException;
 import com.waitless.reservation.application.dto.CancelMenuDto;
 import com.waitless.reservation.application.dto.ReservationCreateCommand;
 import com.waitless.reservation.application.dto.ReservationCreateResponse;
-import com.waitless.reservation.application.event.KafkaSlackEventProducer;
+import com.waitless.reservation.application.event.dto.ReservationCancelRequestEvent;
 import com.waitless.reservation.application.event.dto.ReservationCompleteEvent;
 import com.waitless.reservation.application.event.dto.ReservationVisitedEvent;
-import com.waitless.reservation.application.event.dto.ReservationCancelRequestEvent;
 import com.waitless.reservation.application.interceptor.UserContext;
 import com.waitless.reservation.application.mapper.ReservationServiceMapper;
 import com.waitless.reservation.application.service.redis.RedisReservationQueueService;
@@ -20,7 +19,6 @@ import com.waitless.reservation.domain.entity.ReservationStatus;
 import com.waitless.reservation.domain.repository.ReservationRepository;
 import com.waitless.reservation.exception.exception.ReservationErrorCode;
 import com.waitless.reservation.infrastructure.adaptor.client.RestaurantClient;
-import com.waitless.reservation.infrastructure.adaptor.client.dto.RestaurantResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -74,8 +72,6 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
                 .toList();
 
         eventPublisher.publishEvent(new StockDecreasedEvent(reservation.getId(), stockDtos));
-        log.debug("예약 생성 :: Redis 재고 차감 및 DB 저장 완료: {}", storeId);
-
         return reservationServiceMapper.toReservationCreateResponse(reservation);
     }
 
