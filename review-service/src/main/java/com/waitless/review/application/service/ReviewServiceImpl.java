@@ -44,7 +44,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewCommandUseCase {
     @Override
     @Transactional
     public PostReviewResult createReview(PostReviewCommand command) {
-//        visitedReservationValidator.validate(command);
+        visitedReservationValidator.validate(command);
         Review review = reviewServiceMapper.toEntity(command);
         Review saved = reviewRepository.save(review);
 
@@ -65,7 +65,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewCommandUseCase {
     public DeleteReviewResult deleteReview(DeleteReviewCommand command) {
         Review review = reviewRepository.findById(command.reviewId())
                 .orElseThrow(() -> new IllegalArgumentException("리뷰가 존재하지 않습니다."));
-        if (!review.getUserId().equals(command.userId())) {
+        if (!review.getUserId().equals(command.userInfoDto().userId())) {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
         review.softDelete();

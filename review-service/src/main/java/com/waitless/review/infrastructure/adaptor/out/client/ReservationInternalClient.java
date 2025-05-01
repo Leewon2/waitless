@@ -1,5 +1,6 @@
 package com.waitless.review.infrastructure.adaptor.out.client;
 
+import com.waitless.common.config.FeignClientConfig;
 import com.waitless.review.infrastructure.adaptor.out.client.dto.ReservationServiceRequest;
 import com.waitless.review.infrastructure.adaptor.out.client.dto.ReservationServiceResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,7 +11,8 @@ import java.util.List;
 
 @FeignClient(
         name = "reservation-service",
-        url = "http://localhost:19094"
+        url = "http://localhost:19094",
+        configuration = FeignClientConfig.class
 )
 public interface ReservationInternalClient {
     @PostMapping("/api/v1/app/reservations/visited")

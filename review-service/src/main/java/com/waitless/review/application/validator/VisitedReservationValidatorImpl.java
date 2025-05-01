@@ -24,7 +24,7 @@ public class VisitedReservationValidatorImpl implements VisitedReservationValida
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("방문 완료된 예약이 아닙니다."));
 
-        if (!dto.userId().equals(command.userId()) || !dto.restaurantId().equals(command.restaurantId())) {
+        if (!dto.userId().equals(command.userInfoDto().userId()) || !dto.restaurantId().equals(command.restaurantId())) {
             throw new IllegalArgumentException("예약 정보와 사용자 정보가 일치하지 않습니다.");
         }
     }
