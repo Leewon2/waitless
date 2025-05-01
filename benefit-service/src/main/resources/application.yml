@@ -18,11 +18,11 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
-
-  redis:
-    host: redis-master
-    port: 6379
-    password: systempass
+  data:
+    redis:
+      host: redis-master
+      port: 6379
+      password: systempass
   kafka:
     bootstrap-servers: kafka:9092
     producer:

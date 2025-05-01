@@ -1,5 +1,7 @@
 package com.waitless.auth.infrastructure.config;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -10,15 +12,27 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableRedisRepositories
+@RequiredArgsConstructor
 public class RedisConfig {
+
+	private final RedisProperties redisProperties;
+
+	@Value("${spring.data.redis.port}")
+	private int port;
+
+	@Value("${spring.data.redis.password}")
+	private String password;
+
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
-		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration("localhost", 6379);
-		redisStandaloneConfiguration.setPassword("systempass");
+		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(redisProperties.getHost(), port);
+		redisStandaloneConfiguration.setPassword(password);
 		return new LettuceConnectionFactory(
-			redisStandaloneConfiguration
+				redisStandaloneConfiguration
 		);
 	}
 
