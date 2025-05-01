@@ -94,6 +94,8 @@ logging:
     com.waitless.benefit.point: debug
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql: trace
+  pattern:
+    level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
 
 springdoc:
   api-docs:
@@ -101,6 +103,6 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+    enabled: false
 
-  pattern:
-    level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
+
