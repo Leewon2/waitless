@@ -11,4 +11,6 @@ public interface ReservationCommandService {
     void cancelReservation(UUID reservationId);
 
     void visitReservation(UUID reservationId);
+
+    void delayReservation(UUID reservationId, Long count);
 }

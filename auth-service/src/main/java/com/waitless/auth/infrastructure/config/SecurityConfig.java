@@ -6,9 +6,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.waitless.auth.infrastructure.security.AuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-	private final AuthenticationFilter authenticationFilter;
+	// private final AuthenticationFilter authenticationFilter;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -25,10 +22,10 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.formLogin((form)-> form.disable())
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/logout").permitAll()
+				.requestMatchers("/api/auth/signin", "/api/auth/refresh", "/api/auth/logout").permitAll()
 				.anyRequest().authenticated()
-			)
-			.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+			);
+			// .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
