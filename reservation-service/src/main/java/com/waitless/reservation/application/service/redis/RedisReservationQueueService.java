@@ -2,9 +2,11 @@ package com.waitless.reservation.application.service.redis;
 
 import com.waitless.common.exception.BusinessException;
 import com.waitless.common.exception.code.CommonErrorCode;
+import com.waitless.reservation.application.event.dto.VisitRequestEvent;
 import com.waitless.reservation.exception.exception.ReservationErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class RedisReservationQueueService {
 
     private final StringRedisTemplate redisTemplate;
     private final RedisLuaScriptService redisLuaScriptService;
+    private final ApplicationEventPublisher eventPublisher;
 
     private static final String QUEUE_PREFIX = "reservation:queue:";
 
@@ -31,6 +34,7 @@ public class RedisReservationQueueService {
     public void removeFromWaitingQueue(UUID reservationId, LocalDate reservationDate, UUID restaurantId) {
         String zsetKey = QUEUE_PREFIX + restaurantId;
         redisTemplate.opsForZSet().remove(zsetKey, String.valueOf(reservationId));
+        eventPublisher.publishEvent(new VisitRequestEvent(restaurantId));
     }
 
     public Long findCurrentNumberFromWaitingQueue(UUID reservationId, UUID restaurantId) {

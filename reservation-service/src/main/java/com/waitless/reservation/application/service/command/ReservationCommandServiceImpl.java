@@ -6,10 +6,9 @@ import com.waitless.common.exception.BusinessException;
 import com.waitless.reservation.application.dto.CancelMenuDto;
 import com.waitless.reservation.application.dto.ReservationCreateCommand;
 import com.waitless.reservation.application.dto.ReservationCreateResponse;
-import com.waitless.reservation.application.event.KafkaSlackEventProducer;
+import com.waitless.reservation.application.event.dto.ReservationCancelRequestEvent;
 import com.waitless.reservation.application.event.dto.ReservationCompleteEvent;
 import com.waitless.reservation.application.event.dto.ReservationVisitedEvent;
-import com.waitless.reservation.application.event.dto.ReservationCancelRequestEvent;
 import com.waitless.reservation.application.interceptor.UserContext;
 import com.waitless.reservation.application.mapper.ReservationServiceMapper;
 import com.waitless.reservation.application.service.redis.RedisReservationQueueService;
@@ -20,7 +19,6 @@ import com.waitless.reservation.domain.entity.ReservationStatus;
 import com.waitless.reservation.domain.repository.ReservationRepository;
 import com.waitless.reservation.exception.exception.ReservationErrorCode;
 import com.waitless.reservation.infrastructure.adaptor.client.RestaurantClient;
-import com.waitless.reservation.infrastructure.adaptor.client.dto.RestaurantResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -42,11 +40,10 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
     private final RedisReservationQueueService redisReservationQueueService;
     private final RestaurantClient restaurantClient;
     private final ApplicationEventPublisher eventPublisher;
-    private final KafkaSlackEventProducer kafkaSlackEventProducer;
 
     @Override
     public ReservationCreateResponse createReservation(ReservationCreateCommand reservationCreateCommand) {
-        Long userId = UserContext.getUserContext().getUserId();
+        Long userId = getCurrentUserId();
 
         UUID storeId = reservationCreateCommand.restaurantId();
         Long reservationNumber = redisStockService.decrementStock(storeId, reservationCreateCommand.menus());
@@ -75,14 +72,13 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
                 .toList();
 
         eventPublisher.publishEvent(new StockDecreasedEvent(reservation.getId(), stockDtos));
-        log.debug("예약 생성 :: Redis 재고 차감 및 DB 저장 완료: {}", storeId);
-
         return reservationServiceMapper.toReservationCreateResponse(reservation);
     }
 
     @Override
     public void cancelReservation(UUID reservationId) {
-        Long userId = UserContext.getUserContext().getUserId();
+        Long userId = getCurrentUserId();
+
         Reservation findReservation = getReservationOrThrow(reservationId);
 
         List<CancelMenuDto> list = findReservation.getMenus().stream()
@@ -102,7 +98,8 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
     @Override
     public void visitReservation(UUID reservationId) {
-        Long userId = UserContext.getUserContext().getUserId();
+        Long userId = getCurrentUserId();
+
         Reservation findReservation = getReservationOrThrow(reservationId);
 
         RestaurantResponseDto restaurantResponseDto =
@@ -127,17 +124,24 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         Reservation findReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND));
 
+        if(!findReservation.getUserId().equals(getCurrentUserId())){
+            throw BusinessException.from(ReservationErrorCode.RESERVATION_UNAUTHORIZED);
+        }
+
         if (findReservation.getDelayCount() <= 0) {
             throw BusinessException.from(ReservationErrorCode.RESERVATION_DELAY_FAIL);
         }
 
         redisReservationQueueService.delayReservation(reservationId, count, findReservation.getRestaurantId());
-
         findReservation.minusDelayCount();
     }
 
     private Reservation getReservationOrThrow(UUID reservationId) {
         return reservationRepository.findFetchById(reservationId)
                 .orElseThrow(() -> BusinessException.from(ReservationErrorCode.RESERVATION_NOT_FOUND));
+    }
+
+    private Long getCurrentUserId() {
+        return UserContext.getUserContext().getUserId();
     }
 }
