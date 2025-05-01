@@ -3,8 +3,8 @@ POST http://localhost:19091/api/auth/signin
 Content-Type: application/json
 
 {
-  "email": "user2@gmail.com",
-  "password": "user2"
+  "email": "user1@gmail.com",
+  "password": "user1"
 }
 
 ### New Access Token
