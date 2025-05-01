@@ -44,3 +44,7 @@ dependencyManagement {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.named('bootJar') {
+	mainClass.set('com.waitless.eureka.server.ServerApplication')
+}

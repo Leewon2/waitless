@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: benefit-service
+  labels:
+    app: benefit-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: benefit-service
+  template:
+    metadata:
+      labels:
+        app: benefit-service
+    spec:
+      containers:
+        - name: benefit-service-container
+          image: leewon2/benefit-service:latest
+          ports:
+            - containerPort: 19096
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mariadb://mariadb:3306/hangry-database"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "root"
+
+            - name: SPRING_DATA_REDIS_HOST
+              value: "redis"
+            - name: SPRING_DATA_REDIS_PORT
+              value: "6379"
+            - name: SPRING_DATA_REDIS_USERNAME
+              value: "default"
+            - name: SPRING_DATA_REDIS_PASSWORD
+              value: "systempass"
+
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka:9092"

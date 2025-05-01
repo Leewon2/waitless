@@ -35,7 +35,7 @@ dependencies {
 	//implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 //	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
-//	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'org.springframework.kafka:spring-kafka'
 	compileOnly 'org.projectlombok:lombok'
@@ -53,6 +53,8 @@ dependencies {
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
 }
 
 dependencyManagement {
@@ -63,4 +65,8 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named('bootJar') {
+	mainClass.set('com.waitless.restaurant.RestaurantApplication')
 }

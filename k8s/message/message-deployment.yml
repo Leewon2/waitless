@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-service
+  labels:
+    app: message-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: message-service
+  template:
+    metadata:
+      labels:
+        app: message-service
+    spec:
+      containers:
+        - name: message-service-container
+          image: leewon2/message-service:latest
+          ports:
+            - containerPort: 19097
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mariadb://mariadb:3306/hangry-database"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "root"
+
+            - name: SPRING_DATA_REDIS_HOST
+              value: "redis"
+            - name: SPRING_DATA_REDIS_PORT
+              value: "6379"
+            - name: SPRING_DATA_REDIS_USERNAME
+              value: "default"
+            - name: SPRING_DATA_REDIS_PASSWORD
+              value: "systempass"
+
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka:9092"
+
+            - name: SLACK_WEBHOOK_URLS_0
+              value: "https://hooks.slack.com/services/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"
+            - name: SLACK_WEBHOOK_URLS_1
+              value: "https://hooks.slack.com/services/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"
+            - name: SLACK_WEBHOOK_URLS_2
+              value: "https://hooks.slack.com/services/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"

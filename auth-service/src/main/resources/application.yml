@@ -7,7 +7,7 @@ spring:
     import: optional:file:.env[.properties]
   data:
     redis:
-      host: localhost
+      host: redis-master
       port: 6379
 #      username: default
       password: systempass
@@ -23,6 +23,19 @@ jwt:
 
 eureka:
   client:
-    service-Url:
-      defaultZone: http://localhost:19090/eureka/
+    service-url:
+      defaultZone: http://eureka-server:19090/eureka
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 120
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
 

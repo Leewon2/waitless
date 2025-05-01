@@ -2,9 +2,9 @@ spring:
   application:
     name: benefit-service
   datasource:
-    url: jdbc:mariadb://localhost:3306/hangry-database
-    username: root
-    password: root
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
@@ -20,11 +20,11 @@ spring:
       fail-on-empty-beans: false
   data:
     redis:
-      host: localhost
+      host: redis-master
       port: 6379
       password: systempass
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -59,13 +59,13 @@ app:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://eureka-server:19090/eureka
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    lease-renewal-interval-in-seconds: 5
-    lease-expiration-duration-in-seconds: 10
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 120
 
 management:
   endpoints:
@@ -94,5 +94,13 @@ logging:
     com.waitless.benefit.point: debug
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql: trace
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
   pattern:
     level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"

@@ -22,7 +22,6 @@ services:
     ports:
       - "6379:6379"
       - "8001:8001"
-
   zookeeper:
     image: wurstmeister/zookeeper:latest
     platform: linux/amd64
@@ -45,7 +44,6 @@ services:
       KAFKA_LISTENERS: INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 

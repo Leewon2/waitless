@@ -31,7 +31,23 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
 		String path = request.getURI().getPath();
 		log.info("Request path: {}", path);
 
+
+		if (path.startsWith("/v3/api-docs") ||
+				path.startsWith("/swagger-ui") ||
+				path.startsWith("/swagger-ui.html") ||
+				path.startsWith("/user-service/v3/api-docs") ||
+				path.startsWith("/auth-service/v3/api-docs") ||
+				path.startsWith("/restaurant-service/v3/api-docs") ||
+				path.startsWith("/reservation-service/v3/api-docs") ||
+				path.startsWith("/review-service/v3/api-docs") ||
+				path.startsWith("/benefit-service/v3/api-docs") ||
+				path.startsWith("/message-service/v3/api-docs")) {
+			log.debug("Swagger 요청 → 인증 필터 통과");
+			return chain.filter(exchange);
+		}
+
 		if (path.startsWith("/api/users/signup") || path.startsWith("/api/auth/signin") || path.startsWith("/api/auth/validate")
+
 			|| path.startsWith("/api/auth/refresh")) {
 			log.debug("인증 예외 경로 → 필터 통과");
 			return chain.filter(exchange);

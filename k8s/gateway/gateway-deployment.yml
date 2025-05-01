@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-service
+  labels:
+    app: gateway-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-service
+  template:
+    metadata:
+      labels:
+        app: gateway-service
+    spec:
+      containers:
+        - name: gateway-service-container
+          image: leewon2/waitless:latest
+          ports:
+            - containerPort: 19091
+          env:
+            - name: DB_URL
+              value: "jdbc:mariadb://mariadb:3306/hangry-database"
+            - name: DB_USERNAME
+              value: "root"
+            - name: DB_PASSWORD
+              value: "root"
+            - name: JWT_SECRET_KEY
+              value: "piGhz+G1SCtvDWv/sVXxOd4iSnhCyo6S0GkzwuF9wbs="
+            - name: JWT_ACCESS_EXPIRATION
+              value: "3600000"
+            - name: JWT_REFRESH_EXPIRATION
+              value: "604800000"
