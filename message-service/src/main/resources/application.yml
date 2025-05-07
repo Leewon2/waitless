@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: message-service
+  config:
+    import: optional:file:.env[.properties]
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -25,11 +27,11 @@ spring:
 
   data:
     redis:
-      host: redis-master
+      host: ${REDIS_HOST}
       port: 6379
       password: systempass
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_HOST}:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -106,7 +108,7 @@ logging:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-server:19090/eureka
+      defaultZone: http://${SERVER_HOST}:19090/eureka
     fetch-registry: true
     register-with-eureka: true
   instance:

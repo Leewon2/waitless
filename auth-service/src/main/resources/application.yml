@@ -7,9 +7,8 @@ spring:
     import: optional:file:.env[.properties]
   data:
     redis:
-      host: redis-master
+      host: ${REDIS_HOST}
       port: 6379
-#      username: default
       password: systempass
   autoconfigure:
     exclude:
@@ -24,7 +23,7 @@ jwt:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-server:19090/eureka
+      defaultZone: http://${SERVER_HOST}:19090/eureka
     fetch-registry: true
     register-with-eureka: true
   instance:

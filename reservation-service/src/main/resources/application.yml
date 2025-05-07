@@ -1,9 +1,10 @@
 spring:
   application:
     name: reservation-service
-
+  config:
+    import: optional:file:.env[.properties]
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_HOST}:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -41,9 +42,8 @@ spring:
         default-page-size: 10
         max-page-size: 2000
     redis:
-      host: redis-master
+      host: ${REDIS_HOST}
       port: 6379
-      username: default
       password: systempass
 
   cloud:
@@ -57,7 +57,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-server:19090/eureka
+      defaultZone: http://${SERVER_HOST}:19090/eureka
     fetch-registry: true
     register-with-eureka: true
   instance:
@@ -76,7 +76,7 @@ server:
   port: 19094
 
 gateway:
-  url: http://gateway-service:19091
+  url: http://${SERVER_HOST}:19091
 
 management:
   endpoints:

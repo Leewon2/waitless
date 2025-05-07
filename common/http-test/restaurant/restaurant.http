@@ -45,7 +45,7 @@ Content-Type: {{contentType}}
 Authorization: {{access_token}}
 
 {
-  "name": "행그리 식당",
+  "name": "행그리 식당2",
   "ownerId": 2,
   "categoryId": 1,
   "phone": "010-1234-7777",
@@ -54,7 +54,8 @@ Authorization: {{access_token}}
   "longitude": 126.978,
   "openingTime": "10:00:00",
   "closingTime": "22:00:00"
-}> {%
+}
+> {%
     client.global.set("restaurantId", response.body.data.id)
 %}
 
@@ -64,7 +65,7 @@ Content-Type: {{contentType}}
 Authorization: {{access_token}}
 
 ###식당 조회
-GET {{baseUrl}}/api/restaurants?categoryId=2
+GET {{baseUrl}}/api/restaurants?categoryId=1
 Content-Type: {{contentType}}
 Authorization: {{access_token}}
 

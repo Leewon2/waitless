@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/reservation")
+@RequestMapping("/api/reservations")
 public class ReservationExternalController {
 
     private final ReservationCommandService commandService;
