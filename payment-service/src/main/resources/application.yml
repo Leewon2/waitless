@@ -1,10 +1,12 @@
 spring:
   application:
     name: payment-service
+  config:
+    import: optional:file:.env[.properties]
   datasource:
-    url: jdbc:mariadb://localhost:3306/hangry-database
-    username: root
-    password: root
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
@@ -17,13 +19,13 @@ spring:
     open-in-view: false
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
       port: 6379
       password: systempass
 
 eureka:
   client:
     service-Url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: http://${SERVER_HOST}:19090/eureka/
 server:
   port: 19099

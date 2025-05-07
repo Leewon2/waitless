@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/reservation/app")
+@RequestMapping("/api/reservations/app")
 public class ReservationInternalController {
 
     private final TicketMapper ticketMapper;

@@ -1,6 +1,8 @@
 spring:
   application:
     name: benefit-service
+  config:
+    import: optional:file:.env[.properties]
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -20,11 +22,11 @@ spring:
       fail-on-empty-beans: false
   data:
     redis:
-      host: redis-master
+      host: ${REDIS_HOST}
       port: 6379
       password: systempass
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_HOST}:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -59,13 +61,13 @@ app:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-server:19090/eureka
+      defaultZone: http://${SERVER_HOST}:19090/eureka
     fetch-registry: true
     register-with-eureka: true
-  instance:
-    prefer-ip-address: true
-    lease-renewal-interval-in-seconds: 30
-    lease-expiration-duration-in-seconds: 120
+  instance: # 유레카 서버 계속 찾는 주기 설정
+    prefer-ip-address: true # 각 서버가 서버이름 대신 아이피 주소로 등록
+    lease-renewal-interval-in-seconds: 30 # 각 서버 30초마다 갱신 요청
+    lease-expiration-duration-in-seconds: 120 # 각 서버의 요청을 유레카 서버가 못 받았을 경우 120초 대기
 
 management:
   endpoints:
