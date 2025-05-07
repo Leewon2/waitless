@@ -19,6 +19,7 @@ import com.waitless.reservation.domain.entity.ReservationStatus;
 import com.waitless.reservation.domain.repository.ReservationRepository;
 import com.waitless.reservation.exception.exception.ReservationErrorCode;
 import com.waitless.reservation.infrastructure.adaptor.client.RestaurantClient;
+import com.waitless.reservation.infrastructure.adaptor.client.dto.RestaurantResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
