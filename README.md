@@ -35,7 +35,7 @@
       <strong>Redis</strong> 7.2
     </td>
     <td style="text-align: center;">
-      <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/86669962/441075431-374ff578-6a31-49e2-9b8c-a82a093beba4.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250507%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250507T053228Z&X-Amz-Expires=300&X-Amz-Signature=7f7c5fb862e573b6176815efdbd93606d7429519db43a15e4c32332e57ee0808&X-Amz-SignedHeaders=host" width="50"/>
+      <img src="https://github.com/user-attachments/assets/023c361b-de2f-4d3f-b20e-03f92b950659" width="50"/>
       <img src="https://github.com/user-attachments/assets/2a90d034-1542-47e0-a524-b4febc5f170e" width="50"/> 
     </td>
   </tr>
@@ -73,7 +73,7 @@
       <img src="https://github.com/user-attachments/assets/6e4ecc9f-2f9e-44cb-8088-8f780665c693" width="50"/>
       <img src="https://github.com/user-attachments/assets/ecc34476-f5be-4275-bd97-fa247dbc6fa2" width="50" />
       <img src="https://github.com/user-attachments/assets/2f9ab1ca-6a02-4dcb-b15a-e4dec9f803c7" width="50" />
-      <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/107541923/441079559-80fc6690-7bbf-45e1-b41a-6aa49a205599.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250507%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250507T054937Z&X-Amz-Expires=300&X-Amz-Signature=7081a013bb560e523c91ca01555714e427b413acf27fae9f8249eb327e05993e&X-Amz-SignedHeaders=host" width="100">
+      <img src="https://github.com/user-attachments/assets/b76d857b-2a4b-4c3d-a528-a080ad1e69ad" width="60">
     </td>
   </tr>
   <tr>
@@ -98,10 +98,10 @@
       <strong>Slack</strong>
     </td>
     <td style="text-align: center;">
-      <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/86669962/441091016-a881b9fe-5d5d-47d9-890a-bf03e7352c26.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250507%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250507T062840Z&X-Amz-Expires=300&X-Amz-Signature=d8d1938e5055f6b25412f55046eaaa9be15897f265000dbd2ce8fc42c9d17421&X-Amz-SignedHeaders=host" width="50" />
+      <img src="https://github.com/user-attachments/assets/849f656b-70fa-4038-b15f-7b571f6b9718" width="50" />
       <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1570106347/noticon/hx52ypkqqdzjdvd8iaid.svg" width="50"/>
       <img src="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1566914838/noticon/qlfe77nbcvdscm762prm.png" width="50" />
-      <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/86669962/441081145-69cc8054-d151-4339-8819-79500cd4bf9e.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250507%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250507T055434Z&X-Amz-Expires=300&X-Amz-Signature=e31f84ba592c06abca5b3cd81adde3912b93ab11b34c0d02480a5131cb06e85c&X-Amz-SignedHeaders=host" width="50" />
+      <img src="https://github.com/user-attachments/assets/c614d0fb-d67c-4b05-875b-7e8ac37153e4" width="50" />
     </td>
   </tr>
   <tr>
@@ -125,7 +125,7 @@
 </table>
 
 ## 📖 인프라 아키텍처
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/107541923/441082014-95c18511-d9ab-46b9-a4a4-d2c76dc1d43e.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250507%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250507T055708Z&X-Amz-Expires=300&X-Amz-Signature=e663ec6dfe7806914731eb82d0f864d4dd0ad414ea6eb6befa88285ac0e10a64&X-Amz-SignedHeaders=host" >
+<img src="https://github.com/user-attachments/assets/9b236950-b30c-4c2e-acca-96603a6fd153" >
 
 * 유저 : 브라우저에서 서비스 접속 → 요청이 k8s Cluster로 전달 → Gateway가 Eureka에 등록된 서비스 목록 조회 후 해당 서비스로 라우팅 → 요청을 받은 서버 내부에서 작업 수행
 * 개발자 : Github에 Push → Github Actions CI/CD 파이프라인, Docker 이미지 Build & Push → k8s 배포
@@ -133,7 +133,7 @@
 ## ✏️ 이벤트 흐름
 * 사용자 플로우 1 ⇒ 회원가입/로그인 → 예약 생성 신청 → 식당/메뉴 확인 → 메뉴 재고 확인 → 예약 성공 → 예약 성공 알람 전송 → 방문 완료 → 리뷰 작성 요청 알람 발송 → 리뷰 작성 성공 → 포인트 발급 성공
 * 사용자 플로우 2 ⇒ 회원가입/로그인 → 쿠폰 발급
-<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/86669962/441081917-76b43503-d2e7-4859-9177-467803ad5e9b.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250507%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250507T055649Z&X-Amz-Expires=300&X-Amz-Signature=259769a3514df3730a953b62c8854c376ae979c3e1b2af9d1fca917da245926b&X-Amz-SignedHeaders=host">
+<img src="https://github.com/user-attachments/assets/a19b81f4-f9f9-4fb3-b86c-aa4bc1925401">
 
 
 ## 📋 API 문서
