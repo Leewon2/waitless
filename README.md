@@ -158,7 +158,7 @@
 
 ## 🛎️ 기술적 의사결정
 
-### 1️⃣ [인증-인가-유저 관리 서비스 나누어 책임 분리](https://github.com/teamsparta-hangry/hangry/wiki/%5B%EA%B8%B0%EC%88%A0%EC%A0%81-%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95%5D-%EC%9D%B8%EC%A6%9D-%C2%B7-%EC%9D%B8%EA%B0%80-%C2%B7-%EC%9C%A0%EC%A0%80-%EA%B4%80%EB%A6%AC-%EC%84%9C%EB%B9%84%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%84%A4%EA%B3%84)
+### 1️⃣ [인증 · 인가 · 유저 관리 서비스 분리 설계](https://github.com/teamsparta-hangry/hangry/wiki/%5B%EA%B8%B0%EC%88%A0%EC%A0%81-%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95%5D-%EC%9D%B8%EC%A6%9D-%C2%B7-%EC%9D%B8%EA%B0%80-%C2%B7-%EC%9C%A0%EC%A0%80-%EA%B4%80%EB%A6%AC-%EC%84%9C%EB%B9%84%EC%8A%A4-%EB%B6%84%EB%A6%AC-%EC%84%A4%EA%B3%84)
 
 ### 2️⃣ [Redis Lua Script를 활용한 동시성 제어](https://github.com/teamsparta-hangry/hangry/wiki/%5B%EA%B8%B0%EC%88%A0%EC%A0%81-%EC%9D%98%EC%82%AC%EA%B2%B0%EC%A0%95%5D-Redis-LuaScript-%EB%8F%84%EC%9E%85-%EC%9D%B4%EC%9C%A0)
 
