@@ -158,26 +158,26 @@
 
 ## 🛎️ 기술적 의사결정
 
-### 1️⃣ [인증-인가-유저 관리 서비스 나누어 책임 분리](https://github.com/teamsparta-hangry/hangry/wiki/인증%E2%80%90인가%E2%80%90유저-관리-서비스-나누어-책임-분리)
+### 1️⃣ [인증-인가-유저 관리 서비스 나누어 책임 분리](https://github.com/teamsparta-hangry/hangry.wiki.git)
 
-### 2️⃣ [Redis Lua Script를 활용한 동시성 제어](https://github.com/teamsparta-hangry/hangry/wiki/Redis-LuaScript-%EB%8F%84%EC%9E%85-%EC%9D%B4%EC%9C%A0)
+### 2️⃣ [Redis Lua Script를 활용한 동시성 제어](https://github.com/teamsparta-hangry/hangry.wiki.git)
 
-### 3️⃣ [보상 트랜잭션 도입 이유](https://github.com/teamsparta-hangry/hangry/wiki/보상-트랜잭션-도입-이유)
+### 3️⃣ [보상 트랜잭션 도입 이유](https://github.com/teamsparta-hangry/hangry.wiki.git)
 
-### 4️⃣ [포인트 총합/랭킹에 Redis ZSET 사용](https://github.com/teamsparta-hangry/hangry/wiki/포인트-총합-랭킹에-Redis-ZSET-도입-이유)
+### 4️⃣ [포인트 총합/랭킹에 Redis ZSET 사용](https://github.com/teamsparta-hangry/hangry.wiki.git)
 
-### 5️⃣ [Kubernetes VS Blue-Green 무중단 배포 전략](https://github.com/teamsparta-hangry/hangry/wiki/Kubernetes-vs-Blue%E2%80%90Green-무중단-배포-전략)
+### 5️⃣ [Kubernetes VS Blue-Green 무중단 배포 전략](https://github.com/teamsparta-hangry/hangry.wiki.git)
 
 
 ## 🔫 트러블슈팅
 
-### 1️⃣ [Resilience4j를 이용한 메세지 유실 방지](https://github.com/teamsparta-hangry/hangry/wiki/%5B%ED%8A%B8%EB%9F%AC%EB%B8%94-%EC%8A%88%ED%8C%85%5D-Resilience4j%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-Slack-%EB%A9%94%EC%8B%9C%EC%A7%80-%EC%9C%A0%EC%8B%A4-%EB%B0%A9%EC%A7%80)
+### 1️⃣ [Resilience4j를 이용한 메세지 유실 방지](https://github.com/teamsparta-hangry/hangry.wiki.git)
 
-### 2️⃣ [쿠폰 발급시 분산 락으로 동시성 제어](https://github.com/teamsparta-hangry/hangry/wiki/%5B%ED%8A%B8%EB%9F%AC%EB%B8%94-%EC%8A%88%ED%8C%85%5D-%EC%BF%A0%ED%8F%B0-%EB%B0%9C%EA%B8%89%EC%8B%9C-%EB%B6%84%EC%82%B0-%EB%9D%BD%EC%9C%BC%EB%A1%9C-%EB%8F%99%EC%8B%9C%EC%84%B1-%EC%A0%9C%EC%96%B4)
+### 2️⃣ [쿠폰 발급시 분산 락으로 동시성 제어](https://github.com/teamsparta-hangry/hangry.wiki.git)
 
-### 3️⃣ [단건형 → 배치형 API 전환 + Redis MGET, pipelined](https://github.com/teamsparta-hangry/hangry/wiki/%5B%ED%8A%B8%EB%9F%AC%EB%B8%94-%EC%8A%88%ED%8C%85%5D-%EB%8B%A8%EA%B1%B4%ED%98%95-%E2%86%92-%EB%B0%B0%EC%B9%98%ED%98%95-API-%EC%A0%84%ED%99%98---Redis-MGET,-Pipelining)
+### 3️⃣ [단건형 → 배치형 API 전환 + Redis MGET, pipelined](https://github.com/teamsparta-hangry/hangry.wiki.git)
 
-### 4️⃣ [Kafka 이벤트 로깅 및 DLQ 설정](https://github.com/teamsparta-hangry/hangry/wiki/%5B%ED%8A%B8%EB%9F%AC%EB%B8%94-%EC%8A%88%ED%8C%85%5D-Kafka-%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EB%A1%9C%EA%B9%85-%EB%B0%8F-DLQ-%EC%84%A4%EC%A0%95)
+### 4️⃣ [Kafka 이벤트 로깅 및 DLQ 설정](https://github.com/teamsparta-hangry/hangry.wiki.git)
 
-### 5️⃣ [Helm을 이용한 Kafka 컨테이너 실행](https://github.com/teamsparta-hangry/hangry/wiki/%5B%ED%8A%B8%EB%9F%AC%EB%B8%94-%EC%8A%88%ED%8C%85%5D-helm%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%9C-kafka-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88-%EC%8B%A4%ED%96%89)
+### 5️⃣ [Helm을 이용한 Kafka 컨테이너 실행](https://github.com/teamsparta-hangry/hangry.wiki.git)
 
