@@ -66,7 +66,7 @@
       <strong>Docker</strong><br>
       <strong>Docker-Compose</strong><br>
       <strong>GitHub Actions</strong><br>
-      <strong>Kubernetes</strong><br>   
+      <strong>Kubernetes</strong><br>    
     </td> 
     <td style="text-align: center;">
       <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" width="50" />
