@@ -1,0 +1,125 @@
+server:
+  port: 19097
+
+spring:
+  application:
+    name: message-service
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        hibernate.format_sql: true
+        hibernate.use_sql_comments: true
+        format_sql: true
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      password: systempass
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST}:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: >
+          stock-decrease:com.waitless.common.event.StockDecreasedEvent
+    consumer:
+      group-id: ${spring.application.name}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.waitless
+        spring.json.type.mapping: >
+          stock-decrease:com.waitless.common.event.StockDecreasedEvent
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+slack:
+  webhook:
+    urls:
+      - "https://hooks.slack.com/services/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"
+      - "https://hooks.slack.com/services/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"
+      - "https://hooks.slack.com/services/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"
+
+resilience4j:
+  retry:
+    instances:
+      slackRetry:
+        max-attempts: 3
+        wait-duration: 2s
+        retry-exceptions:
+          - java.net.SocketTimeoutException
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.web.client.ResourceAccessException
+
+  circuitbreaker:
+    instances:
+      slackCircuitBreaker:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 30
+        wait-duration-in-open-state: 5s
+
+  ratelimiter:
+    instances:
+      slackRateLimiter:
+        limit-for-period: 3
+        limit-refresh-period: 1s
+        timeout-duration: 0
+
+  bulkhead:
+    instances:
+      slackBulkhead:
+        max-concurrent-calls: 3
+        max-wait-duration: 2s
+
+  timelimiter:
+    instances:
+      slackTimeLimiter:
+        timeout-duration: 3s
+
+logging:
+  level:
+    io.github.resilience4j: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVER_HOST}:19090/eureka
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 120
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: false

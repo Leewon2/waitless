@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: payment-service
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        default_batch_fetch_size: 50
+    open-in-view: false
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      password: systempass
+
+eureka:
+  client:
+    service-Url:
+      defaultZone: http://${SERVER_HOST}:19090/eureka/
+server:
+  port: 19099

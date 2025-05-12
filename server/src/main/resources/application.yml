@@ -1,10 +1,15 @@
 spring:
   application:
     name: server
+  config:
+    import: optional:file:.env[.properties]
 eureka:
+  instance:
+    hostname: server #eureka-server
+    prefer-ip-address: false
   client:
     serviceUrl:
-      defaultZone: http://localhost:19090/eureka
+      defaultZone: http://${SERVER_HOST}:19090/eureka
     fetch-registry: false
     register-with-eureka: false
 server:

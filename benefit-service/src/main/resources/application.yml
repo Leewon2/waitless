@@ -1,0 +1,110 @@
+spring:
+  application:
+    name: benefit-service
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        default_batch_fetch_size: 50
+    open-in-view: false
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      password: systempass
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST}:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      retries: 3
+      properties:
+        delivery.timeout.ms: 30000
+        acks: all
+        spring.json.type.mapping: >
+          point-issued:com.waitless.common.event.PointIssuedEvent,
+          point-issued-failed:com.waitless.common.event.PointIssuedFailedEvent
+    consumer:
+      group-id: point-service
+      auto-offset-reset: latest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.waitless.common.event
+        spring.json.type.mapping: >
+          review-created:com.waitless.common.event.ReviewCreatedEvent,
+          review-deleted:com.waitless.common.event.ReviewDeletedEvent
+    listener:
+      ack-mode: MANUAL_IMMEDIATE
+app:
+  kafka:
+    topics:
+      review-created-events: review-created-events
+      review-deleted-events: review-deleted-events
+      point-issued-events: point-issued-events
+      point-issued-failed-events: point-issued-failed-events
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVER_HOST}:19090/eureka
+    fetch-registry: true
+    register-with-eureka: true
+  instance: # 유레카 서버 계속 찾는 주기 설정
+    prefer-ip-address: true # 각 서버가 서버이름 대신 아이피 주소로 등록
+    lease-renewal-interval-in-seconds: 30 # 각 서버 30초마다 갱신 요청
+    lease-expiration-duration-in-seconds: 120 # 각 서버의 요청을 유레카 서버가 못 받았을 경우 120초 대기
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+    zipkin:
+      tracing:
+        endpoint: http://localhost:9411/api/v2/spans
+
+server:
+  port: 19096
+
+logging:
+  level:
+    root: info
+    com.waitless.benefit.point: debug
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace
+  pattern:
+    level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: false
+
+

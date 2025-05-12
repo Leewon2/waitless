@@ -1,0 +1,21 @@
+### 로그인
+POST http://localhost:19091/api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "user2@gmail.com",
+  "password": "user2"
+}
+
+### New Access Token
+POST http://localhost:19091/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Iiwicm9sZSI6IlJFRlJFU0giLCJpYXQiOjE3NDYwNzcwOTQsImV4cCI6MTc0NjY4MTg5NH0.yhbQh2EAuR5V95WNvdhRhjlryaysIlbl97ZjvBfqyAw"
+}
+
+### 로그아웃
+POST http://localhost:19091/api/auth/logout
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NDYwNzcwOTQsImV4cCI6MTc0NjA4MDY5NH0.xE9wtKnA8180GusQTJAp4uWaEGXh_YTkHluwl06OlJE

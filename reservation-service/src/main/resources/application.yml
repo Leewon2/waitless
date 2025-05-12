@@ -1,0 +1,96 @@
+spring:
+  application:
+    name: reservation-service
+  config:
+    import: optional:file:.env[.properties]
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST}:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: >
+          stock-decrease:com.waitless.common.event.StockDecreasedEvent
+    consumer:
+      group-id: ${spring.application.name}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.waitless
+        spring.json.type.mapping: >
+          stock-decrease:com.waitless.common.event.StockDecreasedEvent
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 2000
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      password: systempass
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 3000
+            read-timeout: 5000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVER_HOST}:19090/eureka
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 120
+
+logging:
+  level:
+    root: info
+    com.waitless.reservation: info
+    org.hibernate.SQL: info
+    org.hibernate.type.descriptor.sql: info
+
+server:
+  port: 19094
+
+gateway:
+  url: http://${SERVER_HOST}:19091
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: false

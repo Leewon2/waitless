@@ -1,0 +1,125 @@
+### 환경 변수 설정
+@baseUrl = http://localhost:19091
+@contentType = application/json
+
+### 회원가입
+POST {{baseUrl}}/api/users/signup
+Content-Type: {{contentType}}
+
+{
+  "email": "restaurant1@gmail.com",
+  "password": "restaurant1",
+  "name": "restaurant1",
+  "phone": "010-1234-1111",
+  "role" : "OWNER",
+  "slackId": "restaurant1@gmail.com"
+}
+
+###로그인
+POST {{baseUrl}}/api/auth/signin
+Content-Type: {{contentType}}
+
+{
+  "email": "restaurant1@gmail.com",
+  "password": "restaurant1"
+}
+> {%
+    client.global.set("access_token", response.body.accessToken)
+%}
+
+###식당 생성
+POST {{baseUrl}}/api/restaurants
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+{
+  "name": "행그리 식당",
+  "ownerId": 2,
+  "categoryId": 1,
+  "phone": "010-1234-7777",
+  "maxTableCount": 10,
+  "latitude": 37.5666,
+  "longitude": 126.978,
+  "openingTime": "10:00:00",
+  "closingTime": "22:00:00"
+}> {%
+    client.global.set("restaurantId", response.body.data.id)
+%}
+
+###메뉴 생성
+POST {{baseUrl}}/api/menus
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "restaurantId": "{{restaurantId}}",
+  "category": "KOREAN",
+  "price": 9500,
+  "name": "제육볶음 정식2",
+  "amount": 15
+}
+> {%
+    client.global.set("menuId", response.body.data.menuId)
+%}
+
+###티켓팅 식당 생성
+POST {{baseUrl}}/api/reservation/app/ticket
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+{
+  "restaurantId": {{restaurantId}},
+  "openTime": "20:00:00"
+}
+
+###메뉴 재고 가져오는 스케쥴러 강제 호출
+### 원래는 매 시 50분마다 스케쥴러가 작동해서 ex)오전 11시 50분에 오픈이 12시인 식당에 메뉴재고를 가져와서 레디스에 넣지만
+### 테스트를 위해 스케쥴러 강제 호출해서 식당id를 pathVariable로 넣어서 그 식당id에 해당하는 메뉴 재고를 받아와서 레디스에 넣음
+GET {{baseUrl}}/api/{{reservationId}}/force-schedule
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+###예약하기
+POST {{baseUrl}}/api/reservation
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+{
+  "restaurantId": {{restaurantId}},
+	"restaurantName": "행그리 식당",
+	"peopleCount": 1,
+	"reservationDate": "2025-04-24",
+  "menus": [
+    {
+      "menuId": "{{menuId}}",
+      "menuName": "제육볶음 정식2",
+      "quantity": 1,
+      "price": 9500
+    }
+  ]
+}
+
+###예약 단건 조회
+GET {{baseUrl}}/api/reservation/{{reservationId}}
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+###예약 복수 조회
+GET {{baseUrl}}/api/reservation?direction=asc
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+###본인 순번 확인하기
+GET {{baseUrl}}/api/reservation/{{reservationId}}/queue-position
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+###방문 완료
+PATCH {{baseUrl}}/api/reservation/{{reservationId}}/visit
+Content-Type: {{contentType}}
+Authorization: {{access_token}}
+
+###예약 취소
+PATCH {{baseUrl}}/api/reservation/{{reservationId}}/cancel
+Content-Type: {{contentType}}
+Authorization: {{access_token}}

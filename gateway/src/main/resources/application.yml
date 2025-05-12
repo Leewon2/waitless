@@ -1,0 +1,130 @@
+server:
+  port: 19091
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        # 유저
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**, /user-service/**
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        # auth
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**, /auth-service/**
+          filters:
+            - RewritePath=/auth-service/(?<segment>.*), /$\{segment}
+        # 식당
+        - id: restaurant-service
+          uri: lb://restaurant-service
+          predicates:
+            - Path=/api/restaurants/**, /api/categories/** , /api/menus/**, /restaurant-service/**
+          filters:
+            - RewritePath=/restaurant-service/(?<segment>.*), /$\{segment}
+        # 예약
+        - id: reservation-service
+          uri: lb://reservation-service
+          predicates:
+            - Path=/api/reservations/**, /reservation-service/**
+          filters:
+            - RewritePath=/reservation-service/(?<segment>.*), /$\{segment}
+        # 리뷰
+        - id: review-service
+          uri: lb://review-service
+          predicates:
+            - Path=/api/reviews/**, /review-service/**
+          filters:
+            - RewritePath=/review-service/(?<segment>.*), /$\{segment}
+        # 혜택
+        - id: benefit-service
+          uri: lb://benefit-service
+          predicates:
+            - Path=/api/points/**, /api/coupons/**, /benefit-service/**
+          filters:
+            - RewritePath=/benefit-service/(?<segment>.*), /$\{segment}
+        # 메시지
+        - id: message-service
+          uri: lb://message-service
+          predicates:
+            - Path=/api/slacks/**, /message-service/**
+          filters:
+            - RewritePath=/message-service/(?<segment>.*), /$\{segment}
+        # 결제
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**, /payment-service/**
+          filters:
+            - RewritePath=/payment-service/(?<segment>.*), /$\{segment}
+      globalcors:
+        corsConfigurations:
+          "[**]":
+            allowedOriginPatterns:
+              - "http://localhost:19091"  # 게이트웨이
+              - "http://localhost:19092"  # 유저
+              - "http://localhost:19098"  # auth
+              - "http://localhost:19093"  # 식당
+              - "http://localhost:19094"  # 예약
+              - "http://localhost:19095"  # 리뷰
+              - "http://localhost:19096"  # 혜택
+              - "http://localhost:19097"  # 메시지
+              - "http://localhost:19099"  # 결제
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+      discovery:
+        locator:
+          enabled: true
+  config:
+    import: optional:file:.env[.properties]
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVER_HOST}:19090/eureka
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 120
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    urls:
+      - name: user-service
+        url: /user-service/v3/api-docs
+      - name: restaurant-service
+        url: /restaurant-service/v3/api-docs
+      - name: message-service
+        url: /message-service/v3/api-docs
+      - name: auth-service
+        url: /auth-service/v3/api-docs
+      - name: benefit-service
+        url: /benefit-service/v3/api-docs
+      - name: reservation-service
+        url: /reservation-service/v3/api-docs
+      - name: review-service
+        url: /review-service/v3/api-docs
+    path: /swagger-ui.html

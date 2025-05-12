@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:19091
+
+### 회원가입
+POST {{baseUrl}}/api/users/signup
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "user1",
+  "name": "user1",
+  "phone": "010-1234-1234",
+  "role" : "ADMIN",
+  "slackId": "user1@gmail.com"
+}
+
+### 로그인
+POST {{baseUrl}}/api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "user1"
+}
+> {%
+    client.global.set("access_token", response.body.accessToken)
+%}
+
+###슬랙 생성
+POST {{baseUrl}}/api/slacks?receiverId=asasd&mySequence=20
+Content-Type: application/json
+Authorization: {{access_token}}
+
+
+### 슬랙 삭제 => get을 안만들어서 삭제 테스트 불가
+DELETE {{baseUrl}}/api/slacks/{{slackId}}
+Content-Type: application/json
+Authorization: {{access_token}}

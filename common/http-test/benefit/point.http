@@ -1,0 +1,95 @@
+@baseUrl = http://localhost:19091
+@reviewApi = {{baseUrl}}/api/reviews
+@pointApi = {{baseUrl}}/api/points
+
+### 회원가입
+POST {{baseUrl}}/api/users/signup
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "user1",
+  "name": "user1",
+  "phone": "010-1234-1234",
+  "role" : "ADMIN",
+  "slackId": "user1@gmail.com"
+}
+
+### 로그인 및 AccessToken 저장
+POST {{baseUrl}}/api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "user1"
+}
+> {% client.global.set("access_token", response.body.accessToken) %}
+
+
+### [리뷰 생성 테스트 - 일반 리뷰 데이터]
+### 리뷰 생성 1
+POST {{reviewApi}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "restaurantId": "11111111-aaaa-bbbb-cccc-111111111111",
+  "reservationId": "11111111-aaaa-bbbb-cccc-000000000001",
+  "content": "정말 맛있게 잘 먹었습니다!",
+  "rating": 5
+}
+> {% client.global.set("reviewId", response.body.data.reviewId) %}
+
+
+### [포인트 자동 생성 시나리오]
+# 리뷰 생성 후 자동으로 포인트 적립이 발생해야 한다.
+# Kafka Event: ReviewCreatedEvent → benefit-service가 소비 → 포인트 생성
+# Outbox Event: review_outbox 테이블에서 review-created 이벤트가 발행되었어야 함
+# 기대 효과:
+#   - DB 테이블 p_point에 해당 userId/reservationId/reviewId로 포인트 row가 생성됨
+#   - 리뷰에 따라 적립된 포인트 (100p)
+#   - review_outbox 테이블 상태: type='review-created', status='SENT'
+
+# 테스트 방법:
+#   1. review.http에서 리뷰 생성 요청 수행
+#   2. DB에서 review_outbox 테이블 확인
+#   3. DB에서 p_point 테이블 확인
+
+### [포인트 자동 삭제 시나리오]
+# 리뷰 삭제 시 자동으로 포인트 삭제가 발생해야 한다.
+# Kafka Event: ReviewDeletedEvent → benefit-service가 소비 → 포인트 삭제
+# Outbox Event: review_outbox 테이블에서 review-deleted 이벤트가 발행되었어야 함
+# 기대 효과:
+#   - p_point 테이블에서 해당 reviewId의 포인트 레코드가 제거됨 (Soft Delete 또는 완전 삭제)
+#   - review_outbox 테이블 상태: type='review-deleted', status='SENT'
+
+# 테스트 방법:
+#   1. review.http에서 DELETE 요청 수행
+#   2. DB에서 review_outbox 테이블 상태 확인
+#   3. DB에서 p_point에서 해당 reviewId가 존재하는지 확인
+
+### [포인트 단건 조회] (리뷰 ID 기준)
+GET {{pointApi}}/{{reviewId}}
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+### [포인트 리스트 조회] (유저 ID 기준)
+GET {{pointApi}}/list?userId=1
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+### [포인트 총합 조회] (유저 ID 기준)
+GET {{pointApi}}/amount?userId=1
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+### [Top N 포인트 랭킹 조회] (topN 파라미터 기준)
+GET {{pointApi}}/ranking/top?topN=5
+Authorization: Bearer {{access_token}}
+Accept: application/json
+
+### [본인 포인트 랭킹 조회] (유저 ID 기준)
+GET {{pointApi}}/ranking/me?userId=1
+Authorization: Bearer {{access_token}}
+Accept: application/json

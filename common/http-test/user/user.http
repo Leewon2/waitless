@@ -1,0 +1,52 @@
+@baseUrl = http://localhost:19091
+@access_token = variable value
+@user_id = variable value
+
+### 회원가입
+POST {{baseUrl}}/api/users/signup
+Content-Type: application/json
+
+{
+  "email": "user3@gmail.com",
+  "password": "user3",
+  "name": "user3",
+  "phone": "010-1234-1238",
+  "role" : "ADMIN",
+  "slackId": "user3@gmail.com"
+}
+> {%
+    client.global.set("user_id", response.body.data.id)
+%}
+
+### 로그인
+POST {{baseUrl}}/api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "user3@gmail.com",
+  "password": "user3"
+}
+> {%
+    client.global.set("access_token", response.body.accessToken)
+%}
+
+### 유저 단건 조회
+GET {{baseUrl}}/api/users/{{user_id}}
+Authorization: {{access_token}}
+
+### 유저 전체 조회
+GET {{baseUrl}}/api/users?keyword=
+Authorization: {{access_token}}
+
+### 유저 수정
+PATCH {{baseUrl}}/api/users/{{user_id}}
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "name" : "test"
+}
+
+### 유저 삭제
+DELETE {{baseUrl}}/api/users/{{user_id}}
+Authorization: {{access_token}}

@@ -1,0 +1,106 @@
+#name: Deploy
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#      - develop
+#  pull_request:
+#    branches:
+#      - develop
+#
+#jobs:
+#  deploy:
+#    runs-on: self-hosted
+##    env:
+##      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+##      JWT_ACCESS_EXPIRATION: ${{ secrets.JWT_ACCESS_EXPIRATION }}
+##      JWT_REFRESH_EXPIRATION: ${{ secrets.JWT_REFRESH_EXPIRATION }}
+##      SPRING_DATASOURCE_URL: ${{ secrets.DB_URL }}
+##      SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
+##      SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Java 설치
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '17'
+#
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v3
+#
+#      - name: DockerHub 로그인
+#        uses: docker/login-action@v3
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+#
+#      - name: Gradle 실행 권한 부여
+#        run: chmod +x ./gradlew
+#
+#      - name: Spring Build
+#        run: ./gradlew clean bootJar -x test
+#
+#      - name: 빌드 파일명 통일
+#        run: |
+#          SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service gateway"
+#          for SERVICE in $SERVICES
+#          do
+#            mv $SERVICE/build/libs/*-SNAPSHOT.jar $SERVICE/build/libs/app.jar
+#          done
+#
+#      - name: Tag 생성
+#        id: vars
+#        run: echo "tag=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+#
+#
+#      - name: Docker 이미지 Build, Push
+#        run: |
+#          SERVICES="auth-service user-service reservation-service restaurant-service review-service benefit-service message-service gateway server"
+#          for SERVICE in $SERVICES
+#          do
+#            if [ "$SERVICE" = "server" ]; then
+#              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/eureka-server:${{ env.tag }} -f server/Dockerfile server
+#              docker push ${{ secrets.DOCKERHUB_USERNAME }}/eureka-server:${{ env.tag }}
+#            elif [ "$SERVICE" = "gateway" ]; then
+#              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/gateway-service:${{ env.tag }} -f gateway/Dockerfile gateway
+#              docker push ${{ secrets.DOCKERHUB_USERNAME }}/gateway-service:${{ env.tag }}
+#            else
+#              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }} -f ${SERVICE}/Dockerfile ${SERVICE}
+#              docker push ${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }}
+#            fi
+#          done
+#
+#      - name: Kubeconfig Setup
+#        run: |
+#          mkdir -p $HOME/.kube
+#          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
+#
+#      - name: deployment 적용
+#        run: |
+#          SERVICES="auth benefit mariadb eureka gateway message reservation restaurant review user"
+#          for SERVICE in $SERVICES
+#          do
+#            if [ -f k8s/${SERVICE}/${SERVICE}-deployment.yml ]; then
+#              kubectl apply -f k8s/${SERVICE}/${SERVICE}-deployment.yml
+#            fi
+#
+#            if [ -f k8s/${SERVICE}/${SERVICE}-service.yml ] && [ "${SERVICE}" != "gateway" ]; then
+#              kubectl apply -f k8s/${SERVICE}/${SERVICE}-service.yml
+#            fi
+#          done
+#
+#      - name: Kubernetes에 배포
+#        run: |
+#          SERVICES="auth-service benefit-service eureka-server gateway-service message-service reservation-service restaurant-service review-service user-service"
+#          for SERVICE in $SERVICES
+#          do
+#            kubectl set image deployment/${SERVICE} \
+#              ${SERVICE}-container=${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ env.tag }}
+#          done
+#
+#
