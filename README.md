@@ -3,6 +3,9 @@
   <img src="https://github.com/user-attachments/assets/3101f745-0639-49d1-8fb9-7fd9aa093b3c" style="height: 450px;">
 </div>
 
+<img src="https://github.com/user-attachments/assets/cae307ce-dd3a-41b9-a6e5-e7d9a0389b01">
+
+
 ## 🗣️ 프로젝트 소개
 
 - 대규모 트래픽에도 안정적인 성능을 유지하고 실시간 예약순번을 보장하는 식당 웨이팅 플랫폼
